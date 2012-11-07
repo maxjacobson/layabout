@@ -62,15 +62,11 @@ post '/vids' do
       resource = OEmbed::Providers::Hulu.get(a[0]["url"])
     end
     one_video << "<h2>#{a[0]["title"]}</h2>\n"
-    #one_video << "<a href=\"#{a[0]["url"]}\"><img class=\"thumbnail\" width=\"500px\" src=\"#{resource.thumbnail_url}\" /></a>"
+    one_video << "<a href=\"#{a[0]["url"]}\"><img class=\"thumbnail\" width=\"500px\" src=\"#{resource.thumbnail_url}\" /></a>"
+    #one_video << "#{resource.html}\n\n"
     if a[0]["description"] != ""
-      one_video << "<p><strong>Description:</strong> #{clickableLinks(a[0]["description"])}</p>\n"
+      one_video << "<p>#{clickableLinks(a[0]["description"])}</p>\n"
     end
-    if a[0]["private_source"] != ""
-      # what even is private source?
-      one_video << "<p><strong>Private source:</strong> #{a[0]["private_source"]}</p>\n"
-    end
-    one_video << "#{resource.html}\n\n"
     one_video << "<hr />"
     html.push(one_video)
   end
@@ -116,7 +112,7 @@ __END__
 <form action="/vids" method="POST">
   <input type="text" name="u" placeholder="Instapaper Username" autofocus="autofocus">
   <input type="password" name="pw" placeholder="Instapaper password">
-  <button class="btn btn-large btn-block btn-info" id="lookup">Log in</button>
+  <button class="btn btn-large btn-block btn-info">Log in</button>
 </form>
 
 @@ vids
