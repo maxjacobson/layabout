@@ -67,6 +67,9 @@ post '/vids' do
     if a[0]["description"] != ""
       one_video << "<p>#{clickableLinks(a[0]["description"])}</p>\n"
     end
+
+    one_video << "<p><button class=\"btn btn-primary\">Favorite <i class=\"icon-heart icon-white\"></i></button> <button class=\"btn btn-warning\">Archive <i class=\"icon-book icon-white\"></i></button> <button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></p>"
+
     one_video << "<hr />"
     html.push(one_video)
   end
@@ -92,8 +95,8 @@ __END__
   <title><%= @title %></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="HandheldFriendly" content="true" />
-  <link rel="stylesheet" href="bootstrap.css" />
-  <link rel="stylesheet" href="bootstrap-responsive.css" />
+  <link rel="stylesheet" href="css/bootstrap.css" />
+  <link rel="stylesheet" href="css/bootstrap-responsive.css" />
 </head>
 <body>
   <div class="row">
