@@ -45,7 +45,7 @@ post '/vids' do
 
   ip = InstapaperFull::API.new :consumer_key => myKey, :consumer_secret => mySecret
   ip.authenticate(username, password)
-  links = ip.bookmarks_list(:limit => 50)
+  links = ip.bookmarks_list(:limit => 500)
   videoLinks = Array.new
   i = 2 # because the first two hashes in the bookmarks_list array are not bookmarks
   # TODO rewrite like in the sample code on https://github.com/vanderwal/instapaper_full `if b['type'] == 'bookmark'`
