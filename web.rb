@@ -19,7 +19,12 @@ def isVideo (url)
 end
 
 def clickableLinks (s)
-  # TODO make sure this regex is sufficient
+  # TODO make sure this regex is sufficient for recognizing links
+  # the funny thing is, the vast majority of the time (in my experience)
+  # that this even comes into play, the link is a link TO the video
+  # and is, in fact, the link that I pressed-and-held-on to add the video
+  # to instapaper in the first place
+  
   link_regex = /\w*(:\/\/)\w*.[\w#?%=\/]+/
   s.gsub!(link_regex, '<a href="\0">\0</a>')
   return s
@@ -33,16 +38,17 @@ end
 
 def youtube_expand (url)
   url.gsub!(/(http:\/\/youtu.be\/)([A-Za-z0-9\-_]+)/, 'http://youtube.com/watch?v=\2')
+  return url
 end
 
 def title_cleanup (title)
+  # because it's needless clutter
   title.gsub!(/ - YouTube/, '')
-  title.gsub!(/Youtube - /, '')
+  title.gsub!(/YouTube - /, '')
   title.gsub!(/ on Vimeo/, '')
   title.gsub!(/Watch ([A-Za-z0-9 ]+) \| ([A-Za-z0-9 ]+) online \| Free \| Hulu/, '\1 - \2')
   return title
 end
-
 
 get '/' do
   @title= "Layabout - Login"
@@ -73,28 +79,30 @@ post '/vids' do
   html = Array.new
   videoLinks.each do |a|
     one_video = String.new
+    the_url = a[0]["url"]
     if a[1] == "youtube"
-      temp_url = youtube_cleanup(a[0]["url"])
-      resource = OEmbed::Providers::Youtube.get(temp_url)
+      the_url = youtube_cleanup(the_url)
+      resource = OEmbed::Providers::Youtube.get(the_url)
     elsif a[1] == "youtube-short"
-      temp_url = youtube_expand(a[0]["url"])
-      resource = OEmbed::Providers::Youtube.get(temp_url)
+      the_url = youtube_expand(the_url)
+      resource = OEmbed::Providers::Youtube.get(the_url)
     elsif a[1] == "vimeo"
-      resource = OEmbed::Providers::Vimeo.get(a[0]["url"])
+      resource = OEmbed::Providers::Vimeo.get(the_url)
     elsif a[1] == "viddler"
-      resource = OEmbed::Providers::Viddler.get(a[0]["url"])
+      resource = OEmbed::Providers::Viddler.get(the_url)
     elsif a[1] == "hulu"
-      resource = OEmbed::Providers::Hulu.get(a[0]["url"])
+      resource = OEmbed::Providers::Hulu.get(the_url)
     end
-    one_video << "<h2><a href=\"#{temp_url}\">#{title_cleanup(a[0]["title"])}</a></h2>\n"
-    one_video << "<a href=\"#{temp_url}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>"
-    #one_video << "#{resource.html}\n\n"
+    one_video << "<h2><a href=\"#{the_url}\">#{title_cleanup(a[0]["title"])}</a></h2>\n"
+    one_video << "<a href=\"#{the_url}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>\n"
+    #one_video << "#{resource.html}\n\n" # this is the embed code for the video. I'm not using it right now, the thumbnail is sufficient for me. TODO make it so when you click on the thumbnail it replaces the thumbnail with the embed code
     if a[0]["description"] != ""
       one_video << "<p>#{clickableLinks(a[0]["description"])}</p>\n"
     end
     one_video << "<p><button class=\"btn btn-primary\">Favorite <i class=\"icon-heart icon-white\"></i></button> "
-    one_video << "<button class=\"btn btn-warning\">Archive <i class=\"icon-book icon-white\"></i></button> "
+    one_video << "<button class=\"btn btn-warning\">Archive <i class=\"icon-folder-open icon-white\"></i></button> "
     one_video << "<button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></p>"
+    one_video << "\n\n"
     html.push(one_video)
   end
   @bookmarks = html.join('')
