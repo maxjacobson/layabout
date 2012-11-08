@@ -24,8 +24,10 @@ def clickableLinks (s)
 end
 
 def youtube_cleanup (url)
-  id = url.match(/v=[A-Za-z0-9]+/).to_s
+  puts "Before: #{url}"
+  id = url.match(/v=[A-Za-z0-9_-]+/).to_s
   url = 'http://youtube.com/watch?' + id
+  puts "After: #{url}"
   return url
 end
 
@@ -59,7 +61,8 @@ post '/vids' do
   videoLinks.each do |a|
     one_video = String.new
     if a[1] == "youtube"
-      resource = OEmbed::Providers::Youtube.get(youtube_cleanup(a[0]["url"]))
+      temp_url = youtube_cleanup(a[0]["url"])
+      resource = OEmbed::Providers::Youtube.get(temp_url)
     elsif a[1] == "vimeo"
       resource = OEmbed::Providers::Vimeo.get(a[0]["url"])
     elsif a[1] == "viddler"
@@ -68,7 +71,7 @@ post '/vids' do
       resource = OEmbed::Providers::Hulu.get(a[0]["url"])
     end
     one_video << "<h2>#{a[0]["title"]}</h2>\n"
-    one_video << "<a href=\"#{a[0]["url"]}\"><img class=\"thumbnail\" width=\"500px\" src=\"#{resource.thumbnail_url}\" /></a>"
+    one_video << "<a href=\"#{temp_url}\"><img class=\"thumbnail\" width=\"500px\" src=\"#{resource.thumbnail_url}\" /></a>"
     #one_video << "#{resource.html}\n\n"
     if a[0]["description"] != ""
       one_video << "<p>#{clickableLinks(a[0]["description"])}</p>\n"
