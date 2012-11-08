@@ -11,6 +11,8 @@ def isVideo (url)
     return [true, "viddler"]
   elsif url =~ /hulu.com/
     return [true, "hulu"]
+  elsif url =~ /youtu.be/
+    return [true, "youtube-short"]
   else
     return [false]
   end
@@ -24,12 +26,23 @@ def clickableLinks (s)
 end
 
 def youtube_cleanup (url)
-  puts "Before: #{url}"
   id = url.match(/v=[A-Za-z0-9_-]+/).to_s
   url = 'http://youtube.com/watch?' + id
-  puts "After: #{url}"
   return url
 end
+
+def youtube_expand (url)
+  url.gsub!(/(http:\/\/youtu.be\/)([A-Za-z0-9\-_]+)/, 'http://youtube.com/watch?v=\2')
+end
+
+def title_cleanup (title)
+  title.gsub!(/ - YouTube/, '')
+  title.gsub!(/Youtube - /, '')
+  title.gsub!(/ on Vimeo/, '')
+  title.gsub!(/Watch ([A-Za-z0-9 ]+) \| ([A-Za-z0-9 ]+) online \| Free \| Hulu/, '\1 - \2')
+  return title
+end
+
 
 get '/' do
   @title= "Layabout - Login"
@@ -63,6 +76,9 @@ post '/vids' do
     if a[1] == "youtube"
       temp_url = youtube_cleanup(a[0]["url"])
       resource = OEmbed::Providers::Youtube.get(temp_url)
+    elsif a[1] == "youtube-short"
+      temp_url = youtube_expand(a[0]["url"])
+      resource = OEmbed::Providers::Youtube.get(temp_url)
     elsif a[1] == "vimeo"
       resource = OEmbed::Providers::Vimeo.get(a[0]["url"])
     elsif a[1] == "viddler"
@@ -70,27 +86,18 @@ post '/vids' do
     elsif a[1] == "hulu"
       resource = OEmbed::Providers::Hulu.get(a[0]["url"])
     end
-    one_video << "<h2>#{a[0]["title"]}</h2>\n"
-    one_video << "<a href=\"#{temp_url}\"><img class=\"thumbnail\" width=\"500px\" src=\"#{resource.thumbnail_url}\" /></a>"
+    one_video << "<h2><a href=\"#{temp_url}\">#{title_cleanup(a[0]["title"])}</a></h2>\n"
+    one_video << "<a href=\"#{temp_url}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>"
     #one_video << "#{resource.html}\n\n"
     if a[0]["description"] != ""
       one_video << "<p>#{clickableLinks(a[0]["description"])}</p>\n"
     end
-
-    one_video << "<p><button class=\"btn btn-primary\">Favorite <i class=\"icon-heart icon-white\"></i></button> <button class=\"btn btn-warning\">Archive <i class=\"icon-book icon-white\"></i></button> <button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></p>"
-
-    one_video << "<hr />"
+    one_video << "<p><button class=\"btn btn-primary\">Favorite <i class=\"icon-heart icon-white\"></i></button> "
+    one_video << "<button class=\"btn btn-warning\">Archive <i class=\"icon-book icon-white\"></i></button> "
+    one_video << "<button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></p>"
     html.push(one_video)
   end
-  num_videos_to_display = 500 # if you want to limit the output to like the 3 most recent or something
-  if num_videos_to_display >= html.length
-    num_videos_to_display = html.length - 1
-  end
-  # for i in 0..num_videos_to_display
-  #   puts html[i]
-  # end
   @bookmarks = html.join('')
-  
   erb :vids
 end
 
@@ -109,17 +116,17 @@ __END__
 </head>
 <body>
   <div class="row">
-    <div class="span8 offset2">
+    <div class="span6 offset3">
       <h1><%= @title %></h1>
       <%= yield %>
     </div>
-    <div class="span 2"></div>
+    <div class="span 3"></div>
   </div>
 </body>
 </html>
 
 @@ home
-<p>Layabout is a fun way to watch the videos in your Intapaper queue.</p>
+<p>Layabout is a fun way to watch the videos in your Instapaper queue.</p>
 <p>This only works for subscribers, sorry. Should I add support for things like Pinboard or Pocket?</p>
 <form action="/vids" method="POST">
   <input type="text" name="u" placeholder="Instapaper Username" autofocus="autofocus">
