@@ -23,6 +23,12 @@ def clickableLinks (s)
   return s
 end
 
+def youtube_cleanup (url)
+  id = url.match(/v=[A-Za-z0-9]+/).to_s
+  url = 'http://youtube.com/watch?' + id
+  return url
+end
+
 get '/' do
   @title= "Layabout - Login"
   erb :home
@@ -53,7 +59,7 @@ post '/vids' do
   videoLinks.each do |a|
     one_video = String.new
     if a[1] == "youtube"
-      resource = OEmbed::Providers::Youtube.get(a[0]["url"])
+      resource = OEmbed::Providers::Youtube.get(youtube_cleanup(a[0]["url"]))
     elsif a[1] == "vimeo"
       resource = OEmbed::Providers::Vimeo.get(a[0]["url"])
     elsif a[1] == "viddler"
@@ -77,9 +83,9 @@ post '/vids' do
   if num_videos_to_display >= html.length
     num_videos_to_display = html.length - 1
   end
-  for i in 0..num_videos_to_display
-    puts html[i]
-  end
+  # for i in 0..num_videos_to_display
+  #   puts html[i]
+  # end
   @bookmarks = html.join('')
   
   erb :vids
