@@ -113,7 +113,7 @@ post '/vids' do
     elsif link["vid_site"] == "hulu"
       resource = OEmbed::Providers::Hulu.get(the_url)
     end
-    one_video << "<h3><a href=\"#{the_url}\">#{title_cleanup(link["title"])}</a></h3>\n"
+    one_video << "<h3><a href=\"#{the_url}\">#{title_cleanup(link["title"])}&rarr;</a></h3>\n"
     one_video << "<a href=\"#{the_url}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>\n"
     # one_video << "#{resource.html}\n\n" # this is the embed code for the video.
                                           # I'm not using it right now, the thumbnail is sufficient for me.
