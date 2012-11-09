@@ -4,3 +4,6 @@ gem 'thin'
 gem 'progress_bar'
 gem 'instapaper_full'
 gem 'ruby-oembed'
+gem 'markdown'
+gem 'kramdown'
+

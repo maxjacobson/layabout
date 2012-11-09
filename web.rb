@@ -1,8 +1,14 @@
 require 'sinatra'
 require 'instapaper_full'
 require 'oembed'
+require 'kramdown'
 
-# enable :sessions # what is this? I think important
+enable :sessions
+
+def cap_first (s)
+  # this code via stack overflow http://stackoverflow.com/questions/2646709/capitalize-only-first-character-of-string-and-leave-others-alone-rails
+  return s.slice(0,1).capitalize + s.slice(1..-1)
+end
 
 def is_video (url)
   if url =~ /youtube.com/
@@ -70,85 +76,92 @@ error do
   erb :'500'
 end
 
-
 get '/' do
-  
-  # I think here I'll need to do something like:
-  # if authenticated?
-  #   erb :vids
-  # else
-  #  erb :login
-  # end
-  
-  @title= "Layabout"
-  @subtitle = "Login"
-  erb :home
+  app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
+  app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
+  @title = "Layabout"
+  if session[:username].nil? or session[:password].nil?
+    @subtitle = "Log in to Instapaper"
+    erb :login
+  else
+    @subtitle = "Watch"
+    ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
+    ip.authenticate(session[:username], session[:password])
+    all_links = ip.bookmarks_list(:limit => 500)
+    video_links = Array.new
+    all_links.each do |link|
+      if link["type"] == "bookmark"
+        info = is_video(link["url"])
+        if info[0] == true
+          video_links.push(link)
+          video_links[-1]["vid_site"] = info[1]
+        end
+      end
+    end
+    html = Array.new
+    video_links.each do |link|
+      one_video = String.new
+      the_url = link["url"]
+      if link["vid_site"] == "youtube"
+        the_url = youtube_cleanup(the_url)
+        resource = OEmbed::Providers::Youtube.get(the_url)
+      elsif link["vid_site"] == "youtube-short"
+        the_url = youtube_expand(the_url)
+        resource = OEmbed::Providers::Youtube.get(the_url)
+      elsif link["vid_site"] == "vimeo"
+        resource = OEmbed::Providers::Vimeo.get(the_url)
+      elsif link["vid_site"] == "viddler"
+        resource = OEmbed::Providers::Viddler.get(the_url)
+      elsif link["vid_site"] == "hulu"
+        resource = OEmbed::Providers::Hulu.get(the_url)
+      end
+      one_video << "      <h3><a href=\"#{the_url}\">#{title_cleanup(link["title"])}&rarr;</a></h3>\n"
+      one_video << "      <a href=\"#{the_url}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>\n"
+      # one_video << "#{resource.html}\n\n" # this is the embed code for the video.
+                                            # I'm not using it right now, the thumbnail is sufficient for me.
+                                            # TODO make it so when you click on the thumbnail it replaces the thumbnail with the embed code
+      if link["description"] != ""
+        one_video << "      <p>#{make_clicky(link["description"])}</p>\n"
+      end
+      one_video << "      <p><button class=\"btn btn-primary\">Like <i class=\"icon-heart icon-white\"></i></button> "
+      one_video << "<button class=\"btn btn-warning\">Archive <i class=\"icon-folder-open icon-white\"></i></button> "
+      one_video << "<button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></p>"
+      one_video << "\n\n"
+      html.push(one_video)
+    end
+    @bookmarks = html.join('')
+    erb :vids
+  end
+end
+
+post '/login' do
+  if params[:u] == '' # TODO obv remove this if statement at some point
+    session[:username] = "maxwell.jacobson@gmail.com"
+    session[:password] = "layabout"
+  else
+    session[:username] = params[:u]
+    session[:password] = params[:pw]
+  end
+  redirect '/'
+end
+
+get '/logout' do
+  session[:username] = nil
+  session[:password] = nil
+  redirect '/'
 end
 
 get '/:page' do
   if File.exists?('views/'+params[:page]+'.erb')
-    erb params[:page].to_sym
+    @title = "Layabout"
+    @subtitle = cap_first(params[:page].to_s)
+    if params[:page] != 'login'
+      erb params[:page].to_sym
+    else
+      redirect '/'
+    end
   else
     @error_page = params[:page]
     raise error(404) 
   end
-end
-
-post '/vids' do
-  @title = "Layabout"
-  @subtitle = "Watch"
-  app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
-  app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
-  username = params[:u]
-  password = params[:pw]
-  if username == "" # TODO obviously remove this if statement eventually
-    username = "maxwell.jacobson@gmail.com"
-    password = "layabout"
-  end
-  ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
-  ip.authenticate(username, password)
-  all_links = ip.bookmarks_list(:limit => 500)
-  video_links = Array.new
-  all_links.each do |link|
-    if link["type"] == "bookmark"
-      info = is_video(link["url"])
-      if info[0] == true
-        video_links.push(link)
-        video_links[-1]["vid_site"] = info[1]
-      end
-    end
-  end
-  html = Array.new
-  video_links.each do |link|
-    one_video = String.new
-    the_url = link["url"]
-    if link["vid_site"] == "youtube"
-      the_url = youtube_cleanup(the_url)
-      resource = OEmbed::Providers::Youtube.get(the_url)
-    elsif link["vid_site"] == "youtube-short"
-      the_url = youtube_expand(the_url)
-      resource = OEmbed::Providers::Youtube.get(the_url)
-    elsif link["vid_site"] == "vimeo"
-      resource = OEmbed::Providers::Vimeo.get(the_url)
-    elsif link["vid_site"] == "viddler"
-      resource = OEmbed::Providers::Viddler.get(the_url)
-    elsif link["vid_site"] == "hulu"
-      resource = OEmbed::Providers::Hulu.get(the_url)
-    end
-    one_video << "      <h3><a href=\"#{the_url}\">#{title_cleanup(link["title"])}&rarr;</a></h3>\n"
-    one_video << "      <a href=\"#{the_url}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>\n"
-    # one_video << "#{resource.html}\n\n" # this is the embed code for the video.
-                                          # I'm not using it right now, the thumbnail is sufficient for me.
-                                          # TODO make it so when you click on the thumbnail it replaces the thumbnail with the embed code
-    if link["description"] != ""
-      one_video << "      <p>#{make_clicky(link["description"])}</p>\n"
-    end
-    one_video << "      <p><button class=\"btn btn-primary\">Favorite <i class=\"icon-heart icon-white\"></i></button> "
-    one_video << "<button class=\"btn btn-warning\">Archive <i class=\"icon-folder-open icon-white\"></i></button> "
-    one_video << "<button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></p>"
-    one_video << "\n\n"
-    html.push(one_video)
-  end
-  @bookmarks = html.join('')
-  erb :vids
 end

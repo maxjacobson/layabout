@@ -12,4 +12,5 @@ A site for Instapaper subscribers to go to and watch all the videos they've save
 * 2012-11-08, set it up as a sinatra app yesterday
 * today did some URL and Title cleanup. OEmbed is finicky and will only accept clean URLs which is fine by me.
 * added support for youtube short urls (`youtu.be/`) and mobile (`m.youtube.com`)
-* 
+* 2012-11-09, separated the views into separate `.erb` files and it picked them up without a hitch. I'm mainly (well, completely) using erb because it's what Dan Benjamin was using in those videos I was watching, but some other resources I'm learning from use (and therefore implicitly recommend) either slim or haml. I think I'll stick with erb because it's basically just HTML with some ruby snuck in. I don't mind writing the brackets.
+* I set up a `get` to allow *anything* to be typed in, and it'll just check if there's a view. and if not, it'll give a 404 error. I'm wondering if this is how I'll do certain actions... pass arguments in the URL

@@ -18,6 +18,11 @@ GEM
       multi_json (~> 1.0.4)
       simple_oauth (~> 0.1)
       yajl-ruby (~> 1.1.0)
+    kramdown (0.14.0)
+    markdown (1.0.0)
+      kramdown (>= 0.13.7)
+      props (>= 1.0.0)
+      textutils (>= 0.2.0)
     multi_json (1.0.4)
     multipart-post (1.1.5)
     options (2.3.0)
@@ -25,12 +30,14 @@ GEM
     progress_bar (0.4.0)
       highline (~> 1.6.1)
       options (~> 2.3.0)
+    props (1.0.0)
     rack (1.4.1)
     ruby-oembed (0.8.7)
     simple_oauth (0.1.9)
     sinatra (1.1.0)
       rack (~> 1.1)
       tilt (~> 1.1)
+    textutils (0.2.0)
     thin (1.4.1)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
@@ -43,6 +50,8 @@ PLATFORMS
 
 DEPENDENCIES
   instapaper_full
+  kramdown
+  markdown
   progress_bar
   ruby-oembed
   sinatra (= 1.1.0)
