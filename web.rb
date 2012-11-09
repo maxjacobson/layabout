@@ -22,7 +22,7 @@ end
 
 def make_clicky (s)
   s.gsub!(/\w*(:\/\/)\w*.[\w#?%=\/]+/, '<a href="\0">\0</a>')
-  # TODO make sure this regex is sufficient for recognizing links
+  # TODO make sure this regex is sufficient for recognizing all links
   # the funny thing is, the vast majority of the time (in my experience)
   # that this even comes into play, the link is a link TO the video
   # and is, in fact, the link that I pressed-and-held-on to add the video
@@ -67,17 +67,19 @@ get '/' do
   #  erb :login
   # end
   
-  @title= "Layabout - Login"
+  @title= "Layabout"
+  @subtitle = "Login"
   erb :home
 end
 
 post '/vids' do
-  @title = "Layabout - Watch"
+  @title = "Layabout"
+  @subtitle = "Watch"
   app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
   app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
   username = params[:u]
   password = params[:pw]
-  if username == ""
+  if username == "" # TODO obviously remove this if statement eventually
     username = "maxwell.jacobson@gmail.com"
     password = "layabout"
   end
@@ -111,7 +113,7 @@ post '/vids' do
     elsif link["vid_site"] == "hulu"
       resource = OEmbed::Providers::Hulu.get(the_url)
     end
-    one_video << "<h2><a href=\"#{the_url}\">#{title_cleanup(link["title"])}</a></h2>\n"
+    one_video << "<h3><a href=\"#{the_url}\">#{title_cleanup(link["title"])}</a></h3>\n"
     one_video << "<a href=\"#{the_url}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>\n"
     # one_video << "#{resource.html}\n\n" # this is the embed code for the video.
                                           # I'm not using it right now, the thumbnail is sufficient for me.
@@ -136,7 +138,7 @@ __END__
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title><%= @title %></title>
+  <title><%= @title %> - <%= @subtitle %></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="HandheldFriendly" content="true" />
   <link rel="stylesheet" href="css/bootstrap.min.css" />
@@ -146,6 +148,7 @@ __END__
   <div class="row">
     <div class="span6 offset3">
       <h1><%= @title %></h1>
+      <h2><%= @subtitle %></h2>
 
 <%= yield %>
 
@@ -159,16 +162,14 @@ __END__
     </div>
     <div class="span3"></div>
   </div>
-  <script src="js/bootstrap.min.js"></script>
 </body>
 </html>
 
 @@ home
-<p>Layabout is a fun way to watch the videos in your Instapaper queue.</p>
-<p>This only works for subscribers, sorry. Should I add support for things like Pinboard or Pocket?</p>
+<p>WATCH YOUR INSTAPAPER</p>
 <form action="/vids" method="POST">
   <input type="text" name="u" placeholder="Instapaper Username" autofocus="autofocus">
-  <input type="password" name="pw" placeholder="Instapaper password">
+  <input type="password" name="pw" placeholder="Instapaper Password">
   <button class="btn btn-large btn-block btn-info">Log in</button>
 </form>
 
