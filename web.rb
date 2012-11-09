@@ -2,7 +2,9 @@ require 'sinatra'
 require 'instapaper_full'
 require 'oembed'
 
-def isVideo (url)
+# enable :sessions # what is this? I think important
+
+def is_video (url)
   if url =~ /youtube.com/
     return [true, "youtube"]
   elsif url =~ /vimeo.com/
@@ -18,15 +20,18 @@ def isVideo (url)
   end
 end
 
-def clickableLinks (s)
+def make_clicky (s)
+  s.gsub!(/\w*(:\/\/)\w*.[\w#?%=\/]+/, '<a href="\0">\0</a>')
   # TODO make sure this regex is sufficient for recognizing links
   # the funny thing is, the vast majority of the time (in my experience)
   # that this even comes into play, the link is a link TO the video
   # and is, in fact, the link that I pressed-and-held-on to add the video
   # to instapaper in the first place
+  # still
+  # I want it to be clickable
   
-  link_regex = /\w*(:\/\/)\w*.[\w#?%=\/]+/
-  s.gsub!(link_regex, '<a href="\0">\0</a>')
+  s.gsub!(/@[A-Za-z0-9_]+/, '<a href="http://twitter.com/\0">\0</a>')
+  s.gsub!(/twitter.com\/@/, 'twitter.com/')
   return s
 end
 
@@ -47,57 +52,72 @@ def title_cleanup (title)
   title.gsub!(/YouTube - /, '')
   title.gsub!(/ on Vimeo/, '')
   title.gsub!(/Watch ([A-Za-z0-9 ]+) \| ([A-Za-z0-9 ]+) online \| Free \| Hulu/, '\1 - \2')
+  title.gsub!(/^[ \t\n]+/, '') #some of these have blank shit at the beginning
+  title.gsub!(/[ \t\n]+$/, '') #some of these have blank shit at the end
+  # some have blank shit in the middle too but I haven't accounted for those
   return title
 end
 
 get '/' do
+  
+  # I think here I'll need to do something like:
+  # if authenticated?
+  #   erb :vids
+  # else
+  #  erb :login
+  # end
+  
   @title= "Layabout - Login"
   erb :home
 end
 
 post '/vids' do
   @title = "Layabout - Watch"
-  myKey = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
-  mySecret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
+  app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
+  app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
   username = params[:u]
   password = params[:pw]
-
-  ip = InstapaperFull::API.new :consumer_key => myKey, :consumer_secret => mySecret
-  ip.authenticate(username, password)
-  links = ip.bookmarks_list(:limit => 500)
-  videoLinks = Array.new
-  i = 2 # because the first two hashes in the bookmarks_list array are not bookmarks
-  # TODO rewrite like in the sample code on https://github.com/vanderwal/instapaper_full `if b['type'] == 'bookmark'`
-  while i < links.length
-    info = isVideo(links[i]["url"])  
-    if info[0] == true
-      videoLinks.push([links[i], info[1]])
-    end
-    i += 1
+  if username == ""
+    username = "maxwell.jacobson@gmail.com"
+    password = "layabout"
   end
-  # doing this goofy array thing so I can later selectively share some but not all of the videos
+  ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
+  ip.authenticate(username, password)
+  all_links = ip.bookmarks_list(:limit => 500)
+  video_links = Array.new
+  all_links.each do |link|
+    if link["type"] == "bookmark"
+      info = is_video(link["url"])
+      if info[0] == true
+        video_links.push(link)
+        video_links[-1]["vid_site"] = info[1]
+      end
+    end
+  end
   html = Array.new
-  videoLinks.each do |a|
+  video_links.each do |link|
     one_video = String.new
-    the_url = a[0]["url"]
-    if a[1] == "youtube"
+    the_url = link["url"]
+    if link["vid_site"] == "youtube"
       the_url = youtube_cleanup(the_url)
       resource = OEmbed::Providers::Youtube.get(the_url)
-    elsif a[1] == "youtube-short"
+    elsif link["vid_site"] == "youtube-short"
       the_url = youtube_expand(the_url)
       resource = OEmbed::Providers::Youtube.get(the_url)
-    elsif a[1] == "vimeo"
+    elsif link["vid_site"] == "vimeo"
       resource = OEmbed::Providers::Vimeo.get(the_url)
-    elsif a[1] == "viddler"
+    elsif link["vid_site"] == "viddler"
       resource = OEmbed::Providers::Viddler.get(the_url)
-    elsif a[1] == "hulu"
+    elsif link["vid_site"] == "hulu"
       resource = OEmbed::Providers::Hulu.get(the_url)
     end
-    one_video << "<h2><a href=\"#{the_url}\">#{title_cleanup(a[0]["title"])}</a></h2>\n"
+    one_video << "<h2><a href=\"#{the_url}\">#{title_cleanup(link["title"])}</a></h2>\n"
     one_video << "<a href=\"#{the_url}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>\n"
-    #one_video << "#{resource.html}\n\n" # this is the embed code for the video. I'm not using it right now, the thumbnail is sufficient for me. TODO make it so when you click on the thumbnail it replaces the thumbnail with the embed code
-    if a[0]["description"] != ""
-      one_video << "<p>#{clickableLinks(a[0]["description"])}</p>\n"
+    # one_video << "#{resource.html}\n\n" # this is the embed code for the video.
+                                          # I'm not using it right now, the thumbnail is sufficient for me.
+                                          # TODO make it so when you click on the thumbnail it replaces the thumbnail with the embed code
+    if link["description"] != ""
+      one_video << "<p>#{make_clicky(link["description"])}</p>\n"
     end
     one_video << "<p><button class=\"btn btn-primary\">Favorite <i class=\"icon-heart icon-white\"></i></button> "
     one_video << "<button class=\"btn btn-warning\">Archive <i class=\"icon-folder-open icon-white\"></i></button> "
@@ -119,17 +139,27 @@ __END__
   <title><%= @title %></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="HandheldFriendly" content="true" />
-  <link rel="stylesheet" href="css/bootstrap.css" />
-  <link rel="stylesheet" href="css/bootstrap-responsive.css" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
 </head>
 <body>
   <div class="row">
     <div class="span6 offset3">
       <h1><%= @title %></h1>
-      <%= yield %>
+
+<%= yield %>
+
     </div>
-    <div class="span 3"></div>
+    <div class="span3"></div>
   </div>
+  <div class="row">
+    <div class="span6 offset3">
+      <hr />
+      <p>A <a href="http://maxjacobson.net">Max Jacobson</a> joint.</p>
+    </div>
+    <div class="span3"></div>
+  </div>
+  <script src="js/bootstrap.min.js"></script>
 </body>
 </html>
 
@@ -139,7 +169,7 @@ __END__
 <form action="/vids" method="POST">
   <input type="text" name="u" placeholder="Instapaper Username" autofocus="autofocus">
   <input type="password" name="pw" placeholder="Instapaper password">
-  <button class="btn btn-large btn-block btn-info">Log in</button>
+  <button type="button" class="btn btn-large btn-block btn-info">Log in</button>
 </form>
 
 @@ vids
