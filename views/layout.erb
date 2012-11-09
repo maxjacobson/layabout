@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title><%= @title %> - <%= @subtitle %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="HandheldFriendly" content="true" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
+</head>
+<body>
+  <div class="row">
+    <div class="span6 offset3">
+      <h1><%= @title %></h1>
+      <h2><%= @subtitle %></h2>
+
+<%= yield %>
+
+    </div>
+    <div class="span3"></div>
+  </div>
+  <div class="row">
+    <div class="span6 offset3">
+      <hr />
+      <p>A <a href="http://maxjacobson.net">Max Jacobson</a> joint.</p>
+    </div>
+    <div class="span3"></div>
+  </div>
+</body>
+</html>

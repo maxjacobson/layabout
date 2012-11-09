@@ -58,6 +58,19 @@ def title_cleanup (title)
   return title
 end
 
+not_found do
+  @title= "Layabout"
+  @subtitle = "404"
+  erb :'404'
+end
+
+error do
+  @title= "Layabout"
+  @subtitle = "500"
+  erb :'500'
+end
+
+
 get '/' do
   
   # I think here I'll need to do something like:
@@ -70,6 +83,15 @@ get '/' do
   @title= "Layabout"
   @subtitle = "Login"
   erb :home
+end
+
+get '/:page' do
+  if File.exists?('views/'+params[:page]+'.erb')
+    erb params[:page].to_sym
+  else
+    @error_page = params[:page]
+    raise error(404) 
+  end
 end
 
 post '/vids' do
@@ -113,15 +135,15 @@ post '/vids' do
     elsif link["vid_site"] == "hulu"
       resource = OEmbed::Providers::Hulu.get(the_url)
     end
-    one_video << "<h3><a href=\"#{the_url}\">#{title_cleanup(link["title"])}&rarr;</a></h3>\n"
-    one_video << "<a href=\"#{the_url}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>\n"
+    one_video << "      <h3><a href=\"#{the_url}\">#{title_cleanup(link["title"])}&rarr;</a></h3>\n"
+    one_video << "      <a href=\"#{the_url}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>\n"
     # one_video << "#{resource.html}\n\n" # this is the embed code for the video.
                                           # I'm not using it right now, the thumbnail is sufficient for me.
                                           # TODO make it so when you click on the thumbnail it replaces the thumbnail with the embed code
     if link["description"] != ""
-      one_video << "<p>#{make_clicky(link["description"])}</p>\n"
+      one_video << "      <p>#{make_clicky(link["description"])}</p>\n"
     end
-    one_video << "<p><button class=\"btn btn-primary\">Favorite <i class=\"icon-heart icon-white\"></i></button> "
+    one_video << "      <p><button class=\"btn btn-primary\">Favorite <i class=\"icon-heart icon-white\"></i></button> "
     one_video << "<button class=\"btn btn-warning\">Archive <i class=\"icon-folder-open icon-white\"></i></button> "
     one_video << "<button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></p>"
     one_video << "\n\n"
@@ -130,48 +152,3 @@ post '/vids' do
   @bookmarks = html.join('')
   erb :vids
 end
-
-__END__
-
-@@ layout
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title><%= @title %> - <%= @subtitle %></title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="HandheldFriendly" content="true" />
-  <link rel="stylesheet" href="css/bootstrap.min.css" />
-  <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
-</head>
-<body>
-  <div class="row">
-    <div class="span6 offset3">
-      <h1><%= @title %></h1>
-      <h2><%= @subtitle %></h2>
-
-<%= yield %>
-
-    </div>
-    <div class="span3"></div>
-  </div>
-  <div class="row">
-    <div class="span6 offset3">
-      <hr />
-      <p>A <a href="http://maxjacobson.net">Max Jacobson</a> joint.</p>
-    </div>
-    <div class="span3"></div>
-  </div>
-</body>
-</html>
-
-@@ home
-<p>WATCH YOUR INSTAPAPER</p>
-<form action="/vids" method="POST">
-  <input type="text" name="u" placeholder="Instapaper Username" autofocus="autofocus">
-  <input type="password" name="pw" placeholder="Instapaper Password">
-  <button class="btn btn-large btn-block btn-info">Log in</button>
-</form>
-
-@@ vids
-<%= @bookmarks %>
