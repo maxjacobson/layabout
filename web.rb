@@ -29,7 +29,6 @@ def make_clicky (s)
   # to instapaper in the first place
   # still
   # I want it to be clickable
-  
   s.gsub!(/@[A-Za-z0-9_]+/, '<a href="http://twitter.com/\0">\0</a>')
   s.gsub!(/twitter.com\/@/, 'twitter.com/')
   return s
@@ -52,6 +51,7 @@ def title_cleanup (title)
   title.gsub!(/YouTube - /, '')
   title.gsub!(/ on Vimeo/, '')
   title.gsub!(/Watch ([A-Za-z0-9 ]+) \| ([A-Za-z0-9 ]+) online \| Free \| Hulu/, '\1 - \2')
+  # what about paying hulu subscribers... what do their URLs look like?
   title.gsub!(/^[ \t\n]+/, '') #some of these have blank shit at the beginning
   title.gsub!(/[ \t\n]+$/, '') #some of these have blank shit at the end
   # some have blank shit in the middle too but I haven't accounted for those
@@ -169,7 +169,7 @@ __END__
 <form action="/vids" method="POST">
   <input type="text" name="u" placeholder="Instapaper Username" autofocus="autofocus">
   <input type="password" name="pw" placeholder="Instapaper password">
-  <button type="button" class="btn btn-large btn-block btn-info">Log in</button>
+  <button class="btn btn-large btn-block btn-info">Log in</button>
 </form>
 
 @@ vids
