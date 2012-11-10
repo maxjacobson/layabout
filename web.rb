@@ -80,7 +80,7 @@ end
 
 get '/' do
   
-  puts "Loading /, lets look at session: #{session}"
+  # puts "Loading /, lets look at session: #{session}"
   
   app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
   app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
@@ -159,7 +159,7 @@ get '/' do
         resource = OEmbed::Providers::Hulu.get(the_url)
       end
       one_video << "      <div class=\"video-container\" id=\"#{link["bookmark_id"]}\">\n"
-      one_video << "        <h3><a href=\"#{the_url}\" id=\"#{link["bookmark_id"]}\">#{title_cleanup(link["title"])}&rarr;</a></h3>\n"
+      one_video << "        <h2><a href=\"#{the_url}\" id=\"#{link["bookmark_id"]}\">#{title_cleanup(link["title"])}&rarr;</a></h2>\n"
       
       if link["to_watch"] == true
         one_video << "<div class=\"embeddedvid\">#{resource.html}</div>\n"
