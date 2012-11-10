@@ -21,3 +21,4 @@ A site for Instapaper subscribers to go to and watch all the videos they've save
 * use the "flash" thing to send little messages to confirm that stuff worked
 * add "like and archive" button
 * add "unlike and delete" button
+* when you watch a vid, do you really need to load all the other shit? maybe just throw all that in its own erb (buttons included), with a back button

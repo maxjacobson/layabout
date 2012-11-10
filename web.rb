@@ -15,6 +15,8 @@ end
 def is_video (url)
   if url =~ /youtube.com/
     return [true, "youtube"]
+  elsif url=~ /vimeo.com\/m\//
+    return [true, "vimeo-mobile"]
   elsif url =~ /vimeo.com/
     return [true, "vimeo"]
   elsif url =~ /viddler.com/
@@ -45,6 +47,11 @@ end
 def youtube_cleanup (url)
   id = url.match(/v=[A-Za-z0-9_-]+/).to_s
   url = 'http://youtube.com/watch?' + id
+  return url
+end
+
+def vimeo_cleanup (url)
+  url.gsub!(/vimeo.com\/m\//,'vimeo.com/')
   return url
 end
 
@@ -153,6 +160,8 @@ get '/' do
         resource = OEmbed::Providers::Youtube.get(the_url)
       elsif link["vid_site"] == "vimeo"
         resource = OEmbed::Providers::Vimeo.get(the_url)
+      elsif link["vid_site"] == "vimeo-mobile"
+        resource = OEmbed::Providers::Vimeo.get(vimeo_cleanup(the_url))
       elsif link["vid_site"] == "viddler"
         resource = OEmbed::Providers::Viddler.get(the_url)
       elsif link["vid_site"] == "hulu"
