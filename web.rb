@@ -170,6 +170,7 @@ get '/' do
       elsif link["vid_site"] == "hulu"
         resource = OEmbed::Providers::Hulu.get(the_url)
       end
+      one_video << "      <hr />\n"
       one_video << "      <div class=\"video-container\" id=\"#{link["bookmark_id"]}\">\n"
       one_video << "        <h2><a href=\"#{the_url}\" id=\"#{link["bookmark_id"]}\">#{title_cleanup(link["title"])}&rarr;</a></h2>\n"
       
@@ -199,8 +200,7 @@ get '/' do
       end
       
       
-      one_video << "      </div>\n"
-      one_video << "      <hr />\n\n"
+      one_video << "      </div>\n\n"
       html.push(one_video)
     end
     @bookmarks = html.join('')
