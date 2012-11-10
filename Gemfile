@@ -6,4 +6,4 @@ gem 'instapaper_full'
 gem 'ruby-oembed'
 gem 'markdown'
 gem 'kramdown'
-
+gem 'rack-flash'

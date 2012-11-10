@@ -79,6 +79,7 @@ end
 get '/' do
   app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
   app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
+  
   @title = "Layabout"
   if session[:username].nil? or session[:password].nil?
     @subtitle = "Log in to Instapaper"
@@ -87,19 +88,55 @@ get '/' do
     @subtitle = "Watch"
     ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
     ip.authenticate(session[:username], session[:password])
-    all_links = ip.bookmarks_list(:limit => 500)
-    video_links = Array.new
+    all_links = ip.bookmarks_list(:limit => 50)
+    
+    video_links = Hash.new # gonna try to do this with a hash instead of an array
     all_links.each do |link|
       if link["type"] == "bookmark"
         info = is_video(link["url"])
         if info[0] == true
-          video_links.push(link)
-          video_links[-1]["vid_site"] = info[1]
+          link["vid_site"] = info[1]
+          video_links[link["bookmark_id"]] = link
         end
       end
     end
+    
+    # puts video_links
+    
+    if session[:action] == nil
+    else
+      action_id = session[:action_id].to_i
+      the_link = video_links[action_id]
+      puts "\n\nsession[:action] is: #{session[:action]}"
+      puts "action_id is: #{action_id}"
+      puts "the_link is: #{the_link}\n\n"
+      if session[:action] == "star"
+        if the_link["starred"] == "0"
+          puts "You want to star #{the_link["title"]}"
+          ip.bookmarks_star(the_link)
+          video_links[action_id]["starred"] = "1"
+        elsif the_link["starred"] == "1"
+          puts "You want to unstar #{the_link["title"]}"
+          ip.bookmarks_unstar(the_link)
+          video_links[action_id]["starred"] = "0"
+        end
+      elsif session[:action] == "archive"
+        puts "You want to archive #{the_link["title"]}"
+        ip.bookmarks_archive(the_link)
+        video_links.delete(action_id)
+      elsif session[:action] == "delete"
+        puts "You want to delete #{the_link["title"]}"
+        ip.bookmarks_delete(the_link)
+        video_links.delete(action_id)
+      elsif session[:action] == "watch"
+        video_links[action_id]["to_watch"] = true
+      end
+      session[:action] = nil
+      session[:action_id] = nil
+    end
+
     html = Array.new
-    video_links.each do |link|
+    video_links.each_value do |link|
       one_video = String.new
       the_url = link["url"]
       if link["vid_site"] == "youtube"
@@ -115,17 +152,34 @@ get '/' do
       elsif link["vid_site"] == "hulu"
         resource = OEmbed::Providers::Hulu.get(the_url)
       end
-      one_video << "      <h3><a href=\"#{the_url}\">#{title_cleanup(link["title"])}&rarr;</a></h3>\n"
-      one_video << "      <a href=\"#{the_url}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>\n"
-      # one_video << "#{resource.html}\n\n" # this is the embed code for the video.
-                                            # I'm not using it right now, the thumbnail is sufficient for me.
-                                            # TODO make it so when you click on the thumbnail it replaces the thumbnail with the embed code
-      if link["description"] != ""
-        one_video << "      <p>#{make_clicky(link["description"])}</p>\n"
+      one_video << "      <div class=\"video-container\" id=\"#{link["bookmark_id"]}\">\n"
+      one_video << "        <h3><a href=\"#{the_url}\" id=\"#{link["bookmark_id"]}\">#{title_cleanup(link["title"])}&rarr;</a></h3>\n"
+      
+      if link["to_watch"] == true
+        one_video << "#{resource.html}\n"
+      else
+        one_video << "        <a href=\"watch-#{link["bookmark_id"]}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>\n"
       end
-      one_video << "      <p><button class=\"btn btn-primary\">Like <i class=\"icon-heart icon-white\"></i></button> "
-      one_video << "<button class=\"btn btn-warning\">Archive <i class=\"icon-folder-open icon-white\"></i></button> "
-      one_video << "<button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></p>"
+
+      if link["description"] != ""
+        one_video << "        <p>#{make_clicky(link["description"])}</p>\n"
+      end
+      
+      if link["starred"] == "0"
+        one_video << "        <p><a href=\"/like-#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like <i class=\"icon-heart icon-white\"></i></button></a> "
+      elsif link["starred"] == "1"
+        one_video << "        <p><a href=\"/like-#{link["bookmark_id"]}\"><button class=\"btn btn-success\">Unlike <i class=\"icon-heart icon-white\"></i></button></a> "
+      end
+      one_video << "<a href=\"/archive-#{link["bookmark_id"]}\"><button class=\"btn btn-warning\">Archive <i class=\"icon-folder-open icon-white\"></i></button></a> "
+      
+      if link["starred"] == "0"
+        one_video << "<a href=\"/delete-#{link["bookmark_id"]}\"><button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></a></p>\n"
+      elsif link["starred"] == "1"
+        one_video << "<button class=\"btn btn-inverse\">Delete <i class=\"icon-remove icon-white\"></i></button></p>\n"
+      end
+      
+      
+      one_video << "      </div>"
       one_video << "\n\n"
       html.push(one_video)
     end
@@ -152,7 +206,23 @@ get '/logout' do
 end
 
 get '/:page' do
-  if File.exists?('views/'+params[:page]+'.erb')
+  if params[:page] =~ /like-[0-9]+/
+    session[:action_id] = params[:page].sub(/like-/, '')
+    session[:action] = 'star'
+    redirect '/' + '#' + session[:action_id]
+  elsif params[:page] =~ /archive-[0-9]+/
+    session[:action_id] = params[:page].sub(/archive-/, '')
+    session[:action] = 'archive'
+    redirect '/' + '#' + session[:action_id]
+  elsif params[:page] =~ /delete-[0-9]+/
+    session[:action_id] = params[:page].sub(/delete-/, '')
+    session[:action] = 'delete'
+    redirect '/' + '#' + session[:action_id]
+  elsif params[:page] =~ /watch-[0-9]+/
+    session[:action_id] = params[:page].sub(/watch-/, '')
+    session[:action] = 'watch'
+    redirect '/' + '#' + session[:action_id]
+  elsif File.exists?('views/'+params[:page]+'.erb')
     @title = "Layabout"
     @subtitle = cap_first(params[:page].to_s)
     if params[:page] != 'login'
