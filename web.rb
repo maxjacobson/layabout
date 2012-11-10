@@ -19,8 +19,6 @@ def is_video (url)
     return [true, "vimeo-mobile"]
   elsif url =~ /vimeo.com/
     return [true, "vimeo"]
-  elsif url =~ /viddler.com/
-    return [true, "viddler"]
   elsif url =~ /hulu.com/
     return [true, "hulu"]
   elsif url =~ /youtu.be/
@@ -169,8 +167,6 @@ get '/' do
       elsif link["vid_site"] == "vimeo-mobile"
         the_url = vimeo_cleanup(the_url)
         resource = OEmbed::Providers::Vimeo.get(the_url, maxwidth: "500", portrait: false, byline: false, title: false)
-      elsif link["vid_site"] == "viddler"
-        resource = OEmbed::Providers::Viddler.get(the_url)
       elsif link["vid_site"] == "hulu"
         resource = OEmbed::Providers::Hulu.get(the_url)
       end
