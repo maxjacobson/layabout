@@ -85,6 +85,12 @@ error do
   erb :'500'
 end
 
+get '/faq' do
+  @title = "Layabout"
+  @subtitle = "FAQ"
+  erb :faq
+end
+
 get '/' do
   
   # puts "Loading /, lets look at session: #{session}"
