@@ -160,6 +160,8 @@ get '/' do
       else
         one_video << "        <a href=\"watch-#{link["bookmark_id"]}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>\n"
       end
+      
+      one_video << "        <code>#{the_url}</code>\n"
 
       if link["description"] != ""
         one_video << "        <p>#{make_clicky(link["description"])}</p>\n"
@@ -179,8 +181,8 @@ get '/' do
       end
       
       
-      one_video << "      </div>"
-      one_video << "\n\n"
+      one_video << "      </div>\n"
+      one_video << "      <hr />\n\n"
       html.push(one_video)
     end
     @bookmarks = html.join('')
