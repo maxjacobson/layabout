@@ -88,7 +88,7 @@ get '/' do
     @subtitle = "Watch"
     ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
     ip.authenticate(session[:username], session[:password])
-    all_links = ip.bookmarks_list(:limit => 50)
+    all_links = ip.bookmarks_list(:limit => 500)
     
     video_links = Hash.new # gonna try to do this with a hash instead of an array
     all_links.each do |link|
