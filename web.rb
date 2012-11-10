@@ -208,6 +208,8 @@ end
 get '/logout' do
   session[:username] = nil
   session[:password] = nil
+  session[:action] = nil
+  session[:action_id] = nil
   redirect '/'
 end
 
