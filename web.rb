@@ -4,6 +4,8 @@ require 'oembed'
 require 'kramdown'
 
 enable :sessions
+set :dump_errors, false
+set :show_exceptions, false
 
 def cap_first (s)
   # this code via stack overflow http://stackoverflow.com/questions/2646709/capitalize-only-first-character-of-string-and-leave-others-alone-rails
@@ -88,7 +90,7 @@ get '/' do
     @subtitle = "Watch"
     ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
     ip.authenticate(session[:username], session[:password])
-    all_links = ip.bookmarks_list(:limit => 500)
+    all_links = ip.bookmarks_list(:limit => 50)
     
     video_links = Hash.new # gonna try to do this with a hash instead of an array
     all_links.each do |link|
@@ -134,6 +136,8 @@ get '/' do
       session[:action] = nil
       session[:action_id] = nil
     end
+    
+    ## thought: instead of querying instapaper after this kind of thing, just intelligently modify the html array and send it to a fresh :erb???
 
     html = Array.new
     video_links.each_value do |link|
@@ -215,11 +219,11 @@ get '/:page' do
   elsif params[:page] =~ /archive-[0-9]+/
     session[:action_id] = params[:page].sub(/archive-/, '')
     session[:action] = 'archive'
-    redirect '/' + '#' + session[:action_id]
+    redirect '/'
   elsif params[:page] =~ /delete-[0-9]+/
     session[:action_id] = params[:page].sub(/delete-/, '')
     session[:action] = 'delete'
-    redirect '/' + '#' + session[:action_id]
+    redirect '/'
   elsif params[:page] =~ /watch-[0-9]+/
     session[:action_id] = params[:page].sub(/watch-/, '')
     session[:action] = 'watch'
