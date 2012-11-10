@@ -79,6 +79,9 @@ error do
 end
 
 get '/' do
+  
+  puts "Loading /, lets look at session: #{session}"
+  
   app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
   app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
   
@@ -91,8 +94,7 @@ get '/' do
     ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
     ip.authenticate(session[:username], session[:password])
     all_links = ip.bookmarks_list(:limit => 500)
-    
-    video_links = Hash.new # gonna try to do this with a hash instead of an array
+    video_links = Hash.new
     all_links.each do |link|
       if link["type"] == "bookmark"
         info = is_video(link["url"])
@@ -103,9 +105,8 @@ get '/' do
       end
     end
     
-    # puts video_links
-    
     if session[:action] == nil
+      puts "session[:action] is nil -- no action this time"
     else
       action_id = session[:action_id].to_i
       the_link = video_links[action_id]
@@ -114,24 +115,25 @@ get '/' do
       puts "the_link is: #{the_link}\n\n"
       if session[:action] == "star"
         if the_link["starred"] == "0"
-          puts "You want to star #{the_link["title"]}"
           ip.bookmarks_star(the_link)
+          puts "You liked #{the_link["title"]}"
           video_links[action_id]["starred"] = "1"
         elsif the_link["starred"] == "1"
-          puts "You want to unstar #{the_link["title"]}"
           ip.bookmarks_unstar(the_link)
+          puts "You unliked #{the_link["title"]}"
           video_links[action_id]["starred"] = "0"
         end
       elsif session[:action] == "archive"
-        puts "You want to archive #{the_link["title"]}"
         ip.bookmarks_archive(the_link)
+        puts "You archived #{the_link["title"]}"
         video_links.delete(action_id)
       elsif session[:action] == "delete"
-        puts "You want to delete #{the_link["title"]}"
         ip.bookmarks_delete(the_link)
+        puts "You deleted #{the_link["title"]}"
         video_links.delete(action_id)
       elsif session[:action] == "watch"
         video_links[action_id]["to_watch"] = true
+        puts "Please enjoy #{the_link["title"]}."
       end
       session[:action] = nil
       session[:action_id] = nil
@@ -162,10 +164,10 @@ get '/' do
       if link["to_watch"] == true
         one_video << "<div class=\"embeddedvid\">#{resource.html}</div>\n"
       else
-        one_video << "        <a href=\"watch-#{link["bookmark_id"]}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>\n"
+        one_video << "        <p><a href=\"watch-#{link["bookmark_id"]}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a></p>\n"
       end
       
-      one_video << "        <code>#{the_url}</code>\n"
+      one_video << "        <p><code>#{the_url}</code></p>\n"
 
       if link["description"] != ""
         one_video << "        <p>#{make_clicky(link["description"])}</p>\n"
@@ -206,10 +208,7 @@ post '/login' do
 end
 
 get '/logout' do
-  session[:username] = nil
-  session[:password] = nil
-  session[:action] = nil
-  session[:action_id] = nil
+  session.clear
   redirect '/'
 end
 
@@ -229,6 +228,7 @@ get '/:page' do
   elsif params[:page] =~ /watch-[0-9]+/
     session[:action_id] = params[:page].sub(/watch-/, '')
     session[:action] = 'watch'
+    puts "Setting action and action id to watch and your movie!"
     redirect '/' + '#' + session[:action_id]
   elsif File.exists?('views/'+params[:page]+'.erb')
     @title = "Layabout"
