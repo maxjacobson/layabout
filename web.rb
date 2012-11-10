@@ -156,7 +156,7 @@ get '/' do
       one_video << "        <h3><a href=\"#{the_url}\" id=\"#{link["bookmark_id"]}\">#{title_cleanup(link["title"])}&rarr;</a></h3>\n"
       
       if link["to_watch"] == true
-        one_video << "#{resource.html}\n"
+        one_video << "<div class=\"embeddedvid\">#{resource.html}</div>\n"
       else
         one_video << "        <a href=\"watch-#{link["bookmark_id"]}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a>\n"
       end
