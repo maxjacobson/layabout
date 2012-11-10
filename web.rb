@@ -19,6 +19,8 @@ def is_video (url)
     return [true, "vimeo-mobile"]
   elsif url =~ /vimeo.com/
     return [true, "vimeo"]
+  elsif url =~ /viddler.com/
+    return [true, "viddler"]
   elsif url =~ /hulu.com/
     return [true, "hulu"]
   elsif url =~ /youtu.be/
@@ -63,7 +65,7 @@ def title_cleanup (title)
   title.gsub!(/ - YouTube/, '')
   title.gsub!(/YouTube - /, '')
   title.gsub!(/ on Vimeo/, '')
-  title.gsub!(/Watch ([A-Za-z0-9 ]+) \| ([A-Za-z0-9 ]+) online \| Free \| Hulu/, '\1 - \2')
+  title.gsub!(/Watch ([A-Za-z0-9 ]+) \| ([A-Za-z0-9 ]+) online \| Free \| Hulu/, '\1: \2')
   # what about paying hulu subscribers... what do their URLs look like?
   title.gsub!(/^[ \t\n]+/, '') #some of these have blank shit at the beginning
   title.gsub!(/[ \t\n]+$/, '') #some of these have blank shit at the end
@@ -157,9 +159,12 @@ get '/' do
         the_url = youtube_expand(the_url)
         resource = OEmbed::Providers::Youtube.get(the_url)
       elsif link["vid_site"] == "vimeo"
-        resource = OEmbed::Providers::Vimeo.get(the_url)
+        resource = OEmbed::Providers::Vimeo.get(the_url, maxwidth: "500", portrait: false, byline: false, title: false)
       elsif link["vid_site"] == "vimeo-mobile"
-        resource = OEmbed::Providers::Vimeo.get(vimeo_cleanup(the_url))
+        the_url = vimeo_cleanup(the_url)
+        resource = OEmbed::Providers::Vimeo.get(the_url, maxwidth: "500", portrait: false, byline: false, title: false)
+      elsif link["vid_site"] == "viddler"
+        resource = OEmbed::Providers::Viddler.get(the_url)
       elsif link["vid_site"] == "hulu"
         resource = OEmbed::Providers::Hulu.get(the_url)
       end
@@ -167,7 +172,7 @@ get '/' do
       one_video << "        <h2><a href=\"#{the_url}\" id=\"#{link["bookmark_id"]}\">#{title_cleanup(link["title"])}&rarr;</a></h2>\n"
       
       # if link["to_watch"] == true
-        one_video << "<div class=\"embeddedvid\">#{resource.html}</div>\n"
+        one_video << "<p>#{resource.html}</p>\n"
       # else
         # one_video << "        <p><a href=\"watch-#{link["bookmark_id"]}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a></p>\n"
       # end
