@@ -46,9 +46,8 @@ def youtube_cleanup (url)
   if url =~ /embed\//
     # support these two urls:
     # http://m.youtube.com/#/watch?feature=youtu.be&rel=0&v=2NzUm7UEEIY&desktop_uri=%2Fwatch%3Fv%3D2NzUm7UEEIY%26feature%3Dyoutu.be%26rel%3D0
-    # http://www.youtube.com/embed/2NzUm7UEEIY
     id = url.match(/\/embed\/[A-Za-z0-9_-]+/).to_s
-    id.gsub!(/\/embed\//,'')
+    id.gsub!(/\/embed\//,'v=')
   else
     id = url.match(/v=[A-Za-z0-9_-]+/).to_s
   end
@@ -72,10 +71,8 @@ def title_cleanup (title)
   title.gsub!(/YouTube - /, '')
   title.gsub!(/ on Vimeo/, '')
   title.gsub!(/Watch ([A-Za-z0-9 ]+) \| ([A-Za-z0-9 ]+) online \| Free \| Hulu/, '\1: \2')
-  # what about paying hulu subscribers... what do their URLs look like?
   title.gsub!(/^[ \t\n]+/, '') #some of these have blank shit at the beginning
   title.gsub!(/[ \t\n]+$/, '') #some of these have blank shit at the end
-  # some have blank shit in the middle too but I haven't accounted for those
   return title
 end
 
@@ -98,12 +95,10 @@ get '/faq' do
 end
 
 get '/' do
-  
-  # puts "Loading /, lets look at session: #{session}"
-  
+
   app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
   app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
-  
+
   @title = "Layabout"
   if session[:username].nil? or session[:password].nil?
     @subtitle = "Log in to Instapaper"
