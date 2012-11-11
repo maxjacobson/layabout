@@ -1,7 +1,6 @@
 require 'sinatra'
 require 'instapaper_full'
 require 'oembed'
-require 'kramdown'
 
 enable :sessions
 set :dump_errors, false
@@ -44,8 +43,6 @@ end
 
 def youtube_cleanup (url)
   if url =~ /embed\//
-    # support these two urls:
-    # http://m.youtube.com/#/watch?feature=youtu.be&rel=0&v=2NzUm7UEEIY&desktop_uri=%2Fwatch%3Fv%3D2NzUm7UEEIY%26feature%3Dyoutu.be%26rel%3D0
     id = url.match(/\/embed\/[A-Za-z0-9_-]+/).to_s
     id.gsub!(/\/embed\//,'v=')
   else
@@ -175,7 +172,7 @@ get '/' do
       end
       one_video << "      <hr />\n"
       one_video << "      <div class=\"video-container\" id=\"#{link["bookmark_id"]}\">\n"
-      one_video << "        <h2><a href=\"#{the_url}\" id=\"#{link["bookmark_id"]}\">#{title_cleanup(link["title"])}&rarr;</a></h2>\n"
+      one_video << "        <h2><a href=\"#{the_url}\" id=\"#{link["bookmark_id"]}\">#{title_cleanup(resource.title)}&rarr;</a></h2>\n"
       
       # if link["to_watch"] == true
         one_video << "        <p>#{resource.html}</p>\n"
