@@ -43,7 +43,15 @@ def make_clicky (s)
 end
 
 def youtube_cleanup (url)
-  id = url.match(/v=[A-Za-z0-9_-]+/).to_s
+  if url =~ /embed\//
+    # support these two urls:
+    # http://m.youtube.com/#/watch?feature=youtu.be&rel=0&v=2NzUm7UEEIY&desktop_uri=%2Fwatch%3Fv%3D2NzUm7UEEIY%26feature%3Dyoutu.be%26rel%3D0
+    # http://www.youtube.com/embed/2NzUm7UEEIY
+    id = url.match(/\/embed\/[A-Za-z0-9_-]+/).to_s
+    id.gsub!(/\/embed\//,'')
+  else
+    id = url.match(/v=[A-Za-z0-9_-]+/).to_s
+  end
   url = 'http://youtube.com/watch?' + id
   return url
 end
@@ -209,13 +217,13 @@ get '/' do
 end
 
 post '/login' do
-  if params[:u] == '' # TODO obv remove this if statement at some point
-    session[:username] = "maxwell.jacobson@gmail.com"
-    session[:password] = "layabout"
-  else
+  # if params[:u] == '' # TODO obv remove this if statement at some point
+  #   session[:username] = "maxwell.jacobson@gmail.com"
+  #   session[:password] = "layabout"
+  # else
     session[:username] = params[:u]
     session[:password] = params[:pw]
-  end
+  # end
   redirect '/'
 end
 
