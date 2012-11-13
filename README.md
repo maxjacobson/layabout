@@ -22,3 +22,6 @@ A site for Instapaper subscribers to go to and watch all the videos they've save
 * add "like and archive" button
 * add "unlike and delete" button
 * when you watch a vid, do you really need to load all the other shit? maybe just throw all that in its own erb (buttons included), with a back button
+
+
+the thing thats slow is the get-500 thing but taths not always necessary for simple actions is it?? just authenticate and do the action
