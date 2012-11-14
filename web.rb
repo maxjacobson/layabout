@@ -173,13 +173,7 @@ get '/' do
       one_video << "      <hr />\n"
       one_video << "      <div class=\"video-container\" id=\"#{link["bookmark_id"]}\">\n"
       one_video << "        <h2><a href=\"#{the_url}\" id=\"#{link["bookmark_id"]}\">#{title_cleanup(resource.title)}&rarr;</a></h2>\n"
-
-      # if link["to_watch"] == true
-        one_video << "        <p>#{resource.html}</p>\n"
-      # else
-        # one_video << "        <p><a href=\"watch-#{link["bookmark_id"]}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a></p>\n"
-      # end
-
+      one_video << "        <p>#{resource.html}</p>\n"
       one_video << "        <p><code>#{the_url}</code></p>\n"
 
       if link["description"] != ""
