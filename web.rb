@@ -29,13 +29,6 @@ end
 
 def make_clicky (s)
   s.gsub!(/\w*(:\/\/)\w*.[\w#?%=\/]+/, '<a href="\0">\0</a>')
-  # TODO make sure this regex is sufficient for recognizing all links
-  # the funny thing is, the vast majority of the time (in my experience)
-  # that this even comes into play, the link is a link TO the video
-  # and is, in fact, the link that I pressed-and-held-on to add the video
-  # to instapaper in the first place
-  # still
-  # I want it to be clickable
   s.gsub!(/@[A-Za-z0-9_]+/, '<a href="http://twitter.com/\0">\0</a>')
   s.gsub!(/twitter.com\/@/, 'twitter.com/')
   return s
@@ -68,8 +61,8 @@ def title_cleanup (title)
   title.gsub!(/YouTube - /, '')
   title.gsub!(/ on Vimeo/, '')
   title.gsub!(/Watch ([A-Za-z0-9 ]+) \| ([A-Za-z0-9 ]+) online \| Free \| Hulu/, '\1: \2')
-  title.gsub!(/^[ \t\n]+/, '') #some of these have blank shit at the beginning
-  title.gsub!(/[ \t\n]+$/, '') #some of these have blank shit at the end
+  title.gsub!(/^[ \t\n]+/, '')
+  title.gsub!(/[ \t\n]+$/, '')
   return title
 end
 
@@ -150,9 +143,14 @@ get '/' do
       session[:action_id] = nil
     end
 
-    ## thought: instead of querying instapaper after this kind of thing, just intelligently modify the html array and send it to a fresh :erb???
+    ## TODO thought: instead of querying instapaper after this kind of thing, just intelligently modify the html array and send it to a fresh :erb???
 
     html = Array.new
+    if video_links.length == 1
+      html.push("<p>There is one video.</p>\n")
+    else
+      html.push("<p>There are #{video_links.length} videos.</p>\n")
+    end
     video_links.each_value do |link|
       one_video = String.new
       the_url = link["url"]
