@@ -115,7 +115,7 @@ get '/' do
         end
       end
     end
-    
+
     if session[:action] == nil
       puts "session[:action] is nil -- no action this time"
     else
@@ -149,7 +149,7 @@ get '/' do
       session[:action] = nil
       session[:action_id] = nil
     end
-    
+
     ## thought: instead of querying instapaper after this kind of thing, just intelligently modify the html array and send it to a fresh :erb???
 
     html = Array.new
@@ -173,33 +173,33 @@ get '/' do
       one_video << "      <hr />\n"
       one_video << "      <div class=\"video-container\" id=\"#{link["bookmark_id"]}\">\n"
       one_video << "        <h2><a href=\"#{the_url}\" id=\"#{link["bookmark_id"]}\">#{title_cleanup(resource.title)}&rarr;</a></h2>\n"
-      
+
       # if link["to_watch"] == true
         one_video << "        <p>#{resource.html}</p>\n"
       # else
         # one_video << "        <p><a href=\"watch-#{link["bookmark_id"]}\"><img class=\"thumbnail\" width=\"100%\" src=\"#{resource.thumbnail_url}\" /></a></p>\n"
       # end
-      
+
       one_video << "        <p><code>#{the_url}</code></p>\n"
 
       if link["description"] != ""
         one_video << "        <p>#{make_clicky(link["description"])}</p>\n"
       end
-      
+
       if link["starred"] == "0"
         one_video << "        <p><a href=\"/like-#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like <i class=\"icon-heart icon-white\"></i></button></a> "
       elsif link["starred"] == "1"
         one_video << "        <p><a href=\"/like-#{link["bookmark_id"]}\"><button class=\"btn btn-success\">Unlike <i class=\"icon-heart icon-white\"></i></button></a> "
       end
       one_video << "<a href=\"/archive-#{link["bookmark_id"]}\"><button class=\"btn btn-warning\">Archive <i class=\"icon-folder-open icon-white\"></i></button></a> "
-      
+
       if link["starred"] == "0"
         one_video << "<a href=\"/delete-#{link["bookmark_id"]}\"><button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></a></p>\n"
       elsif link["starred"] == "1"
         one_video << "<button class=\"btn btn-inverse\">Delete <i class=\"icon-remove icon-white\"></i></button></p>\n"
       end
-      
-      
+
+
       one_video << "      </div>\n\n"
       html.push(one_video)
     end
@@ -209,13 +209,8 @@ get '/' do
 end
 
 post '/login' do
-  # if params[:u] == '' # TODO obv remove this if statement at some point
-  #   session[:username] = "maxwell.jacobson@gmail.com"
-  #   session[:password] = "layabout"
-  # else
-    session[:username] = params[:u]
-    session[:password] = params[:pw]
-  # end
+  session[:username] = params[:u]
+  session[:password] = params[:pw]
   redirect '/'
 end
 
@@ -252,6 +247,6 @@ get '/:page' do
     end
   else
     @error_page = params[:page]
-    raise error(404) 
+    raise error(404)
   end
 end
