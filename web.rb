@@ -153,6 +153,7 @@ end
 post '/login' do
   session[:username] = params[:u]
   session[:password] = params[:pw]
+  puts "Logging in as #{params[:u]}"
   redirect '/'
 end
 
