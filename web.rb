@@ -76,6 +76,16 @@ get '/' do
         ip.bookmarks_delete(the_link)
         puts "You deleted #{the_link["title"]}"
         video_links.delete(action_id)
+      elsif session[:action] == "like-and-archive"
+        ip.bookmarks_star(the_link)
+        ip.bookmarks_archive(the_link)
+        puts "You liked and archived #{the_link["title"]}"
+        video_links.delete(action_id)
+      elsif session[:action] == "unlike-and-delete"
+        ip.bookmarks_unstar(the_link)
+        ip.bookmarks_delete(the_link)
+        puts "You unliked and deleted #{the_link["title"]}"
+        video_links.delete(action_id)
       end
       session[:action] = nil
       session[:action_id] = nil
@@ -118,6 +128,7 @@ get '/' do
 
       if link["starred"] == "0"
         one_video << "        <p><a href=\"/like/#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like <i class=\"icon-heart icon-white\"></i></button></a> "
+        one_video << "        <a href=\"/like-and-archive/#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like and Archive <i class=\"icon-heart icon-white\"></i> <i class=\"icon-folder-open icon-white\"></i></button></a> "
       elsif link["starred"] == "1"
         one_video << "        <p><a href=\"/like/#{link["bookmark_id"]}\"><button class=\"btn btn-success\">Unlike <i class=\"icon-heart icon-white\"></i></button></a> "
       end
@@ -126,7 +137,8 @@ get '/' do
       if link["starred"] == "0"
         one_video << "<a href=\"/delete/#{link["bookmark_id"]}\"><button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></a></p>\n"
       elsif link["starred"] == "1"
-        one_video << "<button class=\"btn btn-danger disabled\">Delete <i class=\"icon-remove icon-white\"></i></button></p>\n"
+        one_video << "<button class=\"btn btn-danger disabled\">Delete <i class=\"icon-remove icon-white\"></i></button> "
+        one_video << "<a href=\"/unlike-and-delete/#{link["bookmark_id"]}\"><button class=\"btn btn-danger\">Unlike and Delete <i class=\"icon-remove icon-white\"></i></button></a></p>\n"
       end
 
 
@@ -149,7 +161,37 @@ get '/logout' do
   redirect '/'
 end
 
+get '/like-and-archive/:id' do
+  session[:action_id] = params[:id]
+  session[:action] = 'like-and-archive'
+  redirect '/'
+end
+
+get '/unlike-and-delete/:id' do
+  session[:action_id] = params[:id]
+  session[:action] = 'unlike-and-delete'
+  redirect '/'
+end
+
 get '/like/:id' do
+  # # attempt at ajaxy implementation...
+  # app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
+  # app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
+  # ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
+  # ip.authenticate(session[:username], session[:password])
+  # all_links = ip.bookmarks_list(:limit => 500)
+  # all_links.each do |h|
+  #   if h.has_value?(params[:id])
+  #     if h["starred"] == "0"
+  #       ip.bookmarks_star(h)
+  #       puts "You liked #{h["title"]}"
+  #     elsif h["starred"] == "1"
+  #       ip.bookmarks_unstar(h)
+  #       puts "You unliked #{h["title"]}"
+  #     end
+  #   end
+  # end
+
   session[:action_id] = params[:id]
   session[:action] = 'star'
   redirect '/#' + session[:action_id]
