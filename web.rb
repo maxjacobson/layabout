@@ -7,7 +7,7 @@ enable :sessions
 set :dump_errors, false
 set :show_exceptions, false
 
-not_found do
+error 404 do
   @title= "Layabout"
   @subtitle = "404"
   erb :'404'
@@ -76,9 +76,6 @@ get '/' do
         ip.bookmarks_delete(the_link)
         puts "You deleted #{the_link["title"]}"
         video_links.delete(action_id)
-      elsif session[:action] == "watch"
-        video_links[action_id]["to_watch"] = true
-        puts "Please enjoy #{the_link["title"]}."
       end
       session[:action] = nil
       session[:action_id] = nil
@@ -120,16 +117,16 @@ get '/' do
       end
 
       if link["starred"] == "0"
-        one_video << "        <p><a href=\"/like-#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like <i class=\"icon-heart icon-white\"></i></button></a> "
+        one_video << "        <p><a href=\"/like/#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like <i class=\"icon-heart icon-white\"></i></button></a> "
       elsif link["starred"] == "1"
-        one_video << "        <p><a href=\"/like-#{link["bookmark_id"]}\"><button class=\"btn btn-success\">Unlike <i class=\"icon-heart icon-white\"></i></button></a> "
+        one_video << "        <p><a href=\"/like/#{link["bookmark_id"]}\"><button class=\"btn btn-success\">Unlike <i class=\"icon-heart icon-white\"></i></button></a> "
       end
-      one_video << "<a href=\"/archive-#{link["bookmark_id"]}\"><button class=\"btn btn-warning\">Archive <i class=\"icon-folder-open icon-white\"></i></button></a> "
+      one_video << "<a href=\"/archive/#{link["bookmark_id"]}\"><button class=\"btn btn-warning\">Archive <i class=\"icon-folder-open icon-white\"></i></button></a> "
 
       if link["starred"] == "0"
-        one_video << "<a href=\"/delete-#{link["bookmark_id"]}\"><button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></a></p>\n"
+        one_video << "<a href=\"/delete/#{link["bookmark_id"]}\"><button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></a></p>\n"
       elsif link["starred"] == "1"
-        one_video << "<button class=\"btn btn-inverse\">Delete <i class=\"icon-remove icon-white\"></i></button></p>\n"
+        one_video << "<button class=\"btn btn-danger disabled\">Delete <i class=\"icon-remove icon-white\"></i></button></p>\n"
       end
 
 
@@ -152,25 +149,26 @@ get '/logout' do
   redirect '/'
 end
 
+get '/like/:id' do
+  session[:action_id] = params[:id]
+  session[:action] = 'star'
+  redirect '/#' + session[:action_id]
+end
+
+get '/archive/:id' do
+  session[:action_id] = params[:id]
+  session[:action] = 'archive'
+  redirect '/'
+end
+
+get '/delete/:id' do
+  session[:action_id] = params[:id]
+  session[:action] = 'delete'
+  redirect '/'
+end
+
 get '/:page' do
-  if params[:page] =~ /like-[0-9]+/
-    session[:action_id] = params[:page].sub(/like-/, '')
-    session[:action] = 'star'
-    redirect '/' + '#' + session[:action_id]
-  elsif params[:page] =~ /archive-[0-9]+/
-    session[:action_id] = params[:page].sub(/archive-/, '')
-    session[:action] = 'archive'
-    redirect '/'
-  elsif params[:page] =~ /delete-[0-9]+/
-    session[:action_id] = params[:page].sub(/delete-/, '')
-    session[:action] = 'delete'
-    redirect '/'
-  elsif params[:page] =~ /watch-[0-9]+/
-    session[:action_id] = params[:page].sub(/watch-/, '')
-    session[:action] = 'watch'
-    puts "Setting action and action id to watch and your movie!"
-    redirect '/' + '#' + session[:action_id]
-  elsif File.exists?('views/'+params[:page]+'.erb')
+  if File.exists?('views/'+params[:page]+'.erb')
     @title = "Layabout"
     @subtitle = cap_first(params[:page].to_s)
     if params[:page] != 'login'
