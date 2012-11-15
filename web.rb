@@ -128,7 +128,7 @@ get '/' do
 
       if link["starred"] == "0"
         one_video << "        <p><a href=\"/like/#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like <i class=\"icon-heart icon-white\"></i></button></a> "
-        one_video << "        <a href=\"/like-and-archive/#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like and Archive <i class=\"icon-heart icon-white\"></i> <i class=\"icon-folder-open icon-white\"></i></button></a> "
+        one_video << "<a href=\"/like-and-archive/#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like and Archive <i class=\"icon-heart icon-white\"></i> <i class=\"icon-folder-open icon-white\"></i></button></a> "
       elsif link["starred"] == "1"
         one_video << "        <p><a href=\"/like/#{link["bookmark_id"]}\"><button class=\"btn btn-success\">Unlike <i class=\"icon-heart icon-white\"></i></button></a> "
       end
