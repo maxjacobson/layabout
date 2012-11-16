@@ -37,6 +37,10 @@ end
 
 get '/page/:num' do
   
+  if session[:username].nil? or session[:password].nil?
+    redirect '/'
+  end
+
   app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
   app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"  
   ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
