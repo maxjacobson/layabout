@@ -35,7 +35,6 @@ get '/' do
     @subtitle = "Log in to Instapaper"
     erb :login
   else
-    @subtitle = "Watch"
     ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
     ip.authenticate(session[:username], session[:password])
     all_links = ip.bookmarks_list(:limit => 500)
@@ -49,6 +48,8 @@ get '/' do
         end
       end
     end
+
+    @subtitle = "Watch (#{video_links.length})"
 
     if session[:action] == nil
       puts "session[:action] is nil -- no action this time"
@@ -94,11 +95,7 @@ get '/' do
     ## TODO thought: instead of querying instapaper after this kind of thing, just intelligently modify the html array and send it to a fresh :erb???
 
     html = Array.new
-    if video_links.length == 1
-      html.push("<p>There is one video.</p>\n")
-    else
-      html.push("<p>There are #{video_links.length} videos.</p>\n")
-    end
+    
     video_links.each_value do |link|
       one_video = String.new
       the_url = link["url"]
