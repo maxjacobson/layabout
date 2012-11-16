@@ -170,21 +170,21 @@ get '/page/:num' do
 
   nav = String.new
   if current_page == 1
-    nav << "<div class=\"pagination\">\n  <ul>\n    <li class=\"disabled\"><a href=\"#\">Prev</a></li>\n"
+    nav << "      <div class=\"pagination\">\n        <ul>\n          <li class=\"disabled\"><a href=\"#\">Prev</a></li>\n"
   else
-    nav << "<div class=\"pagination\">\n  <ul>\n    <li><a href=\"/page/#{current_page-1}\">Prev</a></li>\n"
+    nav << "      <div class=\"pagination\">\n        <ul>\n          <li><a href=\"/page/#{current_page-1}\">Prev</a></li>\n"
   end
   for i in 1..amount_of_pages
     if i == current_page
-      nav << "    <li class=\"active\"><a href=\"/page/#{i}\">#{i}</a></li>\n"
+      nav << "          <li class=\"active\"><a href=\"/page/#{i}\">#{i}</a></li>\n"
     else
-      nav << "    <li><a href=\"/page/#{i}\">#{i}</a></li>\n"
+      nav << "          <li><a href=\"/page/#{i}\">#{i}</a></li>\n"
     end
   end
   if current_page == amount_of_pages
     nav << "    <li class=\"disabled\"><a href=\"#\">Next</a></li>\n  </ul>\n</div>\n"
   else
-    nav << "    <li><a href=\"/page/#{current_page+1}\">Next</a></li>\n  </ul>\n</div>\n"
+    nav << "          <li><a href=\"/page/#{current_page+1}\">Next</a></li>\n        </ul>\n      </div>\n"
   end
     
     
