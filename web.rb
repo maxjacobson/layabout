@@ -59,6 +59,13 @@ get '/page/:num' do
     end
   end
   
+  
+  # thought on actions: instead of 4-5 separate routes, make one with wildcards wehre the first splat is the action and the second splat is the id
+  # then, build a video hash using just the ID *if* that's enough information to pass to the instapaper APIdef ...
+    
+  end
+  
+  
   if session[:action] == nil
     # puts "session[:action] is nil -- no action this time"
   else
@@ -218,6 +225,7 @@ post '/login' do
   if ip.authenticate(session[:username], session[:password])
     if session[:username] == "maxwell.jacobson@gmail.com"
       Pony.mail({:to => 'max+layabout@maxjacobson.net',:subject => 'You logged in Max', :body => 'Welcome back', :via => :smtp, :via_options => { :address => 'smtp.gmail.com', :port => '587', :enable_starttls_auto => true, :user_name => 'max@maxjacobson.net', :password => '3118milola', :authentication => :plain, :domain => "localhost.localdomain"}})
+      puts "Logging in as #{session[:username]}"
     end
     redirect '/page/1'
   else
