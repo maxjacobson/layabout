@@ -1,6 +1,8 @@
 require 'sinatra'
 require 'instapaper_full'
 require 'oembed'
+require 'pony'
+require 'mail'
 require_relative 'helpers.rb'
 
 enable :sessions
@@ -42,7 +44,7 @@ get '/page/:num' do
   end
 
   app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
-  app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"  
+  app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
   ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
   ip.authenticate(session[:username], session[:password])
   all_links = ip.bookmarks_list(:limit => 500)  
@@ -58,40 +60,40 @@ get '/page/:num' do
   end
   
   if session[:action] == nil
-    puts "session[:action] is nil -- no action this time"
+    # puts "session[:action] is nil -- no action this time"
   else
     action_id = session[:action_id].to_i
     the_link = video_links[action_id]
-    puts "\n\nsession[:action] is: #{session[:action]}"
-    puts "action_id is: #{action_id}"
-    puts "the_link is: #{the_link}\n\n"
+    # puts "\n\nsession[:action] is: #{session[:action]}"
+    # puts "action_id is: #{action_id}"
+    # puts "the_link is: #{the_link}\n\n"
     if session[:action] == "star"
       if the_link["starred"] == "0"
         ip.bookmarks_star(the_link)
-        puts "You liked #{the_link["title"]}"
+        # puts "You liked #{the_link["title"]}"
         video_links[action_id]["starred"] = "1"
       elsif the_link["starred"] == "1"
         ip.bookmarks_unstar(the_link)
-        puts "You unliked #{the_link["title"]}"
+        # puts "You unliked #{the_link["title"]}"
         video_links[action_id]["starred"] = "0"
       end
     elsif session[:action] == "archive"
       ip.bookmarks_archive(the_link)
-      puts "You archived #{the_link["title"]}"
+      # puts "You archived #{the_link["title"]}"
       video_links.delete(action_id)
     elsif session[:action] == "delete"
       ip.bookmarks_delete(the_link)
-      puts "You deleted #{the_link["title"]}"
+      # puts "You deleted #{the_link["title"]}"
       video_links.delete(action_id)
     elsif session[:action] == "like-and-archive"
       ip.bookmarks_star(the_link)
       ip.bookmarks_archive(the_link)
-      puts "You liked and archived #{the_link["title"]}"
+      # puts "You liked and archived #{the_link["title"]}"
       video_links.delete(action_id)
     elsif session[:action] == "unlike-and-delete"
       ip.bookmarks_unstar(the_link)
       ip.bookmarks_delete(the_link)
-      puts "You unliked and deleted #{the_link["title"]}"
+      # puts "You unliked and deleted #{the_link["title"]}"
       video_links.delete(action_id)
     end
     session[:action] = nil
@@ -210,8 +212,18 @@ end
 post '/login' do
   session[:username] = params[:u]
   session[:password] = params[:pw]
-  puts "Logging in as #{params[:u]}"
-  redirect '/page/1'
+  app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
+  app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
+  ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
+  if ip.authenticate(session[:username], session[:password])
+    if session[:username] == "maxwell.jacobson@gmail.com"
+      Pony.mail({:to => 'max+layabout@maxjacobson.net',:subject => 'You logged in Max', :body => 'Welcome back', :via => :smtp, :via_options => { :address => 'smtp.gmail.com', :port => '587', :enable_starttls_auto => true, :user_name => 'max@maxjacobson.net', :password => '3118milola', :authentication => :plain, :domain => "localhost.localdomain"}})
+    end
+    redirect '/page/1'
+  else
+    session.clear
+    redirect '/'
+  end
 end
 
 get '/logout' do
