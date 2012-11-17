@@ -117,8 +117,30 @@ get '/page/:num' do
   end
 
   # puts video_subset_index
+  # TODO get rid of oembed it's slow and buggy
 
-  html = Array.new  
+  html = Array.new
+  
+  nav = String.new
+  if current_page == 1
+    nav << "      <div class=\"pagination\">\n        <ul>\n          <li class=\"disabled\"><a href=\"#\">Prev</a></li>\n"
+  else
+    nav << "      <div class=\"pagination\">\n        <ul>\n          <li><a href=\"/page/#{current_page-1}\">Prev</a></li>\n"
+  end
+  for i in 1..amount_of_pages
+    if i == current_page
+      nav << "          <li class=\"active\"><a href=\"/page/#{i}\">#{i}</a></li>\n"
+    else
+      nav << "          <li><a href=\"/page/#{i}\">#{i}</a></li>\n"
+    end
+  end
+  if current_page == amount_of_pages
+    nav << "    <li class=\"disabled\"><a href=\"#\">Next</a></li>\n  </ul>\n</div>\n"
+  else
+    nav << "          <li><a href=\"/page/#{current_page+1}\">Next</a></li>\n        </ul>\n      </div>\n"
+  end
+  html.push(nav)
+  
   index_checker = 1
   video_links.each_value do |link|
     if video_subset_index.member?(index_checker)
@@ -168,24 +190,7 @@ get '/page/:num' do
     index_checker+=1
   end
 
-  nav = String.new
-  if current_page == 1
-    nav << "      <div class=\"pagination\">\n        <ul>\n          <li class=\"disabled\"><a href=\"#\">Prev</a></li>\n"
-  else
-    nav << "      <div class=\"pagination\">\n        <ul>\n          <li><a href=\"/page/#{current_page-1}\">Prev</a></li>\n"
-  end
-  for i in 1..amount_of_pages
-    if i == current_page
-      nav << "          <li class=\"active\"><a href=\"/page/#{i}\">#{i}</a></li>\n"
-    else
-      nav << "          <li><a href=\"/page/#{i}\">#{i}</a></li>\n"
-    end
-  end
-  if current_page == amount_of_pages
-    nav << "    <li class=\"disabled\"><a href=\"#\">Next</a></li>\n  </ul>\n</div>\n"
-  else
-    nav << "          <li><a href=\"/page/#{current_page+1}\">Next</a></li>\n        </ul>\n      </div>\n"
-  end
+  
     
     
   html.push(nav)
