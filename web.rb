@@ -47,12 +47,21 @@ get '/page/:num' do
   app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
   ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
   ip.authenticate(session[:username], session[:password])
+  folders_list = ip.folders_list
   
   if session[:folder].nil?
     session[:folder] = "main"
     all_links = ip.bookmarks_list(:limit => 500)
+    folder_name = ""
+    puts "You're looking at the main Read Later folder"
   else
     all_links = ip.bookmarks_list(:limit => 500, :folder_id => session[:folder])
+    folders_list.each do |folder|
+      if folder.has_value?(session[:folder].to_i)
+        folder_name = " #{folder["title"]}"
+        puts "You're looking at the #{folder_name} folder"
+      end
+    end
   end
   
   
@@ -141,8 +150,6 @@ get '/page/:num' do
   # TODO only display pagination nav if there are more than `videos_per_page` videos
   # like, what if there are NO videos in their bookmarks? i dont even know what it would display haha
   
-  folders_list = ip.folders_list
-  
   folder_nav = String.new
   folder_nav << "<div class=\"btn-group\">\n  <a class=\"btn dropdown-toggle btn-large\" data-toggle=\"dropdown\" href=\"#\">Switch folder <span class=\"caret\"></span></a>\n"
   folder_nav << "  <ul class=\"dropdown-menu\">\n"
@@ -156,7 +163,6 @@ get '/page/:num' do
   if folders_list.length > 0
     html.push(folder_nav)
   end
-  
   
   nav = String.new
   if current_page == 1
@@ -240,12 +246,15 @@ get '/page/:num' do
   if video_links.length > videos_per_page
     html.push(nav)
   end
+  
   @bookmarks = html.join('')
   
-  
-  
+  if session[:folder] == "main"
+    @title = "Layabout"
+  else
+    @title = "Layabout - #{folder_name}"
+  end
 
-  @title = "Layabout"
   @subtitle = "Watch (#{amount_of_videos})"
   erb :vids
 end
