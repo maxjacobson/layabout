@@ -152,7 +152,11 @@ get '/page/:num' do
   end
   
   folder_nav << "  </ul>\n</div>\n"
-  html.push(folder_nav)
+  
+  if folders_list.length > 0
+    html.push(folder_nav)
+  end
+  
   
   nav = String.new
   if current_page == 1
