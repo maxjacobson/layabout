@@ -59,13 +59,11 @@ get '/page/:num' do
     session[:folder] = "main"
     all_links = ip.bookmarks_list(:limit => 500)
     folder_name = ""
-    puts "You're looking at the main Read Later folder"
   else
     all_links = ip.bookmarks_list(:limit => 500, :folder_id => session[:folder])
     folders_list.each do |folder|
       if folder.has_value?(session[:folder].to_i)
         folder_name = " #{folder["title"]}"
-        puts "You're looking at the #{folder_name} folder"
       end
     end
   end
