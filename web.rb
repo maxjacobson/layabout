@@ -47,7 +47,15 @@ get '/page/:num' do
   app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
   ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
   ip.authenticate(session[:username], session[:password])
-  all_links = ip.bookmarks_list(:limit => 500)  
+  
+  if session[:folder].nil?
+    session[:folder] = "main"
+    all_links = ip.bookmarks_list(:limit => 500)
+  else
+    all_links = ip.bookmarks_list(:limit => 500, :folder_id => session[:folder])
+  end
+  
+  
   video_links = Hash.new
   all_links.each do |link|
     if link["type"] == "bookmark"
@@ -128,6 +136,24 @@ get '/page/:num' do
 
   html = Array.new
   
+  html.push("<a href=\"/logout\"><button class=\"btn btn-large btn-info\">Log out</button></a>\n")
+  
+  # TODO only display pagination nav if there are more than `videos_per_page` videos
+  # like, what if there are NO videos in their bookmarks? i dont even know what it would display haha
+  
+  folders_list = ip.folders_list
+  
+  folder_nav = String.new
+  folder_nav << "<div class=\"btn-group\">\n  <a class=\"btn dropdown-toggle btn-large\" data-toggle=\"dropdown\" href=\"#\">Switch folder <span class=\"caret\"></span></a>\n"
+  folder_nav << "  <ul class=\"dropdown-menu\">\n"
+  folder_nav << "    <li><a href=\"/switch-to-folder/main\">Read Later</a></li>\n    <li class=\"divider\"></li>\n"
+  folders_list.each do |folder|
+    folder_nav << "    <li><a href=\"/switch-to-folder/#{folder["folder_id"]}\">#{folder["title"]}</a></li>\n"
+  end
+  
+  folder_nav << "  </ul>\n</div>\n"
+  html.push(folder_nav)
+  
   nav = String.new
   if current_page == 1
     nav << "      <div class=\"pagination\">\n        <ul>\n          <li class=\"disabled\"><a href=\"#\">Prev</a></li>\n"
@@ -146,7 +172,14 @@ get '/page/:num' do
   else
     nav << "          <li><a href=\"/page/#{current_page+1}\">Next</a></li>\n        </ul>\n      </div>\n"
   end
-  html.push(nav)
+  
+  if video_links.length > videos_per_page
+    html.push(nav)
+  end
+  
+  if video_links.length == 0
+    html.push("<p>No videos!</p>")
+  end
   
   index_checker = 1
   video_links.each_value do |link|
@@ -200,7 +233,9 @@ get '/page/:num' do
   
     
     
-  html.push(nav)
+  if video_links.length > videos_per_page
+    html.push(nav)
+  end
   @bookmarks = html.join('')
   
   
@@ -235,6 +270,11 @@ end
 get '/logout' do
   session.clear
   redirect '/'
+end
+
+get '/switch-to-folder/:id' do
+  session[:folder] = params[:id].to_s
+  redirect '/page/1'
 end
 
 get '/like-and-archive/:id' do
