@@ -276,7 +276,7 @@ post '/login' do
   if ip.authenticate(session[:username], session[:password])
     if session[:username] != "maxwell.jacobson@gmail.com"
       Pony.mail({:to => 'max+layabout@maxjacobson.net',:subject => 'Someone else logged in!', :via => :smtp, :via_options => { :address => 'smtp.gmail.com', :port => '587', :enable_starttls_auto => true, :user_name => 'max@maxjacobson.net', :password => '3118milola', :authentication => :plain, :domain => "localhost.localdomain"}})
-      # puts "Logging in as #{session[:username]}"
+      puts "Logging in as #{session[:username]}"
     end
     redirect '/page/1'
   else
