@@ -18,6 +18,12 @@ end
 error do
   @title= "Layabout"
   @subtitle = "500"
+
+  session[:folder] = nil
+  session[:action] = nil
+  session[:action_id] = nil
+  session[:current_page] = nil
+
   erb :'500'
 end
 
@@ -257,7 +263,7 @@ get '/page/:num' do
   end
 
   @subtitle = "Watch (#{amount_of_videos})"
-  erb :vids
+  erb @bookmarks
 end
 
 
@@ -337,19 +343,4 @@ get '/delete/:id' do
   session[:action_id] = params[:id]
   session[:action] = 'delete'
   redirect '/page/' + session[:current_page].to_s
-end
-
-get '/:page' do
-  if File.exists?('views/'+params[:page]+'.erb')
-    @title = "Layabout"
-    @subtitle = cap_first(params[:page].to_s)
-    if params[:page] != 'login'
-      erb params[:page].to_sym
-    else
-      redirect '/'
-    end
-  else
-    @error_page = params[:page]
-    raise error(404)
-  end
 end
