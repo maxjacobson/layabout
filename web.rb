@@ -145,20 +145,19 @@ get '/page/:num' do
 
   html = Array.new
   
-  html.push("<a href=\"/logout\"><button class=\"btn btn-large btn-info\">Log out</button></a>\n")
+  html.push("      <a href=\"/logout\"><button class=\"btn btn-large btn-info\">Log out</button></a>\n\n")
   
   # TODO only display pagination nav if there are more than `videos_per_page` videos
   # like, what if there are NO videos in their bookmarks? i dont even know what it would display haha
   
   folder_nav = String.new
-  folder_nav << "<div class=\"btn-group\">\n  <a class=\"btn dropdown-toggle btn-large\" data-toggle=\"dropdown\" href=\"#\">Switch folder <span class=\"caret\"></span></a>\n"
-  folder_nav << "  <ul class=\"dropdown-menu\">\n"
-  folder_nav << "    <li><a href=\"/switch-to-folder/main\">Read Later</a></li>\n    <li class=\"divider\"></li>\n"
+  folder_nav << "      <div class=\"btn-group\">\n        <a class=\"btn dropdown-toggle btn-large\" data-toggle=\"dropdown\" href=\"#\">Switch folder <span class=\"caret\"></span></a>\n"
+  folder_nav << "        <ul class=\"dropdown-menu\">\n"
+  folder_nav << "          <li><a href=\"/switch-to-folder/main\">Read Later</a></li>\n          <li class=\"divider\"></li>\n"
   folders_list.each do |folder|
-    folder_nav << "    <li><a href=\"/switch-to-folder/#{folder["folder_id"]}\">#{folder["title"]}</a></li>\n"
+    folder_nav << "          <li><a href=\"/switch-to-folder/#{folder["folder_id"]}\">#{folder["title"]}</a></li>\n"
   end
-  
-  folder_nav << "  </ul>\n</div>\n"
+  folder_nav << "        </ul>\n      </div>\n\n"
   
   if folders_list.length > 0
     html.push(folder_nav)
@@ -166,9 +165,9 @@ get '/page/:num' do
   
   nav = String.new
   if current_page == 1
-    nav << "      <div class=\"pagination\">\n        <ul>\n          <li class=\"disabled\"><a href=\"#\">Prev</a></li>\n"
+    nav << "      <div class=\"pagination\">\n        <ul>\n          <li class=\"disabled\"><a href=\"#\">Previous page</a></li>\n"
   else
-    nav << "      <div class=\"pagination\">\n        <ul>\n          <li><a href=\"/page/#{current_page-1}\">Prev</a></li>\n"
+    nav << "      <div class=\"pagination\">\n        <ul>\n          <li><a href=\"/page/#{current_page-1}\">Previous page</a></li>\n"
   end
   for i in 1..amount_of_pages
     if i == current_page
@@ -178,17 +177,19 @@ get '/page/:num' do
     end
   end
   if current_page == amount_of_pages
-    nav << "    <li class=\"disabled\"><a href=\"#\">Next</a></li>\n  </ul>\n</div>\n"
+    nav << "          <li class=\"disabled\"><a href=\"#\">Next page</a></li>\n        </ul>\n      </div>\n\n"
   else
-    nav << "          <li><a href=\"/page/#{current_page+1}\">Next</a></li>\n        </ul>\n      </div>\n"
+    nav << "          <li><a href=\"/page/#{current_page+1}\">Next page</a></li>\n        </ul>\n      </div>\n\n"
   end
   
   if video_links.length > videos_per_page
     html.push(nav)
   end
   
+  # html.push("<span class=\"badge badge-info\">#{video_links.length}</span>\n")
+  
   if video_links.length == 0
-    html.push("<p>No videos!</p>")
+    html.push("<hr /><p><span class=\"label label-important\">No videos!</span></p>\n")
   end
   
   index_checker = 1
