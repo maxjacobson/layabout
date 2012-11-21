@@ -298,13 +298,15 @@ end
 get '/like-and-archive/:id' do
   session[:action_id] = params[:id]
   session[:action] = 'like-and-archive'
-  redirect '/page/' + session[:current_page].to_s
+  redirect back
+  # redirect '/page/' + session[:current_page].to_s
 end
 
 get '/unlike-and-delete/:id' do
   session[:action_id] = params[:id]
   session[:action] = 'unlike-and-delete'
-  redirect '/page/' + session[:current_page].to_s
+  redirect back
+  # redirect '/page/' + session[:current_page].to_s
 end
 
 get '/like/:id' do
@@ -328,17 +330,20 @@ get '/like/:id' do
 
   session[:action_id] = params[:id]
   session[:action] = 'star'
-  redirect '/page/' + session[:current_page].to_s# + '/#' + session[:action_id]
+  redirect back
+  # redirect '/page/' + session[:current_page].to_s# + '/#' + session[:action_id]
 end
 
 get '/archive/:id' do
   session[:action_id] = params[:id]
   session[:action] = 'archive'
-  redirect '/page/' + session[:current_page].to_s
+  redirect back
+  # redirect '/page/' + session[:current_page].to_s
 end
 
 get '/delete/:id' do
   session[:action_id] = params[:id]
   session[:action] = 'delete'
-  redirect '/page/' + session[:current_page].to_s
+  redirect back
+  # redirect '/page/' + session[:current_page].to_s
 end
