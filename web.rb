@@ -2,6 +2,7 @@ require 'sinatra'
 require 'instapaper_full'
 require 'oembed'
 require 'pony'
+require 'kramdown'
 require 'mail'
 require_relative 'helpers.rb'
 
