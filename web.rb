@@ -7,8 +7,8 @@ require 'mail'
 require_relative 'helpers.rb'
 
 enable :sessions
-set :dump_errors, false
-set :show_exceptions, false
+# set :dump_errors, false
+# set :show_exceptions, false
 
 error 404 do
   @title= "Layabout"
@@ -191,6 +191,8 @@ get '/page/:num' do
     html.push(nav)
   end
   
+  html.push("<form action=\"/search\" id=\"searchbox\">\n  <fieldset>\n    <input type=\"text\" name=\"q\" placeholder=\"Search...\">\n  </fieldset></form>")
+  
   # html.push("<span class=\"badge badge-info\">#{video_links.length}</span>\n")
   
   if video_links.length == 0
@@ -265,6 +267,36 @@ get '/page/:num' do
   erb @bookmarks
 end
 
+get '/search' do
+  @title = "Layabout"
+  html = Array.new
+  html.push("<form action=\"/search\" id=\"searchbox\">\n  <fieldset>\n    <input type=\"text\" name=\"q\" placeholder=\"Search...\">\n  </fieldset></form>")
+  q = params[:q]
+  @subtitle = "Search results for \"#{q}\""
+  r = Regexp.new(q, true)
+  app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
+  app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
+  ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
+  ip.authenticate(session[:username], session[:password])
+  all_folders = Array.new
+  all_folders.push(ip.bookmarks_list(:limit => 500))
+  ip.folders_list.each do |folder|
+    all_folders.push(ip.bookmarks_list(:limit => 500, :folder_id => folder["folder_id"]))
+  end
+  html.push("<ul>\n")
+  all_folders.each do |folder|
+    folder.each do |link|
+      if link["title"] =~ r or link["url"] =~ r or link["description"] =~ r
+        checker = is_video(link["url"])
+        if checker[0]
+          html.push("<li><a href=\"#{link["url"]}\">#{title_cleanup(link["title"])}&rarr;</a></li>\n")
+        end
+      end
+    end
+  end
+  html.push("</ul>\n")
+  erb html.join('')
+end
 
 
 
