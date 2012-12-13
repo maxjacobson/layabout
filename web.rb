@@ -7,8 +7,8 @@ require 'mail'
 require_relative 'helpers.rb'
 
 enable :sessions
-# set :dump_errors, false
-# set :show_exceptions, false
+set :dump_errors, false
+set :show_exceptions, false
 
 error 404 do
   @title= "Layabout"
