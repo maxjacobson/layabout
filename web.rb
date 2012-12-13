@@ -38,7 +38,8 @@ get '/' do
   if session[:username].nil? or session[:password].nil?
     @title = "Layabout"
     @subtitle = "Log in to Instapaper"
-    erb :login
+    @display_header = false
+    erb :login#, :layout => false
   else
     redirect '/page/1'
   end
@@ -80,94 +81,26 @@ get '/page/:num' do
       end
     end
   end
-
-
-  # thought on actions: instead of 4-5 separate routes, make one with wildcards wehre the first splat is the action and the second splat is the id
-  # then, build a video hash using just the ID *if* that's enough information to pass to the instapaper APIdef ...
-
-  
-  if session[:action] == nil
-    # puts "session[:action] is nil -- no action this time"
-  else
-    action_id = session[:action_id].to_i
-    the_link = video_links[action_id]
-    # puts "\n\nsession[:action] is: #{session[:action]}"
-    # puts "action_id is: #{action_id}"
-    # puts "the_link is: #{the_link}\n\n"
-    if session[:action] == "star"
-      if the_link["starred"] == "0"
-        ip.bookmarks_star(the_link)
-        # puts "You liked #{the_link["title"]}"
-        video_links[action_id]["starred"] = "1"
-      elsif the_link["starred"] == "1"
-        ip.bookmarks_unstar(the_link)
-        # puts "You unliked #{the_link["title"]}"
-        video_links[action_id]["starred"] = "0"
-      end
-    elsif session[:action] == "archive"
-      ip.bookmarks_archive(the_link)
-      # puts "You archived #{the_link["title"]}"
-      video_links.delete(action_id)
-    elsif session[:action] == "delete"
-      ip.bookmarks_delete(the_link)
-      # puts "You deleted #{the_link["title"]}"
-      video_links.delete(action_id)
-    elsif session[:action] == "like-and-archive"
-      ip.bookmarks_star(the_link)
-      ip.bookmarks_archive(the_link)
-      # puts "You liked and archived #{the_link["title"]}"
-      video_links.delete(action_id)
-    elsif session[:action] == "unlike-and-delete"
-      ip.bookmarks_unstar(the_link)
-      ip.bookmarks_delete(the_link)
-      # puts "You unliked and deleted #{the_link["title"]}"
-      video_links.delete(action_id)
-    end
-    session[:action] = nil
-    session[:action_id] = nil
-  end
   
   current_page = params[:num].to_i
   session[:current_page] = current_page
   amount_of_videos = video_links.length
   videos_per_page = 5.0
   amount_of_pages = (amount_of_videos / videos_per_page).ceil
-  # puts "With #{amount_of_videos} videos and #{videos_per_page.to_i} videos per page, there should be #{amount_of_pages} pages."
   last_video = (current_page * videos_per_page).to_i
   first_video = (last_video - videos_per_page).to_i + 1
   if last_video > amount_of_videos
     last_video = amount_of_videos
   end
-  # puts "Page #{current_page} will feature videos #{first_video}-#{last_video}"
   
   video_subset_index = Hash.new
   for y in first_video..last_video
     video_subset_index[y] = true
   end
 
-  # puts video_subset_index
   # TODO get rid of oembed it's slow and buggy
-
   html = Array.new
-  
-  html.push("      <a href=\"/logout\"><button class=\"btn btn-large btn-info\">Log out</button></a>\n\n")
-  
-  # TODO only display pagination nav if there are more than `videos_per_page` videos
-  # like, what if there are NO videos in their bookmarks? i dont even know what it would display haha
-  
-  folder_nav = String.new
-  folder_nav << "      <div class=\"btn-group\">\n        <a class=\"btn dropdown-toggle btn-large\" data-toggle=\"dropdown\" href=\"#\">Switch folder <span class=\"caret\"></span></a>\n"
-  folder_nav << "        <ul class=\"dropdown-menu\">\n"
-  folder_nav << "          <li><a href=\"/switch-to-folder/main\">Read Later</a></li>\n          <li class=\"divider\"></li>\n"
-  folders_list.each do |folder|
-    folder_nav << "          <li><a href=\"/switch-to-folder/#{folder["folder_id"]}\">#{folder["title"]}</a></li>\n"
-  end
-  folder_nav << "        </ul>\n      </div>\n\n"
-  
-  if folders_list.length > 0
-    html.push(folder_nav)
-  end
-  
+
   nav = String.new
   if current_page == 1
     nav << "      <div class=\"pagination\">\n        <ul>\n          <li class=\"disabled\"><a href=\"#\">Previous page</a></li>\n"
@@ -190,67 +123,19 @@ get '/page/:num' do
   if video_links.length > videos_per_page
     html.push(nav)
   end
-  
-  html.push("<form action=\"/search\" id=\"searchbox\">\n  <fieldset>\n    <input type=\"text\" name=\"q\" placeholder=\"Search...\">\n  </fieldset></form>")
-  
-  # html.push("<span class=\"badge badge-info\">#{video_links.length}</span>\n")
-  
+
   if video_links.length == 0
     html.push("<hr /><p><span class=\"label label-important\">No videos!</span></p>\n")
   end
-  
+
   index_checker = 1
   video_links.each_value do |link|
     if video_subset_index.member?(index_checker)
-      one_video = String.new
-      the_url = link["url"]
-      if link["vid_site"] == "youtube"
-        the_url = youtube_cleanup(the_url)
-        resource = OEmbed::Providers::Youtube.get(the_url)
-      elsif link["vid_site"] == "youtube-short"
-        the_url = youtube_expand(the_url)
-        resource = OEmbed::Providers::Youtube.get(the_url)
-      elsif link["vid_site"] == "vimeo"
-        resource = OEmbed::Providers::Vimeo.get(the_url, maxwidth: "500", portrait: false, byline: false, title: false)
-      elsif link["vid_site"] == "vimeo-mobile"
-        the_url = vimeo_cleanup(the_url)
-        resource = OEmbed::Providers::Vimeo.get(the_url, maxwidth: "500", portrait: false, byline: false, title: false)
-      elsif link["vid_site"] == "hulu"
-        resource = OEmbed::Providers::Hulu.get(the_url)
-      end
-      one_video << "      <hr />\n"
-      one_video << "      <div class=\"video-container\" id=\"#{link["bookmark_id"]}\">\n"
-      one_video << "        <h2><a href=\"#{the_url}\" id=\"#{link["bookmark_id"]}\">#{title_cleanup(resource.title)}&rarr;</a></h2>\n"
-      one_video << "        <p>#{resource.html}</p>\n"
-      one_video << "        <p><code><a href=\"#{the_url}\">#{the_url}</a></code></p>\n"
-
-      if link["description"] != ""
-        one_video << "        <p>#{make_clicky(link["description"])}</p>\n"
-      end
-
-      if link["starred"] == "0"
-        one_video << "        <p><a href=\"/like/#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like <i class=\"icon-heart icon-white\"></i></button></a> "
-        one_video << "<a href=\"/like-and-archive/#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like and Archive <i class=\"icon-heart icon-white\"></i> <i class=\"icon-folder-open icon-white\"></i></button></a> "
-      elsif link["starred"] == "1"
-        one_video << "        <p><a href=\"/like/#{link["bookmark_id"]}\"><button class=\"btn btn-success\">Unlike <i class=\"icon-heart icon-white\"></i></button></a> "
-      end
-      one_video << "<a href=\"/archive/#{link["bookmark_id"]}\"><button class=\"btn btn-warning\">Archive <i class=\"icon-folder-open icon-white\"></i></button></a> "
-
-      if link["starred"] == "0"
-        one_video << "<a href=\"/delete/#{link["bookmark_id"]}\"><button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></a></p>\n"
-      elsif link["starred"] == "1"
-        one_video << "<button class=\"btn btn-danger disabled\">Delete <i class=\"icon-remove icon-white\"></i></button> "
-        one_video << "<a href=\"/unlike-and-delete/#{link["bookmark_id"]}\"><button class=\"btn btn-danger\">Unlike and Delete <i class=\"icon-remove icon-white\"></i></button></a></p>\n"
-      end
-      one_video << "      </div>\n\n"
-      html.push(one_video)
+      html.push(video_to_html(link))
     end
     index_checker+=1
   end
 
-  
-    
-    
   if video_links.length > videos_per_page
     html.push(nav)
   end
@@ -268,11 +153,15 @@ get '/page/:num' do
 end
 
 get '/search' do
+  # paginate results
+  # display number of results
+  # display which folder it's in?
+  # be more fuzzy... multi word queries shouldn't require an exact match
   @title = "Layabout"
+  results_count = 0
   html = Array.new
-  html.push("<form action=\"/search\" id=\"searchbox\">\n  <fieldset>\n    <input type=\"text\" name=\"q\" placeholder=\"Search...\">\n  </fieldset></form>")
+  html.push("<p>Search is a new feature and is missing several things you might expect like fuzzy matching ('the beatles' wouldn't match 'beatles') or pagination. Working on it.</p>\n")
   q = params[:q]
-  @subtitle = "Search results for \"#{q}\""
   r = Regexp.new(q, true)
   app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
   app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
@@ -283,22 +172,24 @@ get '/search' do
   ip.folders_list.each do |folder|
     all_folders.push(ip.bookmarks_list(:limit => 500, :folder_id => folder["folder_id"]))
   end
-  html.push("<ul>\n")
   all_folders.each do |folder|
     folder.each do |link|
       if link["title"] =~ r or link["url"] =~ r or link["description"] =~ r
         checker = is_video(link["url"])
-        if checker[0]
-          html.push("<li><a href=\"#{link["url"]}\">#{title_cleanup(link["title"])}&rarr;</a></li>\n")
+        if checker[0] == true
+          results_count += 1
+          link["vid_site"] = checker[1]
+          html.push(video_to_html(link))
         end
       end
     end
   end
-  html.push("</ul>\n")
+  if results_count == 0
+    html.push("<p>No results found for \"#{q}\"\n")
+  end
+  @subtitle = "#{results_count} results for \"#{q}\""
   erb html.join('')
 end
-
-
 
 post '/login' do
   session[:username] = params[:u]
@@ -328,55 +219,32 @@ get '/switch-to-folder/:id' do
   redirect '/page/1'
 end
 
-get '/like-and-archive/:id' do
-  session[:action_id] = params[:id]
-  session[:action] = 'like-and-archive'
-  redirect back
-  # redirect '/page/' + session[:current_page].to_s
-end
-
-get '/unlike-and-delete/:id' do
-  session[:action_id] = params[:id]
-  session[:action] = 'unlike-and-delete'
-  redirect back
-  # redirect '/page/' + session[:current_page].to_s
-end
-
 get '/like/:id' do
-  # # attempt at ajaxy implementation...
-  # app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
-  # app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
-  # ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
-  # ip.authenticate(session[:username], session[:password])
-  # all_links = ip.bookmarks_list(:limit => 500)
-  # all_links.each do |h|
-  #   if h.has_value?(params[:id])
-  #     if h["starred"] == "0"
-  #       ip.bookmarks_star(h)
-  #       puts "You liked #{h["title"]}"
-  #     elsif h["starred"] == "1"
-  #       ip.bookmarks_unstar(h)
-  #       puts "You unliked #{h["title"]}"
-  #     end
-  #   end
-  # end
-
-  session[:action_id] = params[:id]
-  session[:action] = 'star'
+  perform_action({:action => :like, :id => params[:id].to_i})
   redirect back
-  # redirect '/page/' + session[:current_page].to_s# + '/#' + session[:action_id]
+end
+
+get '/unlike/:id' do
+  perform_action({:action => :unlike, :id => params[:id].to_i})
+  redirect back
 end
 
 get '/archive/:id' do
-  session[:action_id] = params[:id]
-  session[:action] = 'archive'
+  perform_action({:action => :archive, :id => params[:id].to_i})
   redirect back
-  # redirect '/page/' + session[:current_page].to_s
 end
 
 get '/delete/:id' do
-  session[:action_id] = params[:id]
-  session[:action] = 'delete'
+  perform_action({:action => :delete, :id => params[:id].to_i})
   redirect back
-  # redirect '/page/' + session[:current_page].to_s
+end
+
+get '/like-and-archive/:id' do
+  perform_action({:action => :like_and_archive, :id => params[:id].to_i})
+  redirect back
+end
+
+get '/unlike-and-delete/:id' do
+  perform_action({:action => :unlike_and_delete, :id => params[:id].to_i})
+  redirect back
 end

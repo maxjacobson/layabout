@@ -24,7 +24,9 @@
   </script>
 </head>
 <body>
-  <%= get_header %>
+  <%= unless @display_header == false
+    get_header
+  %>
   <div class="row">
     <div class="span8 offset3">
 
