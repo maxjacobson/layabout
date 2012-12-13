@@ -17,6 +17,7 @@ error 404 do
 end
 
 error do
+
   @title= "Layabout"
   @subtitle = "500"
 
@@ -46,7 +47,7 @@ get '/' do
 end
 
 get '/page/:num' do
-  
+
   if session[:username].nil? or session[:password].nil?
     redirect '/'
   end
@@ -56,7 +57,7 @@ get '/page/:num' do
   ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
   ip.authenticate(session[:username], session[:password])
   folders_list = ip.folders_list
-  
+
   if session[:folder].nil?
     session[:folder] = "main"
     all_links = ip.bookmarks_list(:limit => 500)
@@ -69,8 +70,8 @@ get '/page/:num' do
       end
     end
   end
-  
-  
+
+
   video_links = Hash.new
   all_links.each do |link|
     if link["type"] == "bookmark"
@@ -81,7 +82,7 @@ get '/page/:num' do
       end
     end
   end
-  
+
   current_page = params[:num].to_i
   session[:current_page] = current_page
   amount_of_videos = video_links.length
@@ -92,7 +93,7 @@ get '/page/:num' do
   if last_video > amount_of_videos
     last_video = amount_of_videos
   end
-  
+
   video_subset_index = Hash.new
   for y in first_video..last_video
     video_subset_index[y] = true
@@ -119,7 +120,7 @@ get '/page/:num' do
   else
     nav << "          <li><a href=\"/page/#{current_page+1}\">Next page</a></li>\n        </ul>\n      </div>\n\n"
   end
-  
+
   if video_links.length > videos_per_page
     html.push(nav)
   end
@@ -139,9 +140,9 @@ get '/page/:num' do
   if video_links.length > videos_per_page
     html.push(nav)
   end
-  
+
   @bookmarks = html.join('')
-  
+
   if session[:folder] == "main"
     @title = "Layabout"
   else
