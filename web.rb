@@ -17,7 +17,6 @@ error 404 do
 end
 
 error do
-
   @title= "Layabout"
   @subtitle = "500"
 
