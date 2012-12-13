@@ -3,7 +3,7 @@ def get_footer
 end
 def get_header
 
-  return "<div class=\"navbar\">\n<div class=\"navbar-inner\">\n<a class=\"brand\" href=\"/\">Layabout</a></div></div>\n" if @display_header == false
+  return "<div class=\"navbar\">\n<div class=\"navbar-inner\">\n<a class=\"brand\" href=\"/\">Layabout</a><ul class=\"nav\"><li><a class href=\"/faq\">FAQs</a></li></ul></div></div>\n" if @display_header == false
   app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
   app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
   ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret

@@ -44,6 +44,8 @@ GEM
     rack-flash (0.1.2)
       rack
     ruby-oembed (0.8.7)
+    shotgun (0.9)
+      rack (>= 1.0)
     simple_oauth (0.1.9)
     sinatra (1.1.0)
       rack (~> 1.1)
@@ -71,5 +73,6 @@ DEPENDENCIES
   progress_bar
   rack-flash
   ruby-oembed
+  shotgun
   sinatra (= 1.1.0)
   thin

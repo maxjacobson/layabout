@@ -13,13 +13,14 @@ set :show_exceptions, false
 error 404 do
   @title= "Layabout"
   @subtitle = "404"
+  @display_header = false
   erb :'404'
 end
 
 error do
   @title= "Layabout"
   @subtitle = "500"
-
+  @display_header = false
   session[:folder] = nil
   session[:action] = nil
   session[:action_id] = nil
@@ -31,6 +32,7 @@ end
 get '/faq' do
   @title = "Layabout"
   @subtitle = "FAQ"
+  @display_header = false
   erb :faq
 end
 
