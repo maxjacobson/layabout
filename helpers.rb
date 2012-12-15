@@ -11,9 +11,9 @@ def get_header
   folders_list = ip.folders_list
   header = Array.new
   header.push("<div class=\"navbar\">\n<div class=\"navbar-inner\">\n<a class=\"brand\" href=\"/\">Layabout</a>\n")
-  header.push("<div class=\"pull-right\"><form action=\"/search\" id=\"searchbox\" class=\"navbar-search\"><input type=\"text\" class=\"search-query\" placeholder=\"Search...\" name=\"q\"></form>\n")
+  header.push("<div class=\"pull-right\">")
+  header.push("<form action=\"/search\" id=\"searchbox\" class=\"navbar-search\"><input type=\"text\" class=\"search-query\" placeholder=\"Search...\" name=\"q\"></form>\n")
   header.push("<ul class=\"nav\">\n")
-
   if folders_list.length > 0
     folder_nav = String.new
     folder_nav << "<li class=\"dropdown\">\n"
@@ -27,7 +27,7 @@ def get_header
   end
   header.push("<li><a href=\"/faq\">FAQs</a></li>")
   header.push("<li><a href=\"/logout\">Log out</a></li>\n</ul>\n</div></div></div>")
-
+  #
   return header.join('')
 end
 
@@ -157,5 +157,7 @@ def perform_action(instructions)
   elsif action == :unlike_and_delete
     ip.bookmarks_unstar(link)
     ip.bookmarks_delete(link)
+  elsif action == :add_url
+    ip.bookmarks_add({"url" => instructions[:url]})
   end
 end

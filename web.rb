@@ -125,6 +125,7 @@ get '/page/:num' do
   if video_links.length > videos_per_page
     html.push(nav)
   end
+  html.push("<form action=\"/add\" method=\"POST\"><input type=\"text\" name=\"url\" placeholder=\"Add url to Instapaper...\"></input></form>\n")
 
   if video_links.length == 0
     html.push("<hr /><p><span class=\"label label-important\">No videos!</span></p>\n")
@@ -191,6 +192,12 @@ get '/search' do
   end
   @subtitle = "#{results_count} results for \"#{q}\""
   erb html.join('')
+end
+
+post '/add' do
+  url = params[:url]
+  perform_action({:action => :add_url, :url => url})
+  redirect back
 end
 
 post '/login' do
