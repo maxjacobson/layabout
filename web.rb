@@ -88,6 +88,7 @@ get '/page/:num' do
   session[:current_page] = current_page
   amount_of_videos = video_links.length
   videos_per_page = 5.0
+  num_page_links_to_include_in_nav = 5
   amount_of_pages = (amount_of_videos / videos_per_page).ceil
   last_video = (current_page * videos_per_page).to_i
   first_video = (last_video - videos_per_page).to_i + 1
@@ -100,13 +101,10 @@ get '/page/:num' do
     video_subset_index[y] = true
   end
 
-  # TODO get rid of oembed it's slow and buggy
   html = Array.new
 
   nav = String.new
   navhash = Hash.new
-
-
   nav << "<ul class=\"pager\">\n  <li class=\"previous#{ " disabled" if current_page == 1}\"><a href=\"#{current_page == 1 ? "#" : "/page/#{current_page-1}"}\">Page--</a></li>\n  <li class=\"next#{" disabled" if current_page == amount_of_pages}\"><a href=\"#{current_page == amount_of_pages ? "#" : "/page/#{current_page+1}"}\">Page++</a></li>\n</ul>\n"
   nav << "<div class=\"pagination\">\n"
 
@@ -115,11 +113,8 @@ get '/page/:num' do
 
   pages_to_include = Hash.new
   for i in 1..amount_of_pages
-    # nav << "<li#{" class=\"active\"" if i == current_page}><a href=\"/page/#{i}\">#{i}</a></li>\n"
     navhash[i] = "<li#{" class=\"active\"" if i == current_page}><a href=\"/page/#{i}\">#{i}</a></li>\n"
   end
-
-  num_page_links_to_include_in_nav = 7
 
   if amount_of_pages < num_page_links_to_include_in_nav
     for i in 1..amount_of_pages
@@ -130,23 +125,26 @@ get '/page/:num' do
     pages_to_include[amount_of_pages] = true
     pages_to_include[current_page] = true
     x = 1
-    while pages_to_include.length != num_page_links_to_include_in_nav
+    while pages_to_include.length < num_page_links_to_include_in_nav
       pages_to_include[current_page + x] = true if (current_page + x) < amount_of_pages
       pages_to_include[current_page - x] = true if (current_page - x) > 1
       x += 1
     end
-    # pages_to_include = Hash[pages_to_include.sort]
   end
-  print "pages to include: #{pages_to_include}"
+  # puts "pages to include: #{pages_to_include}"
 
-  dotdotdot_triggered = false
+  dotdotdot_triggered1 = false
+  dotdotdot_triggered2 = false
   for i in 1..amount_of_pages
     if pages_to_include[i] == true
       nav << navhash[i]
     else
-      if dotdotdot_triggered == false
+      if i < current_page and dotdotdot_triggered1 == false
         nav << "<li class=\"active\"><a href=\"#\">...</a></li>\n"
-        dotdotdot_triggered = true
+        dotdotdot_triggered1 = true
+      elsif i > current_page and dotdotdot_triggered2 == false
+        nav << "<li class=\"active\"><a href=\"#\">...</a></li>\n"
+        dotdotdot_triggered2 = true
       end
     end
   end
