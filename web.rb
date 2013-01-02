@@ -104,44 +104,69 @@ get '/page/:num' do
   html = Array.new
 
   nav = String.new
-  if current_page == 1
-    nav << "      <div class=\"pagination\">\n        <ul>\n          <li class=\"disabled\"><a href=\"#\">Previous page</a></li>\n"
-  else
-    nav << "      <div class=\"pagination\">\n        <ul>\n          <li><a href=\"/page/#{current_page-1}\">Previous page</a></li>\n"
-  end
+  navhash = Hash.new
+
+
+  nav << "<ul class=\"pager\">\n  <li class=\"previous#{ " disabled" if current_page == 1}\"><a href=\"#{current_page == 1 ? "#" : "/page/#{current_page-1}"}\">Page--</a></li>\n  <li class=\"next#{" disabled" if current_page == amount_of_pages}\"><a href=\"#{current_page == amount_of_pages ? "#" : "/page/#{current_page+1}"}\">Page++</a></li>\n</ul>\n"
+  nav << "<div class=\"pagination\">\n"
+
+  nav << "<ul>\n"
+
+
+  pages_to_include = Hash.new
   for i in 1..amount_of_pages
-    if i == current_page
-      nav << "          <li class=\"active\"><a href=\"/page/#{i}\">#{i}</a></li>\n"
+    # nav << "<li#{" class=\"active\"" if i == current_page}><a href=\"/page/#{i}\">#{i}</a></li>\n"
+    navhash[i] = "<li#{" class=\"active\"" if i == current_page}><a href=\"/page/#{i}\">#{i}</a></li>\n"
+  end
+
+  num_page_links_to_include_in_nav = 7
+
+  if amount_of_pages < num_page_links_to_include_in_nav
+    for i in 1..amount_of_pages
+      pages_to_include[i] = true
+    end
+  else
+    pages_to_include[1] = true
+    pages_to_include[amount_of_pages] = true
+    pages_to_include[current_page] = true
+    x = 1
+    while pages_to_include.length != num_page_links_to_include_in_nav
+      pages_to_include[current_page + x] = true if (current_page + x) < amount_of_pages
+      pages_to_include[current_page - x] = true if (current_page - x) > 1
+      x += 1
+    end
+    # pages_to_include = Hash[pages_to_include.sort]
+  end
+  print "pages to include: #{pages_to_include}"
+
+  dotdotdot_triggered = false
+  for i in 1..amount_of_pages
+    if pages_to_include[i] == true
+      nav << navhash[i]
     else
-      nav << "          <li><a href=\"/page/#{i}\">#{i}</a></li>\n"
+      if dotdotdot_triggered == false
+        nav << "<li class=\"active\"><a href=\"#\">...</a></li>\n"
+        dotdotdot_triggered = true
+      end
     end
   end
-  if current_page == amount_of_pages
-    nav << "          <li class=\"disabled\"><a href=\"#\">Next page</a></li>\n        </ul>\n      </div>\n\n"
-  else
-    nav << "          <li><a href=\"/page/#{current_page+1}\">Next page</a></li>\n        </ul>\n      </div>\n\n"
-  end
 
-  if video_links.length > videos_per_page
-    html.push(nav)
-  end
+  nav << "</ul>\n</div>\n"
+
+  html.push(nav) if video_links.length > videos_per_page
+
   html.push("<form action=\"/add\" method=\"POST\"><input type=\"text\" name=\"url\" placeholder=\"Add url to Instapaper...\"></input></form>\n")
 
-  if video_links.length == 0
-    html.push("<hr /><p><span class=\"label label-important\">No videos!</span></p>\n")
-  end
+  
+  html.push("<hr /><p><span class=\"label label-important\">No videos!</span></p>\n") if video_links.length == 0
 
   index_checker = 1
   video_links.each_value do |link|
-    if video_subset_index.member?(index_checker)
-      html.push(video_to_html(link))
-    end
+    html.push(video_to_html(link)) if video_subset_index.member?(index_checker)
     index_checker+=1
   end
 
-  if video_links.length > videos_per_page
-    html.push(nav)
-  end
+  html.push(nav) if video_links.length > videos_per_page
 
   @bookmarks = html.join('')
 
