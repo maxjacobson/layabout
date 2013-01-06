@@ -4,6 +4,7 @@ require 'oembed'
 require 'pony'
 require 'kramdown'
 require 'mail'
+require 'sass'
 require_relative 'helpers.rb'
 
 enable :sessions
@@ -25,8 +26,19 @@ error do
   session[:action] = nil
   session[:action_id] = nil
   session[:current_page] = nil
-
   erb :'500'
+end
+
+get '/num_of_pages' do
+  if session[:num_of_pages].nil? == false
+    erb session[:num_of_pages].to_s, :layout => false
+  end
+end
+
+get '/num_of_videos' do
+  if session[:num_of_videos].nil? == false
+    erb session[:num_of_videos].to_s, :layout => false
+  end
 end
 
 get '/faq' do
@@ -43,8 +55,19 @@ get '/' do
     @display_header = false
     erb :login#, :layout => false
   else
-    redirect '/page/1'
+    if session[:num_of_videos].nil? == false
+      @title = "(#{session[:num_of_videos]}) "
+    else
+      @title = ""
+    end
+    @subtitle = "Layabout"
+    erb :videos
+    # redirect '/page/1'
   end
+end
+
+get '/css/style.css' do
+  scss :style
 end
 
 get '/page/:num' do
@@ -87,9 +110,11 @@ get '/page/:num' do
   current_page = params[:num].to_i
   session[:current_page] = current_page
   amount_of_videos = video_links.length
+  session[:num_of_videos] = amount_of_videos
   videos_per_page = 5.0
   num_page_links_to_include_in_nav = 5
   amount_of_pages = (amount_of_videos / videos_per_page).ceil
+  session[:num_of_pages] = amount_of_pages
   last_video = (current_page * videos_per_page).to_i
   first_video = (last_video - videos_per_page).to_i + 1
   if last_video > amount_of_videos
@@ -109,13 +134,13 @@ get '/page/:num' do
   nav << "<div class=\"pagination\">\n"
 
   nav << "<ul>\n"
+  # for i in 1..amount_of_pages
+  #   nav << "<li#{" class=\"active\"" if i == current_page} id=\"pagelink#{i}\"><a href=\"/page/#{i}\">#{i}</a></li>\n"
+  # end
 
-
+  # # all the following commented out because I'm trying something else. if you end up wanting to use this again, you'll need to comment out some stuff above
+  #
   pages_to_include = Hash.new
-  for i in 1..amount_of_pages
-    navhash[i] = "<li#{" class=\"active\"" if i == current_page}><a href=\"/page/#{i}\">#{i}</a></li>\n"
-  end
-
   if amount_of_pages < num_page_links_to_include_in_nav
     for i in 1..amount_of_pages
       pages_to_include[i] = true
@@ -131,19 +156,23 @@ get '/page/:num' do
       x += 1
     end
   end
-  # puts "pages to include: #{pages_to_include}"
+
+  # for i in 1..amount_of_pages
+  #   navhash[i] = "<li#{" class=\"active\"" if i == current_page}><a href=\"/page/#{i}\">#{i}</a></li>\n"
+  # end
 
   dotdotdot_triggered1 = false
   dotdotdot_triggered2 = false
   for i in 1..amount_of_pages
     if pages_to_include[i] == true
-      nav << navhash[i]
+      nav << "<li#{" class=\"active\"" if i == current_page}><a href=\"/page/#{i}\">#{i}</a></li>\n"
     else
+      nav << "<li class=\"hide_on_mobile\"><a href=\"/page/#{i}\">#{i}</a></li>\n"
       if i < current_page and dotdotdot_triggered1 == false
-        nav << "<li class=\"active\"><a href=\"#\">...</a></li>\n"
+        nav << "<li class=\"active dotdotdot\"><a href=\"#\">...</a></li>\n"
         dotdotdot_triggered1 = true
       elsif i > current_page and dotdotdot_triggered2 == false
-        nav << "<li class=\"active\"><a href=\"#\">...</a></li>\n"
+        nav << "<li class=\"active dotdotdot\"><a href=\"#\">...</a></li>\n"
         dotdotdot_triggered2 = true
       end
     end
@@ -151,20 +180,23 @@ get '/page/:num' do
 
   nav << "</ul>\n</div>\n"
 
-  html.push(nav) if video_links.length > videos_per_page
+  # html.push(nav) if video_links.length > videos_per_page
 
   html.push("<form action=\"/add\" method=\"POST\"><input type=\"text\" name=\"url\" placeholder=\"Add url to Instapaper...\"></input></form>\n")
 
-  
+
   html.push("<hr /><p><span class=\"label label-important\">No videos!</span></p>\n") if video_links.length == 0
+
+  html.push("<div id=\"just_videos\">\n")
 
   index_checker = 1
   video_links.each_value do |link|
     html.push(video_to_html(link)) if video_subset_index.member?(index_checker)
     index_checker+=1
   end
+  html.push("</div>\n")
 
-  html.push(nav) if video_links.length > videos_per_page
+  # html.push(nav) if video_links.length > videos_per_page
 
   @bookmarks = html.join('')
 
@@ -234,7 +266,7 @@ post '/login' do
       Pony.mail({:to => 'max+layabout@maxjacobson.net',:subject => 'Someone else logged in!', :via => :smtp, :via_options => { :address => 'smtp.gmail.com', :port => '587', :enable_starttls_auto => true, :user_name => 'max@maxjacobson.net', :password => '3118milola', :authentication => :plain, :domain => "localhost.localdomain"}})
       puts "Logging in as #{session[:username]}"
     end
-    redirect '/page/1'
+    redirect '/'
   else
     session.clear
     redirect '/'
@@ -248,35 +280,35 @@ end
 
 get '/switch-to-folder/:id' do
   session[:folder] = params[:id].to_s
-  redirect '/page/1'
+  redirect '/'
 end
 
 get '/like/:id' do
   perform_action({:action => :like, :id => params[:id].to_i})
-  redirect back
+  "You like #{params[:id]}"
 end
 
 get '/unlike/:id' do
   perform_action({:action => :unlike, :id => params[:id].to_i})
-  redirect back
+  "You unlike #{params[:id]}"
 end
 
 get '/archive/:id' do
   perform_action({:action => :archive, :id => params[:id].to_i})
-  redirect back
+  "You archive #{params[:id]}"
 end
 
 get '/delete/:id' do
   perform_action({:action => :delete, :id => params[:id].to_i})
-  redirect back
+  "You delete #{params[:id]}"
 end
 
 get '/like-and-archive/:id' do
   perform_action({:action => :like_and_archive, :id => params[:id].to_i})
-  redirect back
+  "You like-and-archive #{params[:id]}"
 end
 
 get '/unlike-and-delete/:id' do
   perform_action({:action => :unlike_and_delete, :id => params[:id].to_i})
-  redirect back
+  "You unlike-and-delete #{params[:id]}"
 end

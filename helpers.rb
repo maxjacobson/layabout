@@ -108,8 +108,8 @@ def video_to_html (link)
   elsif link["vid_site"] == "hulu"
     resource = OEmbed::Providers::Hulu.get(the_url)
   end
-  one_video << "      <hr />\n"
   one_video << "      <div class=\"video-container\" id=\"#{link["bookmark_id"]}\">\n"
+  one_video << "        <hr />\n"
   one_video << "        <h2><a href=\"#{the_url}\" id=\"#{link["bookmark_id"]}\">#{title_cleanup(resource.title)}&rarr;</a></h2>\n"
   one_video << "        <p>#{resource.html}</p>\n"
   one_video << "        <p><code><a href=\"#{the_url}\">#{the_url}</a></code></p>\n"
@@ -118,20 +118,45 @@ def video_to_html (link)
     one_video << "        <p>#{make_clicky(link["description"])}</p>\n"
   end
 
+  # if link["starred"] == "0"
+  #   one_video << "        <p><a href=\"/like/#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like <i class=\"icon-heart icon-white\"></i></button></a> "
+  #   one_video << "<a href=\"/like-and-archive/#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like and Archive <i class=\"icon-heart icon-white\"></i> <i class=\"icon-folder-open icon-white\"></i></button></a> "
+  # elsif link["starred"] == "1"
+  #   one_video << "        <p><a href=\"/unlike/#{link["bookmark_id"]}\"><button class=\"btn btn-success\">Unlike <i class=\"icon-heart icon-white\"></i></button></a> "
+  # end
+  # one_video << "<a href=\"/archive/#{link["bookmark_id"]}\"><button class=\"btn btn-warning\">Archive <i class=\"icon-folder-open icon-white\"></i></button></a> "
+  # 
+  # if link["starred"] == "0"
+  #   one_video << "<a href=\"/delete/#{link["bookmark_id"]}\"><button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></a></p>\n"
+  # elsif link["starred"] == "1"
+  #   one_video << "<button class=\"btn btn-danger disabled\">Delete <i class=\"icon-remove icon-white\"></i></button> "
+  #   one_video << "<a href=\"/unlike-and-delete/#{link["bookmark_id"]}\"><button class=\"btn btn-danger\">Unlike and Delete <i class=\"icon-remove icon-white\"></i></button></a></p>\n"
+  # end
+  
   if link["starred"] == "0"
-    one_video << "        <p><a href=\"/like/#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like <i class=\"icon-heart icon-white\"></i></button></a> "
-    one_video << "<a href=\"/like-and-archive/#{link["bookmark_id"]}\"><button class=\"btn btn-primary\">Like and Archive <i class=\"icon-heart icon-white\"></i> <i class=\"icon-folder-open icon-white\"></i></button></a> "
+    the_buttons = <<TEXT
+        <p class="button-group">
+          <button class="btn btn-primary like-button" id="#{link["bookmark_id"]}">Like <i class="icon-heart icon-white"></i></button>
+          <button class="btn btn-primary like-and-archive-button" id="#{link["bookmark_id"]}">Like and archive <i class="icon-heart icon-white"></i> <i class="icon-folder-open icon-white"></i></button>
+          <button class="btn btn-warning archive-button" id="#{link["bookmark_id"]}">Archive <i class="icon-folder-open icon-white"></i></button>
+          <button class="btn btn-danger delete-button" id="#{link["bookmark_id"]}">Delete <i class="icon-remove icon-white"></i></button>
+        </p>
+TEXT
   elsif link["starred"] == "1"
-    one_video << "        <p><a href=\"/unlike/#{link["bookmark_id"]}\"><button class=\"btn btn-success\">Unlike <i class=\"icon-heart icon-white\"></i></button></a> "
+    the_buttons = <<TEXT
+        <p class="button-group">
+          <button class="btn btn-success unlike-button" id="#{link["bookmark_id"]}">Unlike <i class="icon-heart icon-white"></i></button>
+          <button class="btn btn-warning archive-button" id="#{link["bookmark_id"]}">Archive <i class="icon-folder-open icon-white"></i></button>
+          <button class="btn btn-danger disabled flaccid-delete-button">Delete <i class="icon-remove icon-white"></i></button>
+          <button class="btn btn-danger unlike-and-delete-button" id="#{link["bookmark_id"]}">Unlike and Delete <i class="icon-remove icon-white"></i></button>
+        </p>
+TEXT
   end
-  one_video << "<a href=\"/archive/#{link["bookmark_id"]}\"><button class=\"btn btn-warning\">Archive <i class=\"icon-folder-open icon-white\"></i></button></a> "
-
-  if link["starred"] == "0"
-    one_video << "<a href=\"/delete/#{link["bookmark_id"]}\"><button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></a></p>\n"
-  elsif link["starred"] == "1"
-    one_video << "<button class=\"btn btn-danger disabled\">Delete <i class=\"icon-remove icon-white\"></i></button> "
-    one_video << "<a href=\"/unlike-and-delete/#{link["bookmark_id"]}\"><button class=\"btn btn-danger\">Unlike and Delete <i class=\"icon-remove icon-white\"></i></button></a></p>\n"
-  end
+  one_video << the_buttons
+  
+  # one_video << "        <p><button class=\"btn btn-primary like-button\" id=\"#{link["bookmark_id"]}\" action=\"like\">Like <i class=\"icon-heart icon-white\"></i></button> "
+  
+  
   one_video << "      </div>\n\n"
   return one_video
 end
