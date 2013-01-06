@@ -1,9 +1,9 @@
 def get_footer
-  return "<div class=\"row\"><div class=\"span8 offset3\"><hr /><p>A <a href=\"http://maxjacobson.net\">Max Jacobson</a> joint. <a href=\"/faq\">FAQ</a>.</p></div><div class=\"span1\"></div></div>"
+  return "<div class=\"row\"><div class=\"span8 offset3\"><hr /><p>A <a href=\"http://www.maxjacobson.net/~about\">Max Jacobson</a> joint &#10006;   <a href=\"/about\">About this site</a> &#10006; <a href=\"mailto:max@maxjacobson.net\">hire me? (email)</a></p></div><div class=\"span1\"></div></div>"
 end
 def get_header
 
-  return "<div class=\"navbar\">\n<div class=\"navbar-inner\">\n<a class=\"brand\" href=\"/\">Layabout</a><ul class=\"nav\"><li><a class href=\"/faq\">FAQs</a></li></ul></div></div>\n" if @display_header == false
+  return "<div class=\"navbar\">\n<div class=\"navbar-inner\">\n<a class=\"brand\" href=\"/\">Layabout</a><ul class=\"nav\"><li><a href=\"/about\">about</a></li></ul></div></div>\n" if @display_header == false
   app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
   app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
   ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
@@ -25,7 +25,7 @@ def get_header
     folder_nav << "</ul>\n</li>\n"
     header.push(folder_nav)
   end
-  header.push("<li><a href=\"/faq\">FAQs</a></li>")
+  header.push("<li><a href=\"/about\">about</a></li>")
   header.push("<li><a href=\"/logout\">Log out</a></li>\n</ul>\n</div></div></div>")
   #
   return header.join('')

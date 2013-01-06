@@ -41,11 +41,15 @@ get '/num_of_videos' do
   end
 end
 
-get '/faq' do
+get '/about' do
   @title = "Layabout"
-  @subtitle = "FAQ"
+  @subtitle = "about"
   @display_header = false
-  erb :faq
+  erb :about
+end
+
+get '/faq' do
+  redirect '/about'
 end
 
 get '/' do
@@ -67,7 +71,7 @@ end
 
 get '/folder/:id' do
   session[:folder] = params[:id].to_s
-  if session[:username].nil? or session[:password].nil?
+  if session[:username].nil? or session[:password].nil? or session[:folder].to_sym == :main
     redirect '/'
   else
     if session[:num_of_videos].nil? == false
@@ -196,7 +200,7 @@ get '/page/:num' do
 
   html.push("<div id=\"just_videos\">\n")
 
-  html.push("<hr /><p><span class=\"label label-important\">No videos!</span> Consider switching folders using the dropdown menu in the top right.</p>\n") if video_links.length == 0
+  html.push("<hr /><p><span class=\"label label-important\">No videos!</span> Consider switching folders using the dropdown menu in the top right or go find some more videos.</p>\n") if video_links.length == 0
 
   index_checker = 1
   video_links.each_value do |link|

@@ -1,4 +1,4 @@
-## FAQ
+## about
 
 [YouTube][], [Vimeo][], and [Hulu][] all separately provide a queueing system for watching videos later, but I find myself not remembering to check so many different places, so I just throw it all into [Instapaper][].
 
