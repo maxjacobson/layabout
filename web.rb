@@ -65,6 +65,7 @@ get '/' do
       @title = ""
     end
     @subtitle = "Layabout"
+    session[:folder] = "main"
     erb :videos
   end
 end
