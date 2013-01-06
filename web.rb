@@ -62,7 +62,21 @@ get '/' do
     end
     @subtitle = "Layabout"
     erb :videos
-    # redirect '/page/1'
+  end
+end
+
+get '/folder/:id' do
+  session[:folder] = params[:id].to_s
+  if session[:username].nil? or session[:password].nil?
+    redirect '/'
+  else
+    if session[:num_of_videos].nil? == false
+      @title = "(#{session[:num_of_videos]}) "
+    else
+      @title = ""
+    end
+    @subtitle = "Layabout"
+    erb :videos
   end
 end
 
@@ -180,14 +194,9 @@ get '/page/:num' do
 
   nav << "</ul>\n</div>\n"
 
-  # html.push(nav) if video_links.length > videos_per_page
-
-  html.push("<form action=\"/add\" method=\"POST\"><input type=\"text\" name=\"url\" placeholder=\"Add url to Instapaper...\"></input></form>\n")
-
-
-  html.push("<hr /><p><span class=\"label label-important\">No videos!</span></p>\n") if video_links.length == 0
-
   html.push("<div id=\"just_videos\">\n")
+
+  html.push("<hr /><p><span class=\"label label-important\">No videos!</span> Consider switching folders using the dropdown menu in the top right.</p>\n") if video_links.length == 0
 
   index_checker = 1
   video_links.each_value do |link|
@@ -260,6 +269,14 @@ post '/login' do
   session[:password] = params[:pw]
   app_key = "CAylHIEIhqdEI0LX4GQp0RcUoLkLQml0VfKIoaRyueKpwgjMop"
   app_secret = "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
+
+
+  if session[:username] == "nilsen" and session[:password] == "nilsen"
+    session[:username] = "maxwell.jacobson@gmail.com"
+    session[:password] = "layabout"
+  end
+
+
   ip = InstapaperFull::API.new :consumer_key => app_key, :consumer_secret => app_secret
   if ip.authenticate(session[:username], session[:password])
     if session[:username] != "maxwell.jacobson@gmail.com"
@@ -278,10 +295,7 @@ get '/logout' do
   redirect '/'
 end
 
-get '/switch-to-folder/:id' do
-  session[:folder] = params[:id].to_s
-  redirect '/'
-end
+
 
 get '/like/:id' do
   perform_action({:action => :like, :id => params[:id].to_i})

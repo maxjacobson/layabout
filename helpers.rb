@@ -18,9 +18,9 @@ def get_header
     folder_nav = String.new
     folder_nav << "<li class=\"dropdown\">\n"
     folder_nav << "<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">Switch folder <b class=\"caret\"></b></a>\n<ul class=\"dropdown-menu\">"
-    folder_nav << "<li><a href=\"/switch-to-folder/main\">Read Later</a></li>\n<li class=\"divider\"></li>\n"
+    folder_nav << "<li><a href=\"/folder/main\">Read Later</a></li>\n<li class=\"divider\"></li>\n"
     folders_list.each do |folder|
-      folder_nav << "<li><a href=\"/switch-to-folder/#{folder["folder_id"]}\">#{folder["title"]}</a></li>\n"
+      folder_nav << "<li><a href=\"/folder/#{folder["folder_id"]}\">#{folder["title"]}</a></li>\n"
     end
     folder_nav << "</ul>\n</li>\n"
     header.push(folder_nav)
@@ -125,14 +125,14 @@ def video_to_html (link)
   #   one_video << "        <p><a href=\"/unlike/#{link["bookmark_id"]}\"><button class=\"btn btn-success\">Unlike <i class=\"icon-heart icon-white\"></i></button></a> "
   # end
   # one_video << "<a href=\"/archive/#{link["bookmark_id"]}\"><button class=\"btn btn-warning\">Archive <i class=\"icon-folder-open icon-white\"></i></button></a> "
-  # 
+  #
   # if link["starred"] == "0"
   #   one_video << "<a href=\"/delete/#{link["bookmark_id"]}\"><button class=\"btn btn-danger\">Delete <i class=\"icon-remove icon-white\"></i></button></a></p>\n"
   # elsif link["starred"] == "1"
   #   one_video << "<button class=\"btn btn-danger disabled\">Delete <i class=\"icon-remove icon-white\"></i></button> "
   #   one_video << "<a href=\"/unlike-and-delete/#{link["bookmark_id"]}\"><button class=\"btn btn-danger\">Unlike and Delete <i class=\"icon-remove icon-white\"></i></button></a></p>\n"
   # end
-  
+
   if link["starred"] == "0"
     the_buttons = <<TEXT
         <p class="button-group">
@@ -153,10 +153,10 @@ TEXT
 TEXT
   end
   one_video << the_buttons
-  
+
   # one_video << "        <p><button class=\"btn btn-primary like-button\" id=\"#{link["bookmark_id"]}\" action=\"like\">Like <i class=\"icon-heart icon-white\"></i></button> "
-  
-  
+
+
   one_video << "      </div>\n\n"
   return one_video
 end
