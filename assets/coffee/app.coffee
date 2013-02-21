@@ -8,6 +8,22 @@ underline_current_folder = (id) ->
   $("##{id}").css "text-decoration", "underline"
   $(".folder_link").not("##{id}").css "text-decoration", "none"
 
+load_more_vids = (vids_showing, vids_per, vid_count) ->
+  #  does this play well with dom removed vids?
+  # are they removed or just hidden? that matters, right?
+  # console.log "From #{start} to #{stop}"
+  if vid_count - vids_showing > vids_per
+    $(".video").slice(vids_showing, vids_showing + vids_per).slideToggle 'slow'
+    vids_showing += vids_per
+  else
+    $(".video").slice(vids_showing, vid_count).slideToggle 'slow'
+    vids_showing = vid_count
+    $("#more_videos").slideToggle 'fast'
+  console.log "Showing #{vids_showing} of #{vid_count} videos"
+  return vids_showing
+
+
+
 $(document).ajaxStart ->
   $('#ajax_gif').css "display", "inline"
 $(document).ajaxStop ->
@@ -17,6 +33,9 @@ $(document).ready ->
   height_diff = $(document).height() - $("body").height()
   $("#buffer2").css "height", "#{height_diff - 50}px" if height_diff > 0
   vid_count = parseInt($("#vid_count").text())
+  vids_per = 5
+  vids_showing = 0
+  vids_showing = load_more_vids(vids_showing, vids_per, vid_count)
   moving = false
   to_move = ""
   current_folder = $("#folder_id").text()
@@ -42,18 +61,21 @@ $(document).ready ->
       path = "/folder/#{folder_id_clicked}/#{title_coaxed}" if title isnt "Read Later"
       $("#yield").load "#{path} #yield", ->
         history.pushState({}, "Loading #{title}", path)
-        vid_count = parseInt($("#vid_count").text())
         current_folder = $("#folder_id").text()
         underline_current_folder(current_folder)
         $("#buffer2").css "height", "0"
         height_diff = $(document).height() - $("body").height()
         $("#buffer2").css "height", "#{height_diff - 50}px" if height_diff > 0
+        vid_count = parseInt($("#vid_count").text())
+        vids_showing = 0
+        vids_showing = load_more_vids(vids_showing, vids_per, vid_count)
 
   $("#yield").on "click", "button", ->
     action = $(this).text() # reads the text of the button
     id = this.id
-
-    if action is "Like"
+    if action is "More Videos"
+      vids_showing = load_more_vids(vids_showing, vids_per, vid_count)
+    else if action is "Like"
       $(this).closest(".buttonsets").children().toggle 'fast'
       $('<div/>').load "/like/#{id}", ->
         # "success is incorrect, sometimes it just times out"
@@ -100,3 +122,19 @@ $(document).ready ->
           update_count(vid_count)
           $("<div/>").load "/unlike-and-delete/#{id}", ->
             console.log "Successfully unliked-and-deleted #{id}"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

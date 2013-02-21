@@ -1,5 +1,7 @@
 # TODOS
 
+* do a total google-reader style keyboard shortcut system?
+* detect whether it's on a platform that supports flash, and then tell the app (/get/flash/false, stores in the session hash) and then *don't* serve hulu; or serve it folded?
 * add a little drop shadow under the header?
 * make this a full Instapaper client?
 * like, show *all links* and then if it's a video, include the video

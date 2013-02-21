@@ -3,7 +3,7 @@
 #videos
   -if @videos.length > 0
     -@videos.each do |video|
-      %div.video{:id => video["bookmark_id"]}
+      %div.video{:id => video["bookmark_id"], :style => 'display: none'}
         %span= "<a href='#{video["url"]}'>#{video["title"]}</a>"
         .buttonsets
           -if video["starred"] == "0"
@@ -32,5 +32,6 @@
               %button{:id => video["bookmark_id"]} Archive
               %button{:disabled => 'disabled', :id => video["bookmark_id"]} Delete
               %button{:id =>  video["bookmark_id"]} Move
+    %button#more_videos More Videos
   -else
     %p No videos in this folder.

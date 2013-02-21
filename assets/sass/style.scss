@@ -19,18 +19,20 @@ $bufferheight: 175px; // basically giving a 25px margin-top
 body {
   margin: 0 auto;
   font-family: "Helvetica", sans-serif;
+  background-color: $bg;
 }
 
 .header {
   width: 100%;
   height: $headerheight;
   position: fixed;
-  background-color: $bg;
   .header_content {
     width: $width;
     margin: 0 auto;
   }
   border-bottom: medium double black;
+  background-color: $bg;
+  box-shadow: 0 10px 5px #888;
 }
 
 #buffer1 {
@@ -44,6 +46,9 @@ body {
 #yield {
   width: $width;
   margin: 0 auto;
+  background-color: white;
+  border-radius: 5px;
+  padding: 5px;
   // margin-top: 150px;
 }
 
@@ -120,5 +125,11 @@ hr {
 .about_page {
   li {
     list-style-type: disc;
+  }
+}
+
+@media only screen and (max-width: $width) {
+  #yield {
+    width: 100%;
   }
 }
