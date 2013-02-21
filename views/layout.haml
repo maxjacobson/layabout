@@ -1,0 +1,35 @@
+!!! 5
+
+%html
+  %head
+    %title Layabout
+    %meta{ :charset => "UTF-8" }
+    %link{ :rel => "stylesheet", :href => "/css/style.css" }
+    %link{ :href => '/img/favicon.ico', :type => 'image/x-icon', :rel => 'icon'}
+  %body
+    .header
+      #ajax_gif
+        %img{:src => '/img/ajax.gif'}
+      .header_content
+        %h1 <a href="/">Layabout</a>
+        -if session[:username].nil? == false
+          %ul.menu
+            -if session[:folders_list].nil? == false
+              %li
+                %span{:id => 'readlater', :class => 'folder_link'} Read Later
+              -session[:folders_list].each do |folder|
+                %li
+                  %span{:id => folder["folder_id"], :class => "folder_link"}= "#{folder['title']}"
+            %li <a href="/logout">Logout</a>
+    #buffer1
+    #yield
+      =yield
+    #buffer2
+    %footer
+      .footer_content
+        :markdown
+          * A [Max Jacobson](http://www.maxjacobson.net/~about) project
+          * [About this site](/about)
+          * [Email me](mailto:max@maxjacobson.net)
+    %script{:src => '/js/jquery.js'}
+    %script{:src => '/js/app.js'}

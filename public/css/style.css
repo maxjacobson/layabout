@@ -1,0 +1,184 @@
+/* line 17, ../../../../../.rvm/gems/ruby-1.9.3-p327/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, ../../../../../.rvm/gems/ruby-1.9.3-p327/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, ../../../../../.rvm/gems/ruby-1.9.3-p327/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, ../../../../../.rvm/gems/ruby-1.9.3-p327/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, ../../../../../.rvm/gems/ruby-1.9.3-p327/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, ../../../../../.rvm/gems/ruby-1.9.3-p327/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, ../../../../../.rvm/gems/ruby-1.9.3-p327/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, ../../../../../.rvm/gems/ruby-1.9.3-p327/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, ../../../../../.rvm/gems/ruby-1.9.3-p327/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+  display: block;
+}
+
+@font-face {
+  font-family: 'VT323';
+  font-style: normal;
+  font-weight: 400;
+  src: local("VT323"), local("VT323-Regular"), url(http://themes.googleusercontent.com/static/fonts/vt323/v4/LfMzj2MWAZU6qzlnp1MNbg.woff) format("woff");
+}
+
+/* line 19, ../../assets/sass/style.scss */
+body {
+  margin: 0 auto;
+  font-family: "Helvetica", sans-serif;
+}
+
+/* line 24, ../../assets/sass/style.scss */
+.header {
+  width: 100%;
+  height: 150px;
+  position: fixed;
+  background-color: #e8e8e8;
+  border-bottom: medium double black;
+}
+/* line 29, ../../assets/sass/style.scss */
+.header .header_content {
+  width: 600px;
+  margin: 0 auto;
+}
+
+/* line 36, ../../assets/sass/style.scss */
+#buffer1 {
+  height: 175px;
+}
+
+/* line 40, ../../assets/sass/style.scss */
+#buffer {
+  height: 0;
+}
+
+/* line 44, ../../assets/sass/style.scss */
+#yield {
+  width: 600px;
+  margin: 0 auto;
+}
+
+/* line 50, ../../assets/sass/style.scss */
+footer {
+  width: 100%;
+  border-top: medium double black;
+  margin-top: 25px;
+}
+/* line 54, ../../assets/sass/style.scss */
+footer .footer_content {
+  width: 600px;
+  margin: 0 auto;
+}
+/* line 58, ../../assets/sass/style.scss */
+footer li {
+  display: inline;
+}
+/* line 62, ../../assets/sass/style.scss */
+footer li + li:before {
+  content: "\2736\a0 ";
+}
+
+/* line 68, ../../assets/sass/style.scss */
+h1 {
+  font-family: "VT323", serif;
+  font-size: 6em;
+}
+
+/* line 73, ../../assets/sass/style.scss */
+h2 {
+  font-size: 2em;
+}
+
+/* line 77, ../../assets/sass/style.scss */
+p, ul, li, h1, h2, h3, h4, h5, h6, .buttonsets {
+  margin: 5px 0;
+}
+
+/* line 81, ../../assets/sass/style.scss */
+#ajax_gif {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  display: none;
+}
+
+/* line 88, ../../assets/sass/style.scss */
+a, .folder_link {
+  color: #660033;
+  text-decoration: none;
+}
+/* line 91, ../../assets/sass/style.scss */
+a:hover, .folder_link:hover {
+  cursor: pointer;
+  cursor: hand;
+  text-decoration: underline;
+  color: #cc6699;
+}
+
+/* line 99, ../../assets/sass/style.scss */
+hr {
+  border: none;
+  border-top: medium double #333333;
+}
+
+/* line 105, ../../assets/sass/style.scss */
+.menu li {
+  display: inline;
+}
+/* line 109, ../../assets/sass/style.scss */
+.menu li + li:before {
+  content: "\2736\a0 ";
+}
+
+/* line 115, ../../assets/sass/style.scss */
+.glowing {
+  color: #FF4F4F;
+}

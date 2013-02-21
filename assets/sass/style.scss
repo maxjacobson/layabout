@@ -1,0 +1,118 @@
+@import "compass/reset";
+// @import "compass/layout/sticky-footer";
+// @include sticky-footer(25px, "#yield", "footer", ".footer_content");
+
+$width: 600px;
+$link: #660033;
+$hlink: #CC6699;
+$bg: #E8E8E8;
+$headerheight: 150px; // ugh
+$bufferheight: 175px; // basically giving a 25px margin-top
+
+@font-face {
+  font-family: 'VT323';
+  font-style: normal;
+  font-weight: 400;
+  src: local('VT323'), local('VT323-Regular'), url(http://themes.googleusercontent.com/static/fonts/vt323/v4/LfMzj2MWAZU6qzlnp1MNbg.woff) format('woff');
+}
+
+body {
+  margin: 0 auto;
+  font-family: "Helvetica", sans-serif;
+}
+
+.header {
+  width: 100%;
+  height: $headerheight;
+  position: fixed;
+  background-color: $bg;
+  .header_content {
+    width: $width;
+    margin: 0 auto;
+  }
+  border-bottom: medium double black;
+}
+
+#buffer1 {
+  height: $bufferheight;
+}
+
+#buffer {
+  height: 0;
+}
+
+#yield {
+  width: $width;
+  margin: 0 auto;
+  // margin-top: 150px;
+}
+
+footer {
+  width: 100%;
+  border-top: medium double black;
+  margin-top: 25px;
+  .footer_content {
+    width: $width;
+    margin: 0 auto;
+  }
+  li {
+    display: inline;
+  }
+  li+li {
+    &:before {
+      content: "\2736\a0 ";
+    }
+  }
+}
+
+h1 {
+  font-family: 'VT323', serif;
+  font-size: 6em;
+}
+
+h2 {
+  font-size: 2em;
+}
+
+p, ul, li, h1, h2, h3, h4, h5, h6, .buttonsets {
+  margin: 5px 0;
+}
+
+#ajax_gif {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  display: none;
+}
+
+a, .folder_link {
+  color: $link;
+  text-decoration: none;
+  &:hover {
+    cursor: pointer;
+    cursor: hand;
+    text-decoration: underline;
+    color: $hlink;
+  }
+}
+
+hr {
+  border: none;
+  border-top: medium double #333;
+}
+
+.menu {
+  li {
+    display: inline;
+  }
+  li+li {
+    &:before {
+      content: "\2736\a0 ";
+    }
+  }
+}
+
+.glowing {
+  color: #FF4F4F;
+  // text-shadow: 0.1em 0.1em 0.2em #37113F;
+}
