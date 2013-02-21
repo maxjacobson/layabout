@@ -60,7 +60,7 @@ footer {
   }
   li+li {
     &:before {
-      content: "\2736\a0 ";
+      content: "\a0 \2736\a0 ";
     }
   }
 }
@@ -107,7 +107,7 @@ hr {
   }
   li+li {
     &:before {
-      content: "\2736\a0 ";
+      content: "\a0 \2736\a0 ";
     }
   }
 }
@@ -115,4 +115,10 @@ hr {
 .glowing {
   color: #FF4F4F;
   // text-shadow: 0.1em 0.1em 0.2em #37113F;
+}
+
+.about_page {
+  li {
+    list-style-type: disc;
+  }
 }

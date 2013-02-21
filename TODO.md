@@ -1,5 +1,6 @@
 # TODOS
 
+* add a little drop shadow under the header?
 * make this a full Instapaper client?
 * like, show *all links* and then if it's a video, include the video
 * if it's an instagram, show the gram

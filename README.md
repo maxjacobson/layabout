@@ -28,4 +28,8 @@ from project route
 * nightime, I did implement that... now the buttons work but require a refresh for every action. I'm kind of just pleased that it works... it's kinda feature complete, just in a shitty, inefficient way.
 * 2013-01-05, I have been udpating on the twitter more than here.
 * 2013-02-19, deleted the whole thing and am starting over. Kind of. Will bring most of it back in. But I just want to be clean about it.
+* 2013-02-19, I'm re-writing this fucker from scratch. I've learned so much.
+* I recently bought a domain for the project (<http://layabout.tv>) so I'm doubly motivated to improve the hell out of this thing.
+* Just added some password encryption using the Gibberish gem.
+* Also learned haml this morning. I think I like it more than ERB already.
 * 2013-02-20, I made a ton of progress. Implemented move-to-folder and re-implemented all of the other button actions. Still have to re-do infinite-scrolling and video embedding, but excited to re-think my approach :)
