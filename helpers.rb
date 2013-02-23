@@ -20,12 +20,49 @@ def get_ip
 end
 
 def grok_url (url)
-  return true, :youtube if url =~ /youtube.com/
-  return true, :vimeo_mobile if url =~ /vimeo.com\/m\//
-  return true, :vimeo if url =~ /vimeo.com/
-  return true, :hulu if url =~ /hulu.com/
-  return true, :youtube_mobile if url =~ /youtu.be/
-  return false, :none
+  # support hulu short urls
+  if url =~ /youtube\.com\/embed\//
+    id = url.match(/\/embed\/([A-Za-z0-9_-]+)/)[1].to_s
+    site = :youtube
+  elsif url =~ /youtube\.com/
+    id = url.match(/v=([A-Za-z0-9_-]+)/)[1].to_s
+    site = :youtube
+  elsif url =~ /youtu\.be/
+    id = url.match(/(http:\/\/youtu.be\/)([A-Za-z0-9\-_]+)/)[2].to_s
+    site = :youtube
+  elsif url =~ /vimeo\.com\/m\//
+    id = "todo"
+    site = :vimeo
+  elsif url =~ /vimeo\.com/
+    # https://vimeo.com/59777392
+    id = url.match(/vimeo\.com\/([\d]+)/)[1].to_s
+    site = :vimeo
+  elsif url =~ /hulu\.com\/watch/
+    id = url.match(/watch\/([\d]+)/)[1].to_s
+    site = :hulu
+  else
+    return false, false, false
+  end
+  return true, site, id
+end
+
+def cleanup_title (title)
+  # because it's needless clutter
+  title.gsub!(/ - YouTube/, '')
+  title.gsub!(/YouTube - /, '')
+  title.gsub!(/ on Vimeo/, '')
+  title.gsub!(/Watch ([A-Za-z0-9 ]+) \| ([A-Za-z0-9 ]+) online \| Free \| Hulu/, '\1: \2')
+  title.gsub!(/^[ \t\n]+/, '')
+  title.gsub!(/[ \t\n]+$/, '')
+  return title
+end
+
+def make_clicky (s)
+  # make hashtags clickable
+  s.gsub!(/\w*(:\/\/)\w*.[\w#?%=\/]+/, '<a href="\0">\0</a>') # the fuck is this
+  s.gsub!(/@[A-Za-z0-9_]+/, '<a href="http://twitter.com/\0">\0</a>')
+  s.gsub!(/twitter.com\/@/, 'twitter.com/')
+  return s
 end
 
 def load_videos(folder_id, folder_title) # folder id
@@ -39,10 +76,12 @@ def load_videos(folder_id, folder_title) # folder id
   end
   all_links.each do |link|
     if link["type"] == "bookmark" # filters out the first two irrelevant items
-      is_video, vid_site = grok_url link["url"]
+      is_video, vid_site, video_id = grok_url link["url"]
       if is_video == true
+        link["video_id"] = video_id
+        link["title"] = cleanup_title link["title"]
         link["vid_site"] = vid_site
-        # link["embed"] = get_embed link["url"]
+        link["description"] = make_clicky link["description"]
         video_links.push link
       end
     end
@@ -78,5 +117,20 @@ def perform_action(i) # i for instructions
     ip.bookmarks_add({"url" => i[:url]})
   elsif action == :move
     ip.bookmarks_move({"bookmark_id" => i[:id], "folder_id" => i[:folder_id]})
+  end
+end
+
+def get_embed (vid_site, id)
+  if vid_site == :youtube
+    url = "http://www.youtube.com/watch?v=#{id}"
+    return OEmbed::Providers::Youtube.get(url).html
+  elsif vid_site == :vimeo
+    url = "http://www.vimeo.com/#{id}"
+    return OEmbed::Providers::Vimeo.get(url, maxwidth: "500", portrait: false, byline: false, title: false).html
+  elsif vid_site == :hulu
+    url = "http://www.hulu.com/watch/#{id}"
+    return OEmbed::Providers::Hulu.get(url).html
+  else
+    return "<p>Failed to get embed code</p>"
   end
 end

@@ -14,12 +14,12 @@
     return $(".folder_link").not("#" + id).css("text-decoration", "none");
   };
 
-  load_more_vids = function(vids_showing, vids_per, vid_count) {
+  load_more_vids = function(vids_showing, vids_per, vid_count, speed) {
     if (vid_count - vids_showing > vids_per) {
-      $(".video").slice(vids_showing, vids_showing + vids_per).slideToggle('slow');
+      $(".video").slice(vids_showing, vids_showing + vids_per).slideToggle(speed);
       vids_showing += vids_per;
     } else {
-      $(".video").slice(vids_showing, vid_count).slideToggle('slow');
+      $(".video").slice(vids_showing, vid_count).slideToggle(speed);
       vids_showing = vid_count;
       $("#more_videos").slideToggle('fast');
     }
@@ -44,7 +44,7 @@
     vid_count = parseInt($("#vid_count").text());
     vids_per = 5;
     vids_showing = 0;
-    vids_showing = load_more_vids(vids_showing, vids_per, vid_count);
+    vids_showing = load_more_vids(vids_showing, vids_per, vid_count, 0);
     moving = false;
     to_move = "";
     current_folder = $("#folder_id").text();
@@ -62,6 +62,7 @@
           vid_count--;
           update_count(vid_count);
           $(".folder_link").removeClass("glowing");
+          vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
           $("<div/>").load("/move/" + to_move + "/to/" + folder_id_clicked, function() {
             return console.log("Successfully moved link to " + title);
           });
@@ -83,16 +84,23 @@
           }
           vid_count = parseInt($("#vid_count").text());
           vids_showing = 0;
-          return vids_showing = load_more_vids(vids_showing, vids_per, vid_count);
+          return vids_showing = load_more_vids(vids_showing, vids_per, vid_count, 0);
         });
       }
     });
     return $("#yield").on("click", "button", function() {
-      var action, id;
+      var action, id, shower, vid_site, video_id;
       action = $(this).text();
       id = this.id;
       if (action === "More Videos") {
-        return vids_showing = load_more_vids(vids_showing, vids_per, vid_count);
+        return vids_showing = load_more_vids(vids_showing, vids_per, vid_count, 'slow');
+      } else if (action === "Show video") {
+        shower = $(this);
+        vid_site = $(this).siblings(".vid_site").text();
+        video_id = $(this).siblings(".video_id").text();
+        return shower.siblings(".vid_embed").load("/embedcode/" + vid_site + "/" + video_id, function() {
+          return shower.remove();
+        });
       } else if (action === "Like") {
         $(this).closest(".buttonsets").children().toggle('fast');
         return $('<div/>').load("/like/" + id, function() {
@@ -103,6 +111,7 @@
           $(".video#" + id).slideToggle('fast');
           vid_count--;
           update_count(vid_count);
+          vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
           return $('<div/>').load("/like-and-archive/" + id, function() {
             return console.log("Successfully liked-and-archived " + id);
           });
@@ -112,6 +121,7 @@
           $(".video#" + id).slideToggle('fast');
           vid_count--;
           update_count(vid_count);
+          vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
           return $("<div/>").load("/archive/" + id, function() {
             return console.log("Successfully archived " + id);
           });
@@ -121,12 +131,14 @@
           $(".video#" + id).slideToggle('fast');
           vid_count--;
           update_count(vid_count);
+          vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
           return $("<div/>").load("/delete/" + id, function() {
             return console.log("Successfully deleted " + id);
           });
         }
       } else if (action === "Move") {
         $(".folder_link").not("#" + current_folder).toggleClass("glowing");
+        $(".folder_link").not("#" + current_folder).ClassyWiggle('start');
         if (moving === true) {
           moving = false;
           return to_move = "";
@@ -145,6 +157,7 @@
             $(".video#" + id).slideToggle('fast');
             vid_count--;
             update_count(vid_count);
+            vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
             return $("<div/>").load("/unlike-and-delete/" + id, function() {
               return console.log("Successfully unliked-and-deleted " + id);
             });

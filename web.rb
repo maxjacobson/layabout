@@ -94,9 +94,23 @@ get '/move/:id/to/:folder' do
   else
     perform_action({:action => :move, :id => id, :folder_id => folder.to_i})
   end
-  "Moved to folder:"
+  "Moved to folder: #{folder}"
+end
+
+get '/embedcode/:site/:id' do
+  embedcode = get_embed params[:site].to_sym, params[:id]
+  haml embedcode, :layout => false
 end
 
 error 404 do
-  haml "Sorry, that page doesn't exist"
+  haml "Sorry, that page doesn't exist."
+end
+
+error 500 do
+  u = session[:username]
+  pw = session[:pw]
+  session.clear
+  session[:username] = u
+  session[:pw] = pw
+  haml "Sorry, there was an error. Maybe try again?"
 end
