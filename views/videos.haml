@@ -4,39 +4,40 @@
   -if @videos.length > 0
     -@videos.each do |video|
       %div.video{:id => video["bookmark_id"], :style => 'display: none'}
-        %p= "<a href='#{video["url"]}'>#{video["title"]}</a>"
-        %button.toggle_video Show video
-        .video_id{:style => 'display: none'}= video["video_id"]
-        .vid_site{:style => 'display: none'}= video["vid_site"]
-        .vid_embed
-        %p.description= video["description"]
-        .buttonsets
-          -if video["starred"] == "0"
-            .unliked_buttons
-              %button{:id => video["bookmark_id"]} Like
-              %button{:id => video["bookmark_id"]} Like and Archive
-              %button{:id => video["bookmark_id"]} Archive
-              %button{:id => video["bookmark_id"]} Delete
-              %button{:id =>  video["bookmark_id"]} Move
-            .liked_buttons{:style => 'display: none'}
-              %button{:id => video["bookmark_id"]} Unlike
-              %button{:id => video["bookmark_id"]} Unlike and Delete
-              %button{:id => video["bookmark_id"]} Archive
-              %button{:disabled => 'disabled', :id => video["bookmark_id"]} Delete
-              %button{:id =>  video["bookmark_id"]} Move
-          -else
-            .unliked_buttons{:style => 'display: none'}
-              %button{:id => video["bookmark_id"]} Like
-              %button{:id => video["bookmark_id"]} Like and Archive
-              %button{:id => video["bookmark_id"]} Archive
-              %button{:id => video["bookmark_id"]} Delete
-              %button{:id =>  video["bookmark_id"]} Move
-            .liked_buttons
-              %button{:id => video["bookmark_id"]} Unlike
-              %button{:id => video["bookmark_id"]} Unlike and Delete
-              %button{:id => video["bookmark_id"]} Archive
-              %button{:disabled => 'disabled', :id => video["bookmark_id"]} Delete
-              %button{:id =>  video["bookmark_id"]} Move
+        %div{:class => video["vid_site"]}
+          %p= "<a href='#{video["url"]}'>#{video["title"]}</a>"
+          %button.toggle_video Show video
+          .video_id{:style => 'display: none'}= video["video_id"]
+          .vid_site{:style => 'display: none'}= video["vid_site"]
+          .vid_embed
+          %p.description= video["description"]
+          .buttonsets
+            -if video["starred"] == "0"
+              .unliked_buttons
+                %button{:id => video["bookmark_id"]} Like
+                %button{:id => video["bookmark_id"]} Like and Archive
+                %button{:id => video["bookmark_id"]} Archive
+                %button{:id => video["bookmark_id"]} Delete
+                %button{:id =>  video["bookmark_id"]} Move
+              .liked_buttons{:style => 'display: none'}
+                %button{:id => video["bookmark_id"]} Unlike
+                %button{:id => video["bookmark_id"]} Unlike and Delete
+                %button{:id => video["bookmark_id"]} Archive
+                %button{:disabled => 'disabled', :id => video["bookmark_id"]} Delete
+                %button{:id =>  video["bookmark_id"]} Move
+            -else
+              .unliked_buttons{:style => 'display: none'}
+                %button{:id => video["bookmark_id"]} Like
+                %button{:id => video["bookmark_id"]} Like and Archive
+                %button{:id => video["bookmark_id"]} Archive
+                %button{:id => video["bookmark_id"]} Delete
+                %button{:id =>  video["bookmark_id"]} Move
+              .liked_buttons
+                %button{:id => video["bookmark_id"]} Unlike
+                %button{:id => video["bookmark_id"]} Unlike and Delete
+                %button{:id => video["bookmark_id"]} Archive
+                %button{:disabled => 'disabled', :id => video["bookmark_id"]} Delete
+                %button{:id =>  video["bookmark_id"]} Move
     %button#more_videos More Videos
   -else
     %p No videos in this folder.

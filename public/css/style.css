@@ -70,39 +70,39 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   src: local("VT323"), local("VT323-Regular"), url(http://themes.googleusercontent.com/static/fonts/vt323/v4/LfMzj2MWAZU6qzlnp1MNbg.woff) format("woff");
 }
 
-/* line 19, ../../assets/sass/style.scss */
+/* line 20, ../../assets/sass/style.scss */
 body {
   margin: 0 auto;
   font-family: "Helvetica", sans-serif;
   background-color: #e8e8e8;
 }
 
-/* line 25, ../../assets/sass/style.scss */
+/* line 26, ../../assets/sass/style.scss */
 .header {
   width: 100%;
-  height: 150px;
+  height: 170px;
   position: fixed;
   border-bottom: medium double black;
   background-color: #e8e8e8;
   box-shadow: 0 10px 5px #888888;
 }
-/* line 29, ../../assets/sass/style.scss */
+/* line 30, ../../assets/sass/style.scss */
 .header .header_content {
   width: 600px;
   margin: 0 auto;
 }
 
-/* line 38, ../../assets/sass/style.scss */
+/* line 39, ../../assets/sass/style.scss */
 #buffer1 {
-  height: 175px;
+  height: 195px;
 }
 
-/* line 42, ../../assets/sass/style.scss */
+/* line 43, ../../assets/sass/style.scss */
 #buffer {
   height: 0;
 }
 
-/* line 46, ../../assets/sass/style.scss */
+/* line 47, ../../assets/sass/style.scss */
 #yield {
   width: 600px;
   margin: 0 auto;
@@ -111,48 +111,44 @@ body {
   padding: 5px;
 }
 
-/* line 55, ../../assets/sass/style.scss */
+/* line 56, ../../assets/sass/style.scss */
 footer {
   width: 100%;
   border-top: medium double black;
   margin-top: 25px;
 }
-/* line 59, ../../assets/sass/style.scss */
+/* line 60, ../../assets/sass/style.scss */
 footer .footer_content {
   width: 600px;
   margin: 0 auto;
 }
-/* line 63, ../../assets/sass/style.scss */
+/* line 64, ../../assets/sass/style.scss */
 footer li {
   display: inline;
 }
-/* line 67, ../../assets/sass/style.scss */
+/* line 68, ../../assets/sass/style.scss */
 footer li + li:before {
   content: "\a0 \2736\a0 ";
 }
 
-/* line 73, ../../assets/sass/style.scss */
+/* line 74, ../../assets/sass/style.scss */
 h1 {
   font-family: "VT323", serif;
   font-size: 6em;
 }
 
-/* line 78, ../../assets/sass/style.scss */
+/* line 79, ../../assets/sass/style.scss */
 h2 {
-  font-size: 2em;
+  font-family: "VT323", serif;
+  font-size: 3em;
 }
 
-/* line 82, ../../assets/sass/style.scss */
-h3 {
-  font-size: 1.2em;
-}
-
-/* line 86, ../../assets/sass/style.scss */
+/* line 84, ../../assets/sass/style.scss */
 p, ul, li, h1, h2, h3, h4, h5, h6, .buttonsets {
   margin: 5px 0;
 }
 
-/* line 90, ../../assets/sass/style.scss */
+/* line 88, ../../assets/sass/style.scss */
 #ajax_gif {
   position: fixed;
   top: 30px;
@@ -160,12 +156,12 @@ p, ul, li, h1, h2, h3, h4, h5, h6, .buttonsets {
   display: none;
 }
 
-/* line 97, ../../assets/sass/style.scss */
+/* line 95, ../../assets/sass/style.scss */
 a, .folder_link {
   color: #660033;
   text-decoration: none;
 }
-/* line 100, ../../assets/sass/style.scss */
+/* line 98, ../../assets/sass/style.scss */
 a:hover, .folder_link:hover {
   cursor: pointer;
   cursor: hand;
@@ -173,33 +169,65 @@ a:hover, .folder_link:hover {
   color: #cc6699;
 }
 
-/* line 108, ../../assets/sass/style.scss */
+/* line 106, ../../assets/sass/style.scss */
 hr {
   border: none;
   border-top: medium double #333333;
 }
 
-/* line 114, ../../assets/sass/style.scss */
+/* line 112, ../../assets/sass/style.scss */
 .menu li {
   display: inline;
 }
-/* line 118, ../../assets/sass/style.scss */
+/* line 116, ../../assets/sass/style.scss */
 .menu li + li:before {
   content: "\a0 \2736\a0 ";
 }
 
+/* line 122, ../../assets/sass/style.scss */
+.vimeo, .hulu, .youtube {
+  padding: 10px;
+}
 /* line 124, ../../assets/sass/style.scss */
+.vimeo p, .hulu p, .youtube p {
+  color: white;
+}
+/* line 127, ../../assets/sass/style.scss */
+.vimeo a, .hulu a, .youtube a {
+  color: #E8E8E8;
+}
+/* line 129, ../../assets/sass/style.scss */
+.vimeo a:hover, .hulu a:hover, .youtube a:hover {
+  color: black;
+}
+
+/* line 135, ../../assets/sass/style.scss */
+.vimeo {
+  background-color: #20B9EB;
+}
+
+/* line 139, ../../assets/sass/style.scss */
+.hulu {
+  background-color: #7DB737;
+}
+
+/* line 143, ../../assets/sass/style.scss */
+.youtube {
+  background-color: #A02723;
+}
+
+/* line 147, ../../assets/sass/style.scss */
 .glowing {
   color: #FF4F4F;
 }
 
-/* line 130, ../../assets/sass/style.scss */
+/* line 153, ../../assets/sass/style.scss */
 .about_page li {
   list-style-type: disc;
 }
 
 @media only screen and (max-width: 600px) {
-  /* line 136, ../../assets/sass/style.scss */
+  /* line 159, ../../assets/sass/style.scss */
   #yield {
     width: 100%;
   }
