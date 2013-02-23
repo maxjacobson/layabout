@@ -185,49 +185,53 @@ hr {
 }
 
 /* line 122, ../../assets/sass/style.scss */
-.vimeo, .hulu, .youtube {
-  padding: 10px;
-}
-/* line 124, ../../assets/sass/style.scss */
-.vimeo p, .hulu p, .youtube p {
-  color: white;
-}
-/* line 127, ../../assets/sass/style.scss */
-.vimeo a, .hulu a, .youtube a {
-  color: #E8E8E8;
-}
-/* line 129, ../../assets/sass/style.scss */
-.vimeo a:hover, .hulu a:hover, .youtube a:hover {
-  color: black;
-}
-
-/* line 135, ../../assets/sass/style.scss */
 .vimeo {
   background-color: #20B9EB;
 }
 
-/* line 139, ../../assets/sass/style.scss */
+/* line 126, ../../assets/sass/style.scss */
 .hulu {
   background-color: #7DB737;
 }
 
-/* line 143, ../../assets/sass/style.scss */
+/* line 130, ../../assets/sass/style.scss */
 .youtube {
   background-color: #A02723;
 }
 
-/* line 147, ../../assets/sass/style.scss */
-.glowing {
-  color: #FF4F4F;
+/* line 134, ../../assets/sass/style.scss */
+.vimeo, .hulu, .youtube {
+  padding: 10px;
+}
+/* line 136, ../../assets/sass/style.scss */
+.vimeo p, .hulu p, .youtube p {
+  color: white;
+}
+/* line 139, ../../assets/sass/style.scss */
+.vimeo a, .hulu a, .youtube a {
+  color: #E8E8E8;
+}
+/* line 141, ../../assets/sass/style.scss */
+.vimeo a:hover, .hulu a:hover, .youtube a:hover {
+  color: black;
+}
+/* line 145, ../../assets/sass/style.scss */
+.vimeo hr, .hulu hr, .youtube hr {
+  border-top: medium double white;
 }
 
-/* line 153, ../../assets/sass/style.scss */
+/* line 150, ../../assets/sass/style.scss */
+.glowing {
+  color: red;
+}
+
+/* line 155, ../../assets/sass/style.scss */
 .about_page li {
   list-style-type: disc;
 }
 
 @media only screen and (max-width: 600px) {
-  /* line 159, ../../assets/sass/style.scss */
+  /* line 161, ../../assets/sass/style.scss */
   #yield {
     width: 100%;
   }

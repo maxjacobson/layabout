@@ -119,19 +119,6 @@ hr {
   }
 }
 
-.vimeo, .hulu, .youtube {
-  padding: $videopadding;
-  p {
-    color: white;
-  }
-  a {
-    color: #E8E8E8;
-    &:hover {
-      color: black;
-    }
-  }
-}
-
 .vimeo {
   background-color: #20B9EB;
 }
@@ -144,9 +131,24 @@ hr {
   background-color: #A02723;
 }
 
+.vimeo, .hulu, .youtube {
+  padding: $videopadding;
+  p {
+    color: white;
+  }
+  a {
+    color: #E8E8E8;
+    &:hover {
+      color: black;
+    }
+  }
+  hr {
+    border-top: medium double white;
+  }
+}
+
 .glowing {
-  color: #FF4F4F;
-  // text-shadow: 0.1em 0.1em 0.2em #37113F;
+  color: red;
 }
 
 .about_page {

@@ -36,7 +36,7 @@
   });
 
   $(document).ready(function() {
-    var current_folder, height_diff, moving, to_move, vid_count, vids_per, vids_showing;
+    var current_folder, height_diff, moving, vid_count, vids_per, vids_showing;
     height_diff = $(document).height() - $("body").height();
     if (height_diff > 0) {
       $("#buffer2").css("height", "" + (height_diff - 50) + "px");
@@ -46,7 +46,6 @@
     vids_showing = 0;
     vids_showing = load_more_vids(vids_showing, vids_per, vid_count, 0);
     moving = false;
-    to_move = "";
     current_folder = $("#folder_id").text();
     underline_current_folder(current_folder);
     $(".folder_link").click(function() {
@@ -54,19 +53,22 @@
       folder_id_clicked = this.id;
       title = this.innerHTML;
       title_coaxed = title.replace(/\s/, '-');
-      if (moving === true && to_move !== "") {
-        if ($(this).hasClass("glowing")) {
-          console.log("Trying to move " + to_move + " to " + title);
-          $(".video#" + to_move).toggle('fast');
-          moving = false;
+      if (moving !== false) {
+        console.log("moving isnt false");
+        if ($(this).hasClass("animated")) {
+          console.log("this has class animated");
+          console.log("Trying to move " + moving + " to " + title);
+          $(".video#" + moving).toggle('fast', function() {
+            return $(".video#" + moving).remove();
+          });
           vid_count--;
           update_count(vid_count);
-          $(".folder_link").removeClass("glowing");
+          $(".folder_link").removeClass("animated swing hinge glowing");
           vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
-          $("<div/>").load("/move/" + to_move + "/to/" + folder_id_clicked, function() {
+          $("<div/>").load("/move/" + moving + "/to/" + folder_id_clicked, function() {
             return console.log("Successfully moved link to " + title);
           });
-          return to_move = "";
+          return moving = false;
         }
       } else {
         path = '/';
@@ -89,16 +91,18 @@
       }
     });
     return $("#yield").on("click", "button", function() {
-      var action, id, shower, vid_site, video_id;
+      var action, id, shower, vid_home, vid_site, video_id;
       action = $(this).text();
       id = this.id;
       if (action === "More Videos") {
         return vids_showing = load_more_vids(vids_showing, vids_per, vid_count, 'slow');
-      } else if (action === "Show video") {
+      } else if (action === "Load video") {
         shower = $(this);
-        vid_site = $(this).siblings(".vid_site").text();
-        video_id = $(this).siblings(".video_id").text();
-        return shower.siblings(".vid_embed").load("/embedcode/" + vid_site + "/" + video_id, function() {
+        video_id = $(this).attr("video_id");
+        vid_site = $(this).attr("vid_site");
+        vid_home = $(this).siblings(".vid_embed");
+        return vid_home.load("/embedcode/" + vid_site + "/" + video_id, function() {
+          vid_home.slideToggle('fast');
           return shower.remove();
         });
       } else if (action === "Like") {
@@ -108,7 +112,9 @@
         });
       } else if (action === "Like and Archive") {
         if (confirm("You sure?")) {
-          $(".video#" + id).slideToggle('fast');
+          $(".video#" + id).slideToggle('fast', function() {
+            return $(".video#" + id).remove();
+          });
           vid_count--;
           update_count(vid_count);
           vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
@@ -118,7 +124,9 @@
         }
       } else if (action === "Archive") {
         if (confirm("You sure?")) {
-          $(".video#" + id).slideToggle('fast');
+          $(".video#" + id).slideToggle('fast', function() {
+            return $(".video#" + id).remove();
+          });
           vid_count--;
           update_count(vid_count);
           vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
@@ -128,7 +136,9 @@
         }
       } else if (action === "Delete") {
         if (confirm("You sure?")) {
-          $(".video#" + id).slideToggle('fast');
+          $(".video#" + id).slideToggle('fast', function() {
+            return $(".video#" + id).remove();
+          });
           vid_count--;
           update_count(vid_count);
           vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
@@ -137,14 +147,11 @@
           });
         }
       } else if (action === "Move") {
-        $(".folder_link").not("#" + current_folder).toggleClass("glowing");
-        $(".folder_link").not("#" + current_folder).ClassyWiggle('start');
-        if (moving === true) {
-          moving = false;
-          return to_move = "";
+        $(".folder_link").not("#" + current_folder).toggleClass("animated swing glowing");
+        if (moving !== false) {
+          return moving = false;
         } else {
-          moving = true;
-          return to_move = id;
+          return moving = id;
         }
       } else if (action === "Unlike") {
         $(this).closest(".buttonsets").children().toggle('fast');
@@ -154,7 +161,9 @@
       } else if (action === "Unlike and Delete") {
         if (confirm("You sure?")) {
           return $(this).closest(".buttonsets").children().toggle(750, function() {
-            $(".video#" + id).slideToggle('fast');
+            $(".video#" + id).slideToggle('fast', function() {
+              return $(".video#" + id).remove();
+            });
             vid_count--;
             update_count(vid_count);
             vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');

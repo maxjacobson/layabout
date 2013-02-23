@@ -6,10 +6,8 @@
       %div.video{:id => video["bookmark_id"], :style => 'display: none'}
         %div{:class => video["vid_site"]}
           %p= "<a href='#{video["url"]}'>#{video["title"]}</a>"
-          %button.toggle_video Show video
-          .video_id{:style => 'display: none'}= video["video_id"]
-          .vid_site{:style => 'display: none'}= video["vid_site"]
-          .vid_embed
+          %button{:video_id => video["video_id"], :vid_site => video["vid_site"]} Load video
+          .vid_embed{:style => 'display: none'}
           %p.description= video["description"]
           .buttonsets
             -if video["starred"] == "0"
@@ -38,6 +36,7 @@
                 %button{:id => video["bookmark_id"]} Archive
                 %button{:disabled => 'disabled', :id => video["bookmark_id"]} Delete
                 %button{:id =>  video["bookmark_id"]} Move
+          %hr
     %button#more_videos More Videos
   -else
     %p No videos in this folder.

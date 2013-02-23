@@ -35,7 +35,6 @@ $(document).ready ->
   vids_showing = 0
   vids_showing = load_more_vids(vids_showing, vids_per, vid_count, 0)
   moving = false # not currently moving a bookmark to another folder
-  to_move = ""
   current_folder = $("#folder_id").text()
   underline_current_folder(current_folder)
 
@@ -43,18 +42,20 @@ $(document).ready ->
     folder_id_clicked = this.id
     title = this.innerHTML
     title_coaxed = title.replace(/\s/, '-') # whitespace to hyphens
-    if moving is true and to_move isnt ""
-      if $(this).hasClass "glowing"
-        console.log "Trying to move #{to_move} to #{title}"
-        $(".video##{to_move}").toggle 'fast'
-        moving = false
+    if moving isnt false
+      console.log "moving isnt false"
+      if $(this).hasClass "animated" # bars moving to the same folder it's already in
+        console.log "this has class animated"
+        console.log "Trying to move #{moving} to #{title}"
+        $(".video##{moving}").toggle 'fast', ->
+          $(".video##{moving}").remove()
         vid_count--
         update_count(vid_count)
-        $(".folder_link").removeClass "glowing"
+        $(".folder_link").removeClass "animated swing hinge glowing"
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
-        $("<div/>").load "/move/#{to_move}/to/#{folder_id_clicked}", ->
+        $("<div/>").load "/move/#{moving}/to/#{folder_id_clicked}", ->
           console.log "Successfully moved link to #{title}"
-        to_move = ""
+        moving = false
     else
       path = '/'
       path = "/folder/#{folder_id_clicked}/#{title_coaxed}" if title isnt "Read Later"
@@ -74,11 +75,13 @@ $(document).ready ->
     id = this.id
     if action is "More Videos"
       vids_showing = load_more_vids(vids_showing, vids_per, vid_count, 'slow')
-    else if action is "Show video"
+    else if action is "Load video"
       shower = $(this)
-      vid_site = $(this).siblings(".vid_site").text()
-      video_id = $(this).siblings(".video_id").text()
-      shower.siblings(".vid_embed").load "/embedcode/#{vid_site}/#{video_id}", ->
+      video_id = $(this).attr "video_id"
+      vid_site =  $(this).attr "vid_site"
+      vid_home = $(this).siblings(".vid_embed")
+      vid_home.load "/embedcode/#{vid_site}/#{video_id}", ->
+        vid_home.slideToggle 'fast'
         shower.remove()
     else if action is "Like"
       $(this).closest(".buttonsets").children().toggle 'fast'
@@ -88,7 +91,8 @@ $(document).ready ->
         console.log "Successfully liked #{id}"
     else if action is "Like and Archive"
       if confirm "You sure?"
-        $(".video##{id}").slideToggle 'fast'
+        $(".video##{id}").slideToggle 'fast', ->
+          $(".video##{id}").remove()
         vid_count--
         update_count(vid_count)
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
@@ -96,7 +100,8 @@ $(document).ready ->
           console.log "Successfully liked-and-archived #{id}"
     else if action is "Archive"
       if confirm "You sure?"
-        $(".video##{id}").slideToggle 'fast'
+        $(".video##{id}").slideToggle 'fast', ->
+          $(".video##{id}").remove()
         vid_count--
         update_count(vid_count)
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
@@ -104,21 +109,19 @@ $(document).ready ->
           console.log "Successfully archived #{id}"
     else if action is "Delete"
       if confirm "You sure?"
-        $(".video##{id}").slideToggle 'fast'
+        $(".video##{id}").slideToggle 'fast', ->
+          $(".video##{id}").remove()
         vid_count--
         update_count(vid_count)
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
         $("<div/>").load "/delete/#{id}", ->
           console.log "Successfully deleted #{id}"
     else if action is "Move"
-      $(".folder_link").not("##{current_folder}").toggleClass "glowing"
-      $(".folder_link").not("##{current_folder}").ClassyWiggle 'start'
-      if moving is true
+      $(".folder_link").not("##{current_folder}").toggleClass "animated swing glowing"
+      if moving isnt false
         moving = false
-        to_move = ""
       else
-        moving = true
-        to_move = id
+        moving = id
     else if action is "Unlike"
       $(this).closest(".buttonsets").children().toggle 'fast'
       $("<div>").load "/unlike/#{id}", ->
@@ -126,7 +129,8 @@ $(document).ready ->
     else if action is "Unlike and Delete"
       if confirm "You sure?"
         $(this).closest(".buttonsets").children().toggle 750, ->
-          $(".video##{id}").slideToggle 'fast'
+          $(".video##{id}").slideToggle 'fast', ->
+            $(".video##{id}").remove()
           vid_count--
           update_count(vid_count)
           vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
