@@ -1,5 +1,10 @@
 # TODOS
 
+* if you click move on one video, and then move on another video, what happens and what are your expectations?
+* only include the description p if there's a description
+* redundant to have the id in every single button, instead refer to the closest parent video id
+* add youtube/vimeo/hulu class to the video div, no need to nest that
+* update title with number and maybe folder
 * undo the pushstate thing, it's weird
 * improve the responsive design, it's screwy
 * consider how the design can flex based on how many folders there are -- what if someone has twenty?

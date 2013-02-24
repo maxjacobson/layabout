@@ -3,9 +3,11 @@
   var load_more_vids, underline_current_folder, update_count;
 
   update_count = function(num) {
+    document.title = "(" + num + ") Layabout";
     $("#vid_count").text(num);
     if (num === 0) {
-      return $("#videos").load("<p>No more videos!</p>");
+      $("#yield").append("<p>No more videos!</p>");
+      return $("#more_videos").slideToggle('fast');
     }
   };
 
@@ -15,16 +17,21 @@
   };
 
   load_more_vids = function(vids_showing, vids_per, vid_count, speed) {
+    var queue;
+    queue = $(".video.hiding");
     if (vid_count - vids_showing > vids_per) {
-      $(".video").slice(vids_showing, vids_showing + vids_per).slideToggle(speed);
-      vids_showing += vids_per;
+      queue.slice(0, vids_per).slideToggle(speed, function() {
+        return $(this).removeClass('hiding');
+      });
+      console.log("Showing " + (vids_showing + vids_per) + " of " + vid_count + " videos");
+      return vids_showing + vids_per;
     } else {
-      $(".video").slice(vids_showing, vid_count).slideToggle(speed);
-      vids_showing = vid_count;
-      $("#more_videos").slideToggle('fast');
+      queue.slideToggle(speed, function() {
+        return $(this).removeClass('hiding');
+      });
+      console.log("Showing all " + vid_count + " videos");
+      return vid_count;
     }
-    console.log("Showing " + vids_showing + " of " + vid_count + " videos");
-    return vids_showing;
   };
 
   $(document).ajaxStart(function() {
@@ -42,58 +49,41 @@
       $("#buffer2").css("height", "" + (height_diff - 50) + "px");
     }
     vid_count = parseInt($("#vid_count").text());
-    vids_per = 5;
-    vids_showing = 0;
-    vids_showing = load_more_vids(vids_showing, vids_per, vid_count, 0);
+    if (vid_count > -1) {
+      document.title = "(" + vid_count + ") Layabout";
+    }
+    vids_per = 10;
+    vids_showing = load_more_vids(0, vids_per, vid_count, 0);
     moving = false;
-    current_folder = $("#folder_id").text();
+    current_folder = $("#videos").attr("folder_id");
     underline_current_folder(current_folder);
-    $(".folder_link").click(function() {
-      var folder_id_clicked, path, title, title_coaxed;
-      folder_id_clicked = this.id;
-      title = this.innerHTML;
-      title_coaxed = title.replace(/\s/, '-');
+    $(".folder_link").click(function(event) {
+      var folder_id_clicked, folder_title, id_to_move;
       if (moving !== false) {
-        console.log("moving isnt false");
-        if ($(this).hasClass("animated")) {
-          console.log("this has class animated");
-          console.log("Trying to move " + moving + " to " + title);
-          $(".video#" + moving).toggle('fast', function() {
-            return $(".video#" + moving).remove();
+        event.preventDefault();
+        if ($(this).hasClass("glowing")) {
+          id_to_move = moving;
+          moving = false;
+          folder_id_clicked = $(this).attr("id");
+          folder_title = $(this).text();
+          $(".video#" + id_to_move).slideToggle('fast', function() {
+            return $(this).remove();
           });
           vid_count--;
+          vids_showing--;
           update_count(vid_count);
           $(".folder_link").removeClass("animated swing hinge glowing");
           vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
-          $("<div/>").load("/move/" + moving + "/to/" + folder_id_clicked, function() {
-            return console.log("Successfully moved link to " + title);
+          return $("<div/>").load("/move/" + id_to_move + "/to/" + folder_id_clicked, function() {
+            return console.log("Successfully moved " + id_to_move + " to " + folder_title);
           });
-          return moving = false;
         }
-      } else {
-        path = '/';
-        if (title !== "Read Later") {
-          path = "/folder/" + folder_id_clicked + "/" + title_coaxed;
-        }
-        return $("#yield").load("" + path + " #yield", function() {
-          history.pushState({}, "Loading " + title, path);
-          current_folder = $("#folder_id").text();
-          underline_current_folder(current_folder);
-          $("#buffer2").css("height", "0");
-          height_diff = $(document).height() - $("body").height();
-          if (height_diff > 0) {
-            $("#buffer2").css("height", "" + (height_diff - 50) + "px");
-          }
-          vid_count = parseInt($("#vid_count").text());
-          vids_showing = 0;
-          return vids_showing = load_more_vids(vids_showing, vids_per, vid_count, 0);
-        });
       }
     });
     return $("#yield").on("click", "button", function() {
       var action, id, shower, vid_home, vid_site, video_id;
       action = $(this).text();
-      id = this.id;
+      id = $(this).closest(".video").attr("id");
       if (action === "More Videos") {
         return vids_showing = load_more_vids(vids_showing, vids_per, vid_count, 'slow');
       } else if (action === "Load video") {
@@ -106,7 +96,9 @@
           return shower.remove();
         });
       } else if (action === "Like") {
-        $(this).closest(".buttonsets").children().toggle('fast');
+        $(this).text("Unlike");
+        $(this).siblings(".both").text("Unlike and Delete");
+        $(this).siblings(".delete").attr("disabled", "disabled");
         return $('<div/>').load("/like/" + id, function() {
           return console.log("Successfully liked " + id);
         });
@@ -116,6 +108,7 @@
             return $(".video#" + id).remove();
           });
           vid_count--;
+          vids_showing--;
           update_count(vid_count);
           vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
           return $('<div/>').load("/like-and-archive/" + id, function() {
@@ -128,6 +121,7 @@
             return $(".video#" + id).remove();
           });
           vid_count--;
+          vids_showing--;
           update_count(vid_count);
           vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
           return $("<div/>").load("/archive/" + id, function() {
@@ -140,6 +134,7 @@
             return $(".video#" + id).remove();
           });
           vid_count--;
+          vids_showing--;
           update_count(vid_count);
           vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
           return $("<div/>").load("/delete/" + id, function() {
@@ -147,29 +142,26 @@
           });
         }
       } else if (action === "Move") {
-        $(".folder_link").not("#" + current_folder).toggleClass("animated swing glowing");
-        if (moving !== false) {
-          return moving = false;
-        } else {
-          return moving = id;
-        }
+        $(".folder_link").not("#" + current_folder).toggleClass("animated swing hinge glowing");
+        return moving = moving ? false : id;
       } else if (action === "Unlike") {
-        $(this).closest(".buttonsets").children().toggle('fast');
+        $(this).text("Like");
+        $(this).siblings(".both").text("Like and Archive");
+        $(this).siblings(".delete").removeAttr("disabled");
         return $("<div>").load("/unlike/" + id, function() {
           return console.log("Successfully unliked " + id);
         });
       } else if (action === "Unlike and Delete") {
         if (confirm("You sure?")) {
-          return $(this).closest(".buttonsets").children().toggle(750, function() {
-            $(".video#" + id).slideToggle('fast', function() {
-              return $(".video#" + id).remove();
-            });
-            vid_count--;
-            update_count(vid_count);
-            vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
-            return $("<div/>").load("/unlike-and-delete/" + id, function() {
-              return console.log("Successfully unliked-and-deleted " + id);
-            });
+          $(".video#" + id).slideToggle('fast', function() {
+            return $(".video#" + id).remove();
+          });
+          vid_count--;
+          vids_showing--;
+          update_count(vid_count);
+          vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
+          return $("<div/>").load("/unlike-and-delete/" + id, function() {
+            return console.log("Successfully unliked-and-deleted " + id);
           });
         }
       }

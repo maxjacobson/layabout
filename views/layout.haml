@@ -5,6 +5,7 @@
     %title Layabout
     %meta{ :charset => "UTF-8" }
     %link{ :rel => "stylesheet", :href => "/css/style.css" }
+    %link{ :rel => "stylesheet", :href => "/css/buttons.css" }
     %link{ :rel => "stylesheet", :href => "/css/animate.css" }
     %link{ :href => '/img/favicon.ico', :type => 'image/x-icon', :rel => 'icon'}
     %meta{:name => 'viewport', :content => 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'}
@@ -29,15 +30,16 @@
         %ul.menu
           -if session[:username].nil? == false
             -if session[:folders_list].nil? == false
-              %li
-                %span{:id => 'readlater', :class => 'folder_link'} Read Later
-              -session[:folders_list].each do |folder|
+              -if session[:folders_list].length > 0
                 %li
-                  %span{:id => folder["folder_id"], :class => "folder_link"}= "#{folder['title']}"
+                  %a#readlater.folder_link{:href => "/"} Read Later
+                -session[:folders_list].each do |folder|
+                  %li
+                    %a.folder_link{:id => folder["folder_id"], :href => "/folder/#{folder['folder_id']}/#{folder['clean_title']}"}= folder["title"]
             %li <a href="/logout">Logout</a>
-          -else
-            %li <a href="/">Login</a>
     #buffer1
+    .test
+      <button class="btn btn-primary" type="button">
     #yield
       =yield
     #buffer2

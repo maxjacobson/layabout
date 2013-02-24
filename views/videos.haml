@@ -1,41 +1,26 @@
 %h2= "#{session[:folder_title]} (<span id='vid_count'>#{@videos.length}</span>)"
-%span#folder_id{:style => 'display: none'}= session[:folder_id]
-#videos
+#videos{:folder_id => session[:folder_id]}
   -if @videos.length > 0
     -@videos.each do |video|
-      %div.video{:id => video["bookmark_id"], :style => 'display: none'}
+      .video.hiding{:id => video["bookmark_id"]}
         %div{:class => video["vid_site"]}
           %p= "<a href='#{video["url"]}'>#{video["title"]}</a>"
           %button{:video_id => video["video_id"], :vid_site => video["vid_site"]} Load video
           .vid_embed{:style => 'display: none'}
           %p.description= video["description"]
-          .buttonsets
+          .buttonsets{:id => video["bookmark_id"]}
             -if video["starred"] == "0"
-              .unliked_buttons
-                %button{:id => video["bookmark_id"]} Like
-                %button{:id => video["bookmark_id"]} Like and Archive
-                %button{:id => video["bookmark_id"]} Archive
-                %button{:id => video["bookmark_id"]} Delete
-                %button{:id =>  video["bookmark_id"]} Move
-              .liked_buttons{:style => 'display: none'}
-                %button{:id => video["bookmark_id"]} Unlike
-                %button{:id => video["bookmark_id"]} Unlike and Delete
-                %button{:id => video["bookmark_id"]} Archive
-                %button{:disabled => 'disabled', :id => video["bookmark_id"]} Delete
-                %button{:id =>  video["bookmark_id"]} Move
+              %button Like
+              %button.both Like and Archive
+              %button Archive
+              %button.delete Delete
+              %button Move
             -else
-              .unliked_buttons{:style => 'display: none'}
-                %button{:id => video["bookmark_id"]} Like
-                %button{:id => video["bookmark_id"]} Like and Archive
-                %button{:id => video["bookmark_id"]} Archive
-                %button{:id => video["bookmark_id"]} Delete
-                %button{:id =>  video["bookmark_id"]} Move
-              .liked_buttons
-                %button{:id => video["bookmark_id"]} Unlike
-                %button{:id => video["bookmark_id"]} Unlike and Delete
-                %button{:id => video["bookmark_id"]} Archive
-                %button{:disabled => 'disabled', :id => video["bookmark_id"]} Delete
-                %button{:id =>  video["bookmark_id"]} Move
+              %button Unlike
+              %button.both Unlike and Delete
+              %button Archive
+              %button.delete{:disabled => 'disabled'} Delete
+              %button Move
           %hr
     %button#more_videos More Videos
   -else

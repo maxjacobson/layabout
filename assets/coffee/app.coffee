@@ -1,80 +1,88 @@
 
 update_count = (num) ->
+  document.title = "(#{num}) Layabout"
   $("#vid_count").text(num)
-  $("#videos").load("<p>No more videos!</p>") if num is 0
+  if num is 0
+    $("#yield").append("<p>No more videos!</p>")
+    $("#more_videos").slideToggle 'fast' # gets rid of button
   # also, update the title eventually
+
 
 underline_current_folder = (id) ->
   $("##{id}").css "text-decoration", "underline"
   $(".folder_link").not("##{id}").css "text-decoration", "none"
 
+
 load_more_vids = (vids_showing, vids_per, vid_count, speed) ->
   #  does this play well with dom removed vids?
   # are they removed or just hidden? that matters, right?
   # should we use a different name for "vids_per" in this context?
+  queue = $(".video.hiding")
   if vid_count - vids_showing > vids_per
-    $(".video").slice(vids_showing, vids_showing + vids_per).slideToggle speed
-    vids_showing += vids_per
+    queue.slice(0, vids_per).slideToggle speed, ->
+      $(this).removeClass 'hiding'
+    console.log "Showing #{vids_showing + vids_per} of #{vid_count} videos"
+    return vids_showing + vids_per # new total of visible videos
   else
-    $(".video").slice(vids_showing, vid_count).slideToggle speed
-    vids_showing = vid_count
-    $("#more_videos").slideToggle 'fast' # gets rid of the button
-  console.log "Showing #{vids_showing} of #{vid_count} videos"
-  return vids_showing
+    queue.slideToggle speed, ->
+      $(this).removeClass 'hiding'
+    console.log "Showing all #{vid_count} videos"
+    return vid_count # new total of visible videos
+
 
 $(document).ajaxStart ->
   $('#ajax_gif').css "display", "inline"
 $(document).ajaxStop ->
   $('#ajax_gif').css "display", "none"
 
+
 $(document).ready ->
   height_diff = $(document).height() - $("body").height()
   $("#buffer2").css "height", "#{height_diff - 50}px" if height_diff > 0
-  vid_count = parseInt($("#vid_count").text())
-  vids_per = 5
-  vids_showing = 0
-  vids_showing = load_more_vids(vids_showing, vids_per, vid_count, 0)
+  vid_count = parseInt($("#vid_count").text()) # provided by the videos.haml file
+  document.title = "(#{vid_count}) Layabout" if vid_count > -1
+  vids_per = 10 # adjust to taste
+  vids_showing = load_more_vids(0, vids_per, vid_count, 0)
+      # above params: currently showing, how many to load, total in queue, speed
   moving = false # not currently moving a bookmark to another folder
-  current_folder = $("#folder_id").text()
+  current_folder = $("#videos").attr "folder_id"
   underline_current_folder(current_folder)
 
-  $(".folder_link").click ->
-    folder_id_clicked = this.id
-    title = this.innerHTML
-    title_coaxed = title.replace(/\s/, '-') # whitespace to hyphens
+
+  $(".folder_link").click (event) ->
     if moving isnt false
-      console.log "moving isnt false"
-      if $(this).hasClass "animated" # bars moving to the same folder it's already in
-        console.log "this has class animated"
-        console.log "Trying to move #{moving} to #{title}"
-        $(".video##{moving}").toggle 'fast', ->
-          $(".video##{moving}").remove()
+      event.preventDefault() # won't follow the link
+      if $(this).hasClass "glowing" # doesn't include current pagefolder
+        id_to_move = moving
+        moving = false
+        folder_id_clicked = $(this).attr "id"
+        folder_title = $(this).text()
+        $(".video##{id_to_move}").slideToggle 'fast', ->
+          $(this).remove()
         vid_count--
+        vids_showing--
         update_count(vid_count)
         $(".folder_link").removeClass "animated swing hinge glowing"
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
-        $("<div/>").load "/move/#{moving}/to/#{folder_id_clicked}", ->
-          console.log "Successfully moved link to #{title}"
-        moving = false
-    else
-      path = '/'
-      path = "/folder/#{folder_id_clicked}/#{title_coaxed}" if title isnt "Read Later"
-      $("#yield").load "#{path} #yield", ->
-        history.pushState({}, "Loading #{title}", path)
-        current_folder = $("#folder_id").text()
-        underline_current_folder(current_folder)
-        $("#buffer2").css "height", "0"
-        height_diff = $(document).height() - $("body").height()
-        $("#buffer2").css "height", "#{height_diff - 50}px" if height_diff > 0
-        vid_count = parseInt($("#vid_count").text())
-        vids_showing = 0
-        vids_showing = load_more_vids(vids_showing, vids_per, vid_count, 0)
+        $("<div/>").load "/move/#{id_to_move}/to/#{folder_id_clicked}", ->
+          console.log "Successfully moved #{id_to_move} to #{folder_title}"
+
 
   $("#yield").on "click", "button", ->
+
+    # This catches all button press actions
+    # I wrote it like this in an earlier version when I was using AJAX
+    # to load in content.
+    # TODO: rethink and possibly split it into multiple "paragraphs"
+
     action = $(this).text() # reads the text of the button
-    id = this.id
+    id = $(this).closest(".video").attr "id"
+
+
     if action is "More Videos"
       vids_showing = load_more_vids(vids_showing, vids_per, vid_count, 'slow')
+
+
     else if action is "Load video"
       shower = $(this)
       video_id = $(this).attr "video_id"
@@ -83,64 +91,77 @@ $(document).ready ->
       vid_home.load "/embedcode/#{vid_site}/#{video_id}", ->
         vid_home.slideToggle 'fast'
         shower.remove()
+
+
     else if action is "Like"
-      $(this).closest(".buttonsets").children().toggle 'fast'
+      $(this).text "Unlike"
+      $(this).siblings(".both").text "Unlike and Delete"
+      $(this).siblings(".delete").attr "disabled", "disabled"
       $('<div/>').load "/like/#{id}", ->
         # "success is incorrect, sometimes it just times out"
         # TODO catch and interpet error messages
         console.log "Successfully liked #{id}"
+
+
     else if action is "Like and Archive"
       if confirm "You sure?"
         $(".video##{id}").slideToggle 'fast', ->
           $(".video##{id}").remove()
         vid_count--
+        vids_showing--
         update_count(vid_count)
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
         $('<div/>').load "/like-and-archive/#{id}", ->
           console.log "Successfully liked-and-archived #{id}"
+
+
     else if action is "Archive"
       if confirm "You sure?"
         $(".video##{id}").slideToggle 'fast', ->
           $(".video##{id}").remove()
         vid_count--
+        vids_showing--
         update_count(vid_count)
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
         $("<div/>").load "/archive/#{id}", ->
           console.log "Successfully archived #{id}"
+
+
     else if action is "Delete"
       if confirm "You sure?"
         $(".video##{id}").slideToggle 'fast', ->
           $(".video##{id}").remove()
         vid_count--
+        vids_showing--
         update_count(vid_count)
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
         $("<div/>").load "/delete/#{id}", ->
           console.log "Successfully deleted #{id}"
+
+
     else if action is "Move"
-      $(".folder_link").not("##{current_folder}").toggleClass "animated swing glowing"
-      if moving isnt false
-        moving = false
-      else
-        moving = id
+      $(".folder_link").not("##{current_folder}").toggleClass "animated swing hinge glowing"
+      moving = if moving then false else id # cancel or start a move
+
+
     else if action is "Unlike"
-      $(this).closest(".buttonsets").children().toggle 'fast'
+      $(this).text "Like"
+      $(this).siblings(".both").text "Like and Archive"
+      $(this).siblings(".delete").removeAttr "disabled"
       $("<div>").load "/unlike/#{id}", ->
         console.log "Successfully unliked #{id}"
+
+
     else if action is "Unlike and Delete"
       if confirm "You sure?"
-        $(this).closest(".buttonsets").children().toggle 750, ->
-          $(".video##{id}").slideToggle 'fast', ->
-            $(".video##{id}").remove()
-          vid_count--
-          update_count(vid_count)
-          vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
-          $("<div/>").load "/unlike-and-delete/#{id}", ->
-            console.log "Successfully unliked-and-deleted #{id}"
-
-
-
-
-
+        $(".video##{id}").slideToggle 'fast', ->
+          $(".video##{id}").remove()
+        vid_count--
+        vids_showing--
+        update_count(vid_count)
+        vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
+        $("<div/>").load "/unlike-and-delete/#{id}", ->
+          console.log "Successfully unliked-and-deleted #{id}"
 
 
 

@@ -225,13 +225,19 @@ hr {
   color: red;
 }
 
-/* line 155, ../../assets/sass/style.scss */
+/* line 154, ../../assets/sass/style.scss */
+.hiding {
+  display: none;
+}
+
+/* line 159, ../../assets/sass/style.scss */
 .about_page li {
   list-style-type: disc;
+  margin-left: 1em;
 }
 
 @media only screen and (max-width: 600px) {
-  /* line 161, ../../assets/sass/style.scss */
+  /* line 166, ../../assets/sass/style.scss */
   #yield {
     width: 100%;
   }

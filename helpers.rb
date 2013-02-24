@@ -79,7 +79,7 @@ def load_videos(folder_id, folder_title) # folder id
       is_video, vid_site, video_id = grok_url link["url"]
       if is_video == true
         link["video_id"] = video_id
-        link["title"] = cleanup_title link["title"]
+        # link["title"] = cleanup_title link["title"] # prob not necessary
         link["vid_site"] = vid_site
         link["description"] = make_clicky link["description"]
         video_links.push link
@@ -89,7 +89,13 @@ def load_videos(folder_id, folder_title) # folder id
   @videos = video_links
   session[:folder_id] = folder_id
   session[:folder_title] = folder_title
-  session[:folders_list] = ip.folders_list if session[:folders_list].nil?
+  if session[:folders_list].nil?
+    folders_list = ip.folders_list
+    for i in 0...folders_list.length
+      folders_list[i]["clean_title"] = folders_list[i]["title"].gsub(/\s/,'-')
+    end
+    session[:folders_list] = folders_list
+  end
   haml :videos
 end
 
