@@ -11,46 +11,6 @@
 (function() {
   var load_more_vids, underline_current_folder, update_count;
 
-  update_count = function(num) {
-    document.title = "(" + num + ") Layabout";
-    $("#vid_count").text(num);
-    if (num === 0) {
-      $("#yield").append("<p>No more videos!</p>");
-      return $("#more_videos").slideToggle('fast');
-    }
-  };
-
-  underline_current_folder = function(id) {
-    $("#" + id).css("text-decoration", "underline");
-    return $(".folder_link").not("#" + id).css("text-decoration", "none");
-  };
-
-  load_more_vids = function(vids_showing, vids_per, vid_count, speed) {
-    var queue;
-    queue = $(".video.hiding");
-    if (vid_count - vids_showing > vids_per) {
-      queue.slice(0, vids_per).slideToggle(speed, function() {
-        return $(this).removeClass('hiding');
-      });
-      console.log("Showing " + (vids_showing + vids_per) + " of " + vid_count + " videos");
-      return vids_showing + vids_per;
-    } else {
-      queue.slideToggle(speed, function() {
-        return $(this).removeClass('hiding');
-      });
-      console.log("Showing all " + vid_count + " videos");
-      return vid_count;
-    }
-  };
-
-  $(document).ajaxStart(function() {
-    return $('#ajax_gif').css("display", "inline");
-  });
-
-  $(document).ajaxStop(function() {
-    return $('#ajax_gif').css("display", "none");
-  });
-
   $(document).ready(function() {
     var current_folder, height_diff, moving, vid_count, vids_per, vids_showing;
     height_diff = $(document).height() - $("body").height();
@@ -66,6 +26,9 @@
     moving = false;
     current_folder = $("#videos").attr("folder_id");
     underline_current_folder(current_folder);
+    if (navigator.userAgent.match(/iPod|iPhone|iPad/)) {
+      $(".hulu").remove();
+    }
     $(".folder_link").click(function(event) {
       var folder_id_clicked, folder_title, id_to_move;
       if (moving !== false) {
@@ -175,6 +138,46 @@
         }
       }
     });
+  });
+
+  update_count = function(num) {
+    document.title = "(" + num + ") Layabout";
+    $("#vid_count").text(num);
+    if (num === 0) {
+      $("#yield").append("<p>No more videos!</p>");
+      return $("#more_videos").slideToggle('fast');
+    }
+  };
+
+  underline_current_folder = function(id) {
+    $("#" + id).css("text-decoration", "underline");
+    return $(".folder_link").not("#" + id).css("text-decoration", "none");
+  };
+
+  load_more_vids = function(vids_showing, vids_per, vid_count, speed) {
+    var queue;
+    queue = $(".video.hiding");
+    if (vid_count - vids_showing > vids_per) {
+      queue.slice(0, vids_per).slideToggle(speed, function() {
+        return $(this).removeClass('hiding');
+      });
+      console.log("Showing " + (vids_showing + vids_per) + " of " + vid_count + " videos");
+      return vids_showing + vids_per;
+    } else {
+      queue.slideToggle(speed, function() {
+        return $(this).removeClass('hiding');
+      });
+      console.log("Showing all " + vid_count + " videos");
+      return vid_count;
+    }
+  };
+
+  $(document).ajaxStart(function() {
+    return $('#ajax_gif').css("display", "inline");
+  });
+
+  $(document).ajaxStop(function() {
+    return $('#ajax_gif').css("display", "none");
   });
 
 }).call(this);

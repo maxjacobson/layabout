@@ -5,42 +5,6 @@
   I'd like to figure out source maps so this can point to the CS file, but I have to go eat I'm so hungry.
 ###
 
-update_count = (num) ->
-  document.title = "(#{num}) Layabout"
-  $("#vid_count").text(num)
-  if num is 0
-    $("#yield").append("<p>No more videos!</p>")
-    $("#more_videos").slideToggle 'fast' # gets rid of button
-
-
-underline_current_folder = (id) ->
-  $("##{id}").css "text-decoration", "underline"
-  $(".folder_link").not("##{id}").css "text-decoration", "none"
-
-
-load_more_vids = (vids_showing, vids_per, vid_count, speed) ->
-  #  does this play well with dom removed vids?
-  # are they removed or just hidden? that matters, right?
-  # should we use a different name for "vids_per" in this context?
-  queue = $(".video.hiding")
-  if vid_count - vids_showing > vids_per
-    queue.slice(0, vids_per).slideToggle speed, ->
-      $(this).removeClass 'hiding'
-    console.log "Showing #{vids_showing + vids_per} of #{vid_count} videos"
-    return vids_showing + vids_per # new total of visible videos
-  else
-    queue.slideToggle speed, ->
-      $(this).removeClass 'hiding'
-    console.log "Showing all #{vid_count} videos"
-    return vid_count # new total of visible videos
-
-
-$(document).ajaxStart ->
-  $('#ajax_gif').css "display", "inline"
-$(document).ajaxStop ->
-  $('#ajax_gif').css "display", "none"
-
-
 $(document).ready ->
   height_diff = $(document).height() - $("body").height()
   $("#buffer2").css "height", "#{height_diff - 50}px" if height_diff > 0
@@ -52,6 +16,8 @@ $(document).ready ->
   moving = false # not currently moving a bookmark to another folder
   current_folder = $("#videos").attr "folder_id"
   underline_current_folder(current_folder)
+  if (navigator.userAgent.match(/iPod|iPhone|iPad/))
+    $(".hulu").remove() # no flash!
 
 
   $(".folder_link").click (event) ->
@@ -163,6 +129,41 @@ $(document).ready ->
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
         $("<div/>").load "/unlike-and-delete/#{id}", ->
           console.log "Successfully unliked-and-deleted #{id}"
+
+update_count = (num) ->
+  document.title = "(#{num}) Layabout"
+  $("#vid_count").text(num)
+  if num is 0
+    $("#yield").append("<p>No more videos!</p>")
+    $("#more_videos").slideToggle 'fast' # gets rid of button
+
+
+underline_current_folder = (id) ->
+  $("##{id}").css "text-decoration", "underline"
+  $(".folder_link").not("##{id}").css "text-decoration", "none"
+
+
+load_more_vids = (vids_showing, vids_per, vid_count, speed) ->
+  #  does this play well with dom removed vids?
+  # are they removed or just hidden? that matters, right?
+  # should we use a different name for "vids_per" in this context?
+  queue = $(".video.hiding")
+  if vid_count - vids_showing > vids_per
+    queue.slice(0, vids_per).slideToggle speed, ->
+      $(this).removeClass 'hiding'
+    console.log "Showing #{vids_showing + vids_per} of #{vid_count} videos"
+    return vids_showing + vids_per # new total of visible videos
+  else
+    queue.slideToggle speed, ->
+      $(this).removeClass 'hiding'
+    console.log "Showing all #{vid_count} videos"
+    return vid_count # new total of visible videos
+
+
+$(document).ajaxStart ->
+  $('#ajax_gif').css "display", "inline"
+$(document).ajaxStop ->
+  $('#ajax_gif').css "display", "none"
 
 
 
