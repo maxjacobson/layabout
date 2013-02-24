@@ -38,8 +38,6 @@
                     %a.folder_link{:id => folder["folder_id"], :href => "/folder/#{folder['folder_id']}/#{folder['clean_title']}"}= folder["title"]
             %li <a href="/logout">Logout</a>
     #buffer1
-    .test
-      <button class="btn btn-primary" type="button">
     #yield
       =yield
     #buffer2
