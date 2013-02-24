@@ -22,7 +22,7 @@ post '/' do
   u = params[:u]  # username as entered
   pw = params[:pw] # password as entered
 
-  if u =~ /nilsen/i and pw =~ /nilsen/i # made case insensitive because of iOS
+  if u.downcase == "nilsen" and pw.downcase == "nilsen" # made case insensitive because of iOS
     session[:username] = "maxwell.jacobson@gmail.com"
     session[:password] =  encrypt "layabout" # still my instapaper password...
   else
