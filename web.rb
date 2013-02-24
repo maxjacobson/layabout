@@ -22,9 +22,9 @@ post '/' do
   u = params[:u]  # username as entered
   pw = params[:pw] # password as entered
 
-  if u == "nilsen" and pw == "nilsen"
+  if u =~ /nilsen/i and pw =~ /nilsen/i # made case insensitive because of iOS
     session[:username] = "maxwell.jacobson@gmail.com"
-    session[:password] =  encrypt "layabout"
+    session[:password] =  encrypt "layabout" # still my instapaper password...
   else
     session[:username] = u
     session[:password] = encrypt pw
@@ -49,7 +49,7 @@ get '/about' do
 end
 
 get '/folder/:id/:title' do
-  if session[:username].nil?# or session[:folder_id] == :readlater
+  if session[:username].nil?
     redirect '/'
   else
     load_videos(params[:id], params[:title].gsub(/\-/, ' '))

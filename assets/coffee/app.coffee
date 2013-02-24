@@ -1,3 +1,9 @@
+###
+  Note to anyone who may be viewing the JavaScript of this web page:
+  This was written in CoffeeScript and so some stuff may look weird in the compiled version.
+  I don't understand why 'return' is in there so much. I never did that when I was writing JavaScript.
+  I'd like to figure out source maps so this can point to the CS file, but I have to go eat I'm so hungry.
+###
 
 update_count = (num) ->
   document.title = "(#{num}) Layabout"
@@ -5,7 +11,6 @@ update_count = (num) ->
   if num is 0
     $("#yield").append("<p>No more videos!</p>")
     $("#more_videos").slideToggle 'fast' # gets rid of button
-  # also, update the title eventually
 
 
 underline_current_folder = (id) ->
@@ -68,12 +73,8 @@ $(document).ready ->
           console.log "Successfully moved #{id_to_move} to #{folder_title}"
 
 
-  $("#yield").on "click", "button", ->
+  $("#yield").on "click", "button", -> # ALL button presses. is this wise?
 
-    # This catches all button press actions
-    # I wrote it like this in an earlier version when I was using AJAX
-    # to load in content.
-    # TODO: rethink and possibly split it into multiple "paragraphs"
 
     action = $(this).text() # reads the text of the button
     id = $(this).closest(".video").attr "id"
@@ -98,7 +99,7 @@ $(document).ready ->
       $(this).siblings(".both").text "Unlike and Delete"
       $(this).siblings(".delete").attr "disabled", "disabled"
       $('<div/>').load "/like/#{id}", ->
-        # "success is incorrect, sometimes it just times out"
+        # "success" is incorrect, sometimes it just times out
         # TODO catch and interpet error messages
         console.log "Successfully liked #{id}"
 
