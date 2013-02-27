@@ -120,6 +120,14 @@ hr {
   border-top: medium double #333;
 }
 
+em {
+  font-style: italic;
+}
+
+strong {
+  font-weight: bold;
+}
+
 .vimeo {
   background-color: #20B9EB;
 }
@@ -158,7 +166,7 @@ hr {
   display: none;
 }
 
-.about_page {
+.page {
   padding: 15px;
   li {
     list-style-type: disc;

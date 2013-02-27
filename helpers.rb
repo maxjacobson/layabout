@@ -5,7 +5,7 @@ end
 
 def encrypt(pw)
   cipher = get_cipher()
-  pw = "anything" if pw == ""
+  pw = "anything" if pw == "" # empty strings break the encrypter, BUT instapaper will accept anything if someone's pw is ""
   cipher.enc(pw)
 end
 
@@ -20,7 +20,7 @@ def get_ip
 end
 
 def grok_url (url)
-  # support hulu short urls
+  # TODO support hulu short urls
   if url =~ /youtube\.com\/embed\//
     id = url.match(/\/embed\/([A-Za-z0-9_-]+)/)[1].to_s
     site = :youtube
@@ -34,7 +34,6 @@ def grok_url (url)
     id = "todo"
     site = :vimeo
   elsif url =~ /vimeo\.com/
-    # https://vimeo.com/59777392
     id = url.match(/vimeo\.com\/([\d]+)/)[1].to_s
     site = :vimeo
   elsif url =~ /hulu\.com\/watch/
@@ -66,8 +65,7 @@ def make_clicky (str)
 end
 
 def load_videos(folder_id, folder_title) # folder id
-  ip = get_ip()
-  ip.authenticate(session[:username], decrypt(session[:password]))
+  ip = session[:ip]
   video_links = Array.new
   if folder_id == :readlater
     all_links = ip.bookmarks_list(:limit => 500)
@@ -100,8 +98,7 @@ def load_videos(folder_id, folder_title) # folder id
 end
 
 def perform_action(i) # i for instructions
-  ip = get_ip()
-  ip.authenticate(session[:username], decrypt(session[:password]))
+  ip = session[:ip]
   action = i[:action]
   if action == :like
     ip.bookmarks_star({"bookmark_id" => i[:id]})

@@ -1,4 +1,6 @@
 %p Don't feel like reading? Watch the videos in your Instapaper queue.
+-if @loginmessage.nil? == false
+  %p{:style => "color: red"}= @loginmessage
 %form#loginform{:action => "/", :method => "POST"}
   %input{:type => "text", :name => "u", :placeholder=> "Instapaper Username/Email" , :autofocus => "autofocus"}
   %input{:type => "password", :name => "pw", :placeholder => "Instapaper Password"}

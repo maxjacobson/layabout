@@ -11,6 +11,10 @@ set :show_exceptions, false
 
 get '/' do
   if session[:username].nil? or session[:password].nil?
+    if session[:loginmessage].nil? == false
+      @loginmessage = session[:loginmessage]
+      session.clear
+    end
     haml :login
   else
     load_videos(:readlater, "Read Later")
@@ -32,9 +36,16 @@ post '/' do
 
   ip = get_ip() # method in helpers.rb
   if ip.authenticate(session[:username], decrypt(session[:password]))
-    load_videos(:readlater, "Read Later")
-  else
+    if ip.options[:subscription_is_active] == "1" # can use site
+      session[:ip] = ip
+      load_videos(:readlater, "Read Later")
+    else
+      session.clear
+      redirect '/subscribe'
+    end
+  else # bad login info
     session.clear
+    session[:loginmessage] = "Bad login info"
     redirect '/'
   end
 end
@@ -46,6 +57,10 @@ end
 
 get '/about' do
   haml :about
+end
+
+get '/subscribe' do
+  haml :subscribe
 end
 
 get '/folder/:id/:title' do
