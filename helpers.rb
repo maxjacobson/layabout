@@ -51,18 +51,18 @@ def cleanup_title (title)
   title.gsub!(/ - YouTube/, '')
   title.gsub!(/YouTube - /, '')
   title.gsub!(/ on Vimeo/, '')
-  title.gsub!(/Watch ([A-Za-z0-9 ]+) \| ([A-Za-z0-9 ]+) online \| Free \| Hulu/, '\1: \2')
-  title.gsub!(/^[ \t\n]+/, '')
-  title.gsub!(/[ \t\n]+$/, '')
+  title.gsub!(/Watch (.+) \| (.+) online \| Free \| Hulu/, '\1: \2')
+  title.gsub!(/Watch (.+) online \| Free \| Hulu/, '\1')
+  title.gsub!(/^[\s\t\n]+/, '')
+  title.gsub!(/[\s\t\n]+$/, '')
   return title
 end
 
-def make_clicky (s)
-  # make hashtags clickable
-  s.gsub!(/\w*(:\/\/)\w*.[\w#?%=\/]+/, '<a href="\0">\0</a>') # the fuck is this
-  s.gsub!(/@[A-Za-z0-9_]+/, '<a href="http://twitter.com/\0">\0</a>')
-  s.gsub!(/twitter.com\/@/, 'twitter.com/')
-  return s
+def make_clicky (str)
+  str.gsub!(/\w*(:\/\/)\w*.[\w#?%=\/]+/, '<a href="\0">\0</a>') # makes URLs clickable
+  str.gsub!(/@([A-Za-z0-9_]+)/, '<a href="https://twitter.com/\1">@\1</a>') # makes twitter handles clickable
+  str.gsub!(/\#([\w\d]+)/, '<a href="https://twitter.com/search?q=%23\1">#\1</a>') # makes hashtags clickable
+  return str
 end
 
 def load_videos(folder_id, folder_title) # folder id
@@ -79,7 +79,7 @@ def load_videos(folder_id, folder_title) # folder id
       is_video, vid_site, video_id = grok_url link["url"]
       if is_video == true
         link["video_id"] = video_id
-        # link["title"] = cleanup_title link["title"] # prob not necessary
+        link["title"] = cleanup_title link["title"] # prob not necessary
         link["vid_site"] = vid_site
         link["description"] = make_clicky link["description"]
         video_links.push link

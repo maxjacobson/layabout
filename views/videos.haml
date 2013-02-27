@@ -8,8 +8,8 @@
         .vid_embed{:style => 'display: none'}
         -if video["description"].length > 0
           %p.description= video["description"]
-        .buttonsets
-          -if video["starred"] == "0"
+        .buttons
+          -if video["starred"] == "0" # *NOT* liked
             %button.like Like
             %button.both Like and Archive
             %button.archive Archive
@@ -22,6 +22,7 @@
             %button.delete{:disabled => 'disabled'} Delete
             %button.move Move
         %hr
+    %p#messages
     %button#more_videos More Videos
   -else
-    %p No videos in this folder.
+    %p#messages No videos in this folder.

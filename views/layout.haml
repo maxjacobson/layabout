@@ -3,40 +3,29 @@
 %html
   %head
     %title Layabout
-    %meta{ :charset => "UTF-8" }
-    %link{ :rel => "stylesheet", :href => "/css/style.css" }
-    %link{ :rel => "stylesheet", :href => "/css/buttons.css" }
-    %link{ :rel => "stylesheet", :href => "/css/animate.css" }
-    %link{ :href => '/img/favicon.ico', :type => 'image/x-icon', :rel => 'icon'}
+    %meta{:charset => "UTF-8" }
+    %link{:rel => "stylesheet", :href => "/css/style.css"}
+    %link{:rel => "stylesheet", :href => "/css/animate.min.css"}
+    %link{:href => '/img/favicon.ico', :type => 'image/x-icon', :rel => 'icon'}
     %meta{:name => 'viewport', :content => 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'}
     %meta{:name => 'HandheldFriendly', :content => 'true'}
 
     %script{:type => 'text/javascript'}
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-4982721-13']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
+      var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-4982721-13']); _gaq.push(['_trackPageview']); (function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); });
   %body
     .header
       #ajax_gif
         %img{:src => '/img/ajax.gif'}
       .header_content
         %h1 <a href="/">Layabout</a>
-        %ul.menu
-          -if session[:username].nil? == false
+        %p.menu
+          -if session[:username].nil? == false # three nested ifs? really?
             -if session[:folders_list].nil? == false
               -if session[:folders_list].length > 0
-                %li
-                  %a#readlater.folder_link{:href => "/"} Read Later
+                %a#readlater.folder_link{:href => "/"} Read Later
                 -session[:folders_list].each do |folder|
-                  %li
-                    %a.folder_link{:id => folder["folder_id"], :href => "/folder/#{folder['folder_id']}/#{folder['clean_title']}"}= folder["title"]
-            %li <a href="/logout">Logout</a>
+                  %a.folder_link{:id => folder["folder_id"], :href => "/folder/#{folder['folder_id']}/#{folder['clean_title']}"}= folder["title"]
+                %a{:href => "/logout"} Logout
     #buffer1
     #yield
       =yield
@@ -47,5 +36,5 @@
           * A [Max Jacobson](http://www.maxjacobson.net/~about) project
           * [About this site](/about)
           * [Email me](mailto:max@maxjacobson.net)
-    %script{:src => '/js/jquery.js'}
+    %script{:src => '/js/jquery.min.js'}
     %script{:src => '/js/app.js'}

@@ -9,7 +9,7 @@
 
 
 (function() {
-  var load_more_vids, underline_current_folder, update_count;
+  var delay, load_more_vids, remove_video, underline_current_folder, update_count;
 
   $(document).ready(function() {
     var current_folder, height_diff, moving, vid_count, vids_per, vids_showing;
@@ -29,27 +29,23 @@
     if (navigator.userAgent.match(/iPod|iPhone|iPad/)) {
       $(".hulu").remove();
     }
-    $(".folder_link").click(function(event) {
+    $(".header").on("click", ".folder_link", function(event) {
       var folder_id_clicked, folder_title, id_to_move;
-      if (moving !== false) {
+      if ($(this).hasClass("glowing")) {
         event.preventDefault();
-        if ($(this).hasClass("glowing")) {
-          id_to_move = moving;
-          moving = false;
-          folder_id_clicked = $(this).attr("id");
-          folder_title = $(this).text();
-          $(".video#" + id_to_move).slideToggle('fast', function() {
-            return $(this).remove();
-          });
-          vid_count--;
-          vids_showing--;
-          update_count(vid_count);
-          $(".folder_link").removeClass("animated swing hinge glowing");
-          vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
-          return $("<div/>").load("/move/" + id_to_move + "/to/" + folder_id_clicked, function() {
-            return console.log("Successfully moved " + id_to_move + " to " + folder_title);
-          });
-        }
+        id_to_move = moving;
+        moving = false;
+        folder_id_clicked = $(this).attr("id");
+        folder_title = $(this).text();
+        remove_video(id_to_move);
+        vid_count--;
+        vids_showing--;
+        update_count(vid_count);
+        $(".folder_link").removeClass("glowing animated swing");
+        vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow');
+        return $("<div/>").load("/move/" + id_to_move + "/to/" + folder_id_clicked, function() {
+          return console.log("Successfully moved " + id_to_move + " to " + folder_title);
+        });
       }
     });
     return $("#yield").on("click", "button", function() {
@@ -74,11 +70,16 @@
         return $('<div/>').load("/like/" + id, function() {
           return console.log("Successfully liked " + id);
         });
+      } else if (action === "Unlike") {
+        $(this).text("Like");
+        $(this).siblings(".both").text("Like and Archive");
+        $(this).siblings(".delete").removeAttr("disabled");
+        return $("<div>").load("/unlike/" + id, function() {
+          return console.log("Successfully unliked " + id);
+        });
       } else if (action === "Like and Archive") {
         if (confirm("You sure?")) {
-          $(".video#" + id).slideToggle('fast', function() {
-            return $(".video#" + id).remove();
-          });
+          remove_video(id);
           vid_count--;
           vids_showing--;
           update_count(vid_count);
@@ -89,9 +90,7 @@
         }
       } else if (action === "Archive") {
         if (confirm("You sure?")) {
-          $(".video#" + id).slideToggle('fast', function() {
-            return $(".video#" + id).remove();
-          });
+          remove_video(id);
           vid_count--;
           vids_showing--;
           update_count(vid_count);
@@ -102,9 +101,7 @@
         }
       } else if (action === "Delete") {
         if (confirm("You sure?")) {
-          $(".video#" + id).slideToggle('fast', function() {
-            return $(".video#" + id).remove();
-          });
+          remove_video(id);
           vid_count--;
           vids_showing--;
           update_count(vid_count);
@@ -114,20 +111,11 @@
           });
         }
       } else if (action === "Move") {
-        $(".folder_link").not("#" + current_folder).toggleClass("animated swing hinge glowing");
+        $(".folder_link").not("#" + current_folder).toggleClass("animated swing glowing");
         return moving = moving ? false : id;
-      } else if (action === "Unlike") {
-        $(this).text("Like");
-        $(this).siblings(".both").text("Like and Archive");
-        $(this).siblings(".delete").removeAttr("disabled");
-        return $("<div>").load("/unlike/" + id, function() {
-          return console.log("Successfully unliked " + id);
-        });
       } else if (action === "Unlike and Delete") {
         if (confirm("You sure?")) {
-          $(".video#" + id).slideToggle('fast', function() {
-            return $(".video#" + id).remove();
-          });
+          remove_video(id);
           vid_count--;
           vids_showing--;
           update_count(vid_count);
@@ -150,26 +138,46 @@
   };
 
   underline_current_folder = function(id) {
-    $("#" + id).css("text-decoration", "underline");
-    return $(".folder_link").not("#" + id).css("text-decoration", "none");
+    return $("#" + id).css("text-decoration", "underline");
   };
 
-  load_more_vids = function(vids_showing, vids_per, vid_count, speed) {
+  load_more_vids = function(vids_showing, num_to_load, vid_count, speed) {
     var queue;
     queue = $(".video.hiding");
-    if (vid_count - vids_showing > vids_per) {
-      queue.slice(0, vids_per).slideToggle(speed, function() {
+    if (vid_count - vids_showing > num_to_load) {
+      queue.slice(0, num_to_load).slideToggle(speed, function() {
         return $(this).removeClass('hiding');
       });
-      console.log("Showing " + (vids_showing + vids_per) + " of " + vid_count + " videos");
-      return vids_showing + vids_per;
+      console.log("Showing " + (vids_showing + num_to_load) + " of " + vid_count + " videos");
+      return vids_showing + num_to_load;
     } else {
+      if ($("#messages").text() === "") {
+        $("#messages").text("You've reached the bottom of this folder!");
+      }
+      $("#more_videos").slideToggle('fast');
       queue.slideToggle(speed, function() {
         return $(this).removeClass('hiding');
       });
       console.log("Showing all " + vid_count + " videos");
       return vid_count;
     }
+  };
+
+  delay = function(s, func) {
+    return setTimeout(func, s * 1000);
+  };
+
+  remove_video = function(video_id) {
+    var video;
+    video = $(".video#" + video_id);
+    if (Math.random() > 0.5) {
+      video.addClass("animated bounceOutLeft");
+    } else {
+      video.addClass("animated bounceOutRight");
+    }
+    return delay(1, function() {
+      return video.remove();
+    });
   };
 
   $(document).ajaxStart(function() {

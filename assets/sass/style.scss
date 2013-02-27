@@ -1,4 +1,4 @@
-@import "compass/reset";
+ @import "compass/reset";
 // @import "compass/layout/sticky-footer";
 // @include sticky-footer(25px, "#yield", "footer", ".footer_content");
 
@@ -81,7 +81,7 @@ h2 {
   font-size: 3em;
 }
 
-p, ul, li, h1, h2, h3, h4, h5, h6, .buttonsets {
+p, ul, li, h1, h2, h3, h4, h5, h6, .buttons {
   margin: 5px 0;
 }
 
@@ -92,7 +92,7 @@ p, ul, li, h1, h2, h3, h4, h5, h6, .buttonsets {
   display: none;
 }
 
-a, .folder_link {
+a {
   color: $link;
   text-decoration: none;
   &:hover {
@@ -106,17 +106,6 @@ a, .folder_link {
 hr {
   border: none;
   border-top: medium double #333;
-}
-
-.menu {
-  li {
-    display: inline;
-  }
-  li+li {
-    &:before {
-      content: "\a0 \2736\a0 ";
-    }
-  }
 }
 
 .vimeo {
@@ -148,7 +137,9 @@ hr {
 }
 
 .glowing {
-  color: red;
+  display: inline-block;
+  color: #FF7FBA;
+  text-shadow: 0.1em 0.1em 0.1em #FDEDFF;
 }
 
 .hiding {
@@ -156,6 +147,7 @@ hr {
 }
 
 .about_page {
+  padding: 15px;
   li {
     list-style-type: disc;
     margin-left: 1em;
