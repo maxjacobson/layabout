@@ -75,7 +75,7 @@
         $(this).text("Like");
         $(this).siblings(".both").text("Like and Archive");
         $(this).siblings(".delete").removeAttr("disabled");
-        return $("<div>").load("/unlike/" + id, function() {
+        return $("<div/>").load("/unlike/" + id, function() {
           return console.log("Successfully unliked " + id);
         });
       } else if (action === "Like and Archive") {

@@ -68,7 +68,7 @@ $(document).ready ->
       $(this).text "Like"
       $(this).siblings(".both").text "Like and Archive"
       $(this).siblings(".delete").removeAttr "disabled"
-      $("<div>").load "/unlike/#{id}", ->
+      $("<div/>").load "/unlike/#{id}", ->
         console.log "Successfully unliked #{id}"
 
 
