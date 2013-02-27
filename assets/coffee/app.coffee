@@ -45,7 +45,8 @@ $(document).ready ->
       vids_showing = load_more_vids(vids_showing, vids_per, vid_count, 'slow')
 
 
-    else if action is "Load video"
+    else if action is "Watch"
+      $(this).text "Loading..."
       shower = $(this)
       video_id = $(this).attr "video_id"
       vid_site =  $(this).attr "vid_site"
@@ -124,8 +125,8 @@ update_count = (num) ->
   document.title = "(#{num}) Layabout"
   $("#vid_count").text(num)
   if num is 0
-    $("#yield").append("<p>No more videos!</p>")
-    $("#more_videos").slideToggle 'fast' # gets rid of button
+    $("#messages").text "No more videos!"
+    $("#more_videos").remove() # rid of the load more button
 
 
 underline_current_folder = (id) ->

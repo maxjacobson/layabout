@@ -17,6 +17,13 @@ $videopadding: 10px;
   src: local('VT323'), local('VT323-Regular'), url(http://themes.googleusercontent.com/static/fonts/vt323/v4/LfMzj2MWAZU6qzlnp1MNbg.woff) format('woff');
 }
 
+@font-face {
+  font-family: 'Anaheim';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Anaheim'), local('Anaheim-Regular'), url(http://themes.googleusercontent.com/static/fonts/anaheim/v1/ih4p6L2bXQbInUkJnAHUUQLUuEpTyoUstqEm5AMlJo4.woff) format('woff');
+}
+
 body {
   margin: 0 auto;
   font-family: "Helvetica", sans-serif;
@@ -81,6 +88,11 @@ h2 {
   font-size: 3em;
 }
 
+h3 {
+  font-family: 'Anaheim', serif;
+  font-size: 1.5em;
+}
+
 p, ul, li, h1, h2, h3, h4, h5, h6, .buttons {
   margin: 5px 0;
 }
@@ -126,7 +138,7 @@ hr {
     color: white;
   }
   a {
-    color: #E8E8E8;
+    color: #FFCC66;
     &:hover {
       color: black;
     }

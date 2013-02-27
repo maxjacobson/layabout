@@ -3,26 +3,25 @@
   -if @videos.length > 0
     -@videos.each do |video|
       .video.hiding{:id => video["bookmark_id"], :class => video["vid_site"]}
-        %p= "<a href='#{video["url"]}'>#{video["title"]}</a>"
-        %button{:video_id => video["video_id"], :vid_site => video["vid_site"]} Load video
+        %h3= "<a href='#{video["url"]}'>#{video["title"]}</a>"
         .vid_embed{:style => 'display: none'}
         -if video["description"].length > 0
           %p.description= video["description"]
-        .buttons
-          -if video["starred"] == "0" # *NOT* liked
-            %button.like Like
-            %button.both Like and Archive
-            %button.archive Archive
-            %button.delete Delete
-            %button.move Move
-          -else
-            %button.unlike Unlike
-            %button.both Unlike and Delete
-            %button.archive Archive
-            %button.delete{:disabled => 'disabled'} Delete
-            %button.move Move
+        %button.btn.btn-small.watch{:video_id => video["video_id"], :vid_site => video["vid_site"]} Watch
+        -if video["starred"] == "0" # *NOT* liked
+          %button.btn.btn-small.like Like
+          %button.btn.btn-small.both Like and Archive
+          %button.btn.btn-small.archive Archive
+          %button.btn.btn-small.delete Delete
+          %button.btn.btn-small.move Move
+        -else
+          %button.btn.btn-small.unlike Unlike
+          %button.btn.btn-small.both Unlike and Delete
+          %button.btn.btn-small.archive Archive
+          %button.btn.btn-small.delete{:disabled => 'disabled'} Delete
+          %button.btn.btn-small.move Move
         %hr
     %p#messages
-    %button#more_videos More Videos
+    %button.btn.btn-block#more_videos More Videos
   -else
     %p#messages No videos in this folder.

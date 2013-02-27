@@ -1,5 +1,6 @@
 # TODOS
 
+* what about folder names that HAVE hyphens in them?
 * use the bootstrap buttons, or some other kind. or just learn from them...
 # "success" is incorrect, sometimes it just times out
         # TODO catch and interpet error messages
