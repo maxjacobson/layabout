@@ -31,7 +31,7 @@ def grok_url (url)
     id = url.match(/(http:\/\/youtu.be\/)([A-Za-z0-9\-_]+)/)[2].to_s
     site = :youtube
   elsif url =~ /vimeo\.com\/m\//
-    id = "todo"
+    id = url.match(/\/m\/(\d+)/)[1].to_s
     site = :vimeo
   elsif url =~ /vimeo\.com/
     id = url.match(/vimeo\.com\/([\d]+)/)[1].to_s
@@ -98,6 +98,7 @@ def load_videos(folder_id, folder_title) # folder id
 end
 
 def perform_action(i) # i for instructions
+  # maybe return false if the action doesn't go thru?
   ip = session[:ip]
   action = i[:action]
   if action == :like

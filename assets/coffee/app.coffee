@@ -31,7 +31,7 @@ $(document).ready ->
       $(".folder_link").removeClass "glowing animated swing"
       vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
       $("<div/>").load "/move/#{id_to_move}/to/#{folder_id_clicked}", ->
-        console.log "Successfully moved #{id_to_move} to #{folder_title}"
+        console.log $(this).text()
 
 
   $("#yield").on "click", "button", -> # ALL button presses. is this wise?
@@ -61,7 +61,7 @@ $(document).ready ->
       $(this).siblings(".both").text "Unlike and Delete"
       $(this).siblings(".delete").attr "disabled", "disabled"
       $('<div/>').load "/like/#{id}", ->
-        console.log "Successfully liked #{id}"
+        console.log $(this).text()
 
 
     else if action is "Unlike"
@@ -69,7 +69,7 @@ $(document).ready ->
       $(this).siblings(".both").text "Like and Archive"
       $(this).siblings(".delete").removeAttr "disabled"
       $("<div/>").load "/unlike/#{id}", ->
-        console.log "Successfully unliked #{id}"
+        console.log $(this).text()
 
 
     else if action is "Like and Archive"
@@ -80,7 +80,7 @@ $(document).ready ->
         update_count(vid_count)
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
         $('<div/>').load "/like-and-archive/#{id}", ->
-          console.log "Successfully liked-and-archived #{id}"
+          console.log $(this).text()
 
 
     else if action is "Archive"
@@ -91,7 +91,7 @@ $(document).ready ->
         update_count(vid_count)
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
         $("<div/>").load "/archive/#{id}", ->
-          console.log "Successfully archived #{id}"
+          console.log $(this).text()
 
 
     else if action is "Delete"
@@ -102,7 +102,7 @@ $(document).ready ->
         update_count(vid_count)
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
         $("<div/>").load "/delete/#{id}", ->
-          console.log "Successfully deleted #{id}"
+          console.log $(this).text()
 
 
     else if action is "Move"
@@ -119,7 +119,7 @@ $(document).ready ->
         update_count(vid_count)
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
         $("<div/>").load "/unlike-and-delete/#{id}", ->
-          console.log "Successfully unliked-and-deleted #{id}"
+          console.log $(this).text()
 
 update_count = (num) ->
   document.title = "(#{num}) Layabout"

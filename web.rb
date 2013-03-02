@@ -73,32 +73,32 @@ end
 
 get '/like/:id' do
   perform_action({:action => :like, :id => params[:id].to_i})
-  "Liked"
+  "Liked #{params[:id]}"
 end
 
 get '/unlike/:id' do
   perform_action({:action => :unlike, :id => params[:id].to_i})
-  "Disliked"
+  "Disliked #{params[:id]}"
 end
 
 get '/archive/:id' do
   perform_action({:action => :archive, :id => params[:id].to_i})
-  "Archived"
+  "Archived #{params[:id]}"
 end
 
 get '/delete/:id' do
   perform_action({:action => :delete, :id => params[:id].to_i})
-  "Deleted"
+  "Deleted #{params[:id]}"
 end
 
 get '/like-and-archive/:id' do
   perform_action({:action => :like_and_archive, :id => params[:id].to_i})
-  "Liked and archived"
+  "Liked and archived #{params[:id]}"
 end
 
 get '/unlike-and-delete/:id' do
   perform_action({:action => :unlike_and_delete, :id => params[:id].to_i})
-  "Unliked and deleted"
+  "Unliked and deleted #{params[:id]}"
 end
 
 get '/move/:id/to/:folder' do
@@ -109,12 +109,16 @@ get '/move/:id/to/:folder' do
   else
     perform_action({:action => :move, :id => id, :folder_id => folder.to_i})
   end
-  "Moved to folder: #{folder}"
+  "Moved #{params[:id]} to folder: #{folder}"
 end
 
 get '/embedcode/:site/:id' do
   embedcode = get_embed params[:site].to_sym, params[:id]
-  haml embedcode, :layout => false
+  if embedcode.nil? or embedcode == ""
+    "Video could not be loaded. It may have embedding disabled."
+  else
+    haml embedcode, :layout => false
+  end
 end
 
 error 404 do
