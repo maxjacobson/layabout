@@ -8,9 +8,11 @@
 $(document).ready ->
   vid_count = parseInt $("#vid_count").text() # provided by the videos.haml file
   if not navigator.mimeTypes["application/x-shockwave-flash"] # no flash, hide hulu videos
-    vid_count -= $(".hulu").length
-    console.log "Removing #{$(".hulu").length} hulu videos"
-    $(".hulu").remove()
+    hulu_vids = $(".hulu")
+    num_hulu_vids = hulu_vids.length
+    vid_count -= num_hulu_vids
+    console.log "Removing #{num_hulu_vids} hulu videos"
+    hulu_vids.remove()
   height_diff = $(document).height() - $("body").height()
   $("#buffer2").css "height", "#{height_diff - 50}px" if height_diff > 0 # pushes footer to bottom (sometimes too far)
   document.title = "(#{vid_count}) Layabout" if vid_count > -1 # avoids updating to "(NaN) Layabout" on /about or / pre-login

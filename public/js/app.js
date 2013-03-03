@@ -12,12 +12,14 @@
   var delay, load_more_vids, remove_video, underline_current_folder, update_count;
 
   $(document).ready(function() {
-    var current_folder, height_diff, moving, vid_count, vids_per, vids_showing;
+    var current_folder, height_diff, hulu_vids, moving, num_hulu_vids, vid_count, vids_per, vids_showing;
     vid_count = parseInt($("#vid_count").text());
     if (!navigator.mimeTypes["application/x-shockwave-flash"]) {
-      vid_count -= $(".hulu").length;
-      console.log("Removing " + ($(".hulu").length) + " hulu videos");
-      $(".hulu").remove();
+      hulu_vids = $(".hulu");
+      num_hulu_vids = hulu_vids.length;
+      vid_count -= num_hulu_vids;
+      console.log("Removing " + num_hulu_vids + " hulu videos");
+      hulu_vids.remove();
     }
     height_diff = $(document).height() - $("body").height();
     if (height_diff > 0) {
