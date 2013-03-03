@@ -39,13 +39,13 @@ post '/' do
     if ip.options[:subscription_is_active] == "1" # can use site
       session[:ip] = ip
       load_videos(:readlater, "Read Later")
-    else
+    else # can't use site unless they subscribe. break it to them easy
       session.clear
       redirect '/subscribe'
     end
   else # bad login info
     session.clear
-    session[:loginmessage] = "Bad login info"
+    session[:loginmessage] = "Bad login info" # will show up above the login form
     redirect '/'
   end
 end

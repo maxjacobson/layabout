@@ -13,11 +13,17 @@
 
   $(document).ready(function() {
     var current_folder, height_diff, moving, vid_count, vids_per, vids_showing;
+    console.log(navigator.userAgent);
+    vid_count = parseInt($("#vid_count").text());
+    if (navigator.userAgent.match(/Safari|iPod|iPhone|iPad/)) {
+      vid_count -= $(".hulu").length;
+      console.log("Removing " + ($(".hulu").length) + " hulu videos");
+      $(".hulu").remove();
+    }
     height_diff = $(document).height() - $("body").height();
     if (height_diff > 0) {
       $("#buffer2").css("height", "" + (height_diff - 50) + "px");
     }
-    vid_count = parseInt($("#vid_count").text());
     if (vid_count > -1) {
       document.title = "(" + vid_count + ") Layabout";
     }
@@ -26,9 +32,6 @@
     moving = false;
     current_folder = $("#videos").attr("folder_id");
     underline_current_folder(current_folder);
-    if (navigator.userAgent.match(/iPod|iPhone|iPad/)) {
-      $(".hulu").remove();
-    }
     $(".header").on("click", ".folder_link", function(event) {
       var folder_id_clicked, folder_title, id_to_move;
       if ($(this).hasClass("glowing")) {

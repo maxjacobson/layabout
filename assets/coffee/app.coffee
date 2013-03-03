@@ -6,16 +6,22 @@
 ###
 
 $(document).ready ->
+  console.log navigator.userAgent
+  vid_count = parseInt($("#vid_count").text()) # provided by the videos.haml file
+  if navigator.userAgent.match /Safari|iPod|iPhone|iPad/ # no flash, can't play!
+    vid_count -= $(".hulu").length
+    console.log "Removing #{$(".hulu").length} hulu videos"
+    $(".hulu").remove()
   height_diff = $(document).height() - $("body").height()
   $("#buffer2").css "height", "#{height_diff - 50}px" if height_diff > 0 # pushes footer to bottom (sometimes too far)
-  vid_count = parseInt($("#vid_count").text()) # provided by the videos.haml file
   document.title = "(#{vid_count}) Layabout" if vid_count > -1 # avoids updating to "(NaN) Layabout" on /about or / pre-login
   vids_per = 10 # adjust to taste
   vids_showing = load_more_vids(0, vids_per, vid_count, 0) # params: currently showing, how many to load, total in queue, speed
   moving = false # not currently moving a bookmark to another folder
   current_folder = $("#videos").attr "folder_id"
   underline_current_folder(current_folder)
-  $(".hulu").remove() if (navigator.userAgent.match(/iPod|iPhone|iPad/)) # no flash, can't play!
+
+  # $(".hulu").remove() if (navigator.userAgent.match(/iPod|iPhone|iPad/)) # no flash, can't play!
 
   $(".header").on "click", ".folder_link", (event) -> # when clicking on a folder link in the header
     if $(this).hasClass "glowing"
