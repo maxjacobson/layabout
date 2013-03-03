@@ -6,9 +6,14 @@
 ###
 
 $(document).ready ->
-  console.log navigator.userAgent
+  flash = navigator.mimeTypes["application/x-shockwave-flash"]
+  console.log flash
+  if flash
+    console.log "has flash"
+  else
+    console.log "has no flash"
   vid_count = parseInt($("#vid_count").text()) # provided by the videos.haml file
-  if navigator.userAgent.match /Safari|iPod|iPhone|iPad/ # no flash, can't play!
+  if navigator.userAgent.match /iPod|iPhone|iPad/ # no flash, can't play!
     vid_count -= $(".hulu").length
     console.log "Removing #{$(".hulu").length} hulu videos"
     $(".hulu").remove()

@@ -12,10 +12,16 @@
   var delay, load_more_vids, remove_video, underline_current_folder, update_count;
 
   $(document).ready(function() {
-    var current_folder, height_diff, moving, vid_count, vids_per, vids_showing;
-    console.log(navigator.userAgent);
+    var current_folder, flash, height_diff, moving, vid_count, vids_per, vids_showing;
+    flash = navigator.mimeTypes["application/x-shockwave-flash"];
+    console.log(flash);
+    if (flash) {
+      console.log("has flash");
+    } else {
+      console.log("has no flash");
+    }
     vid_count = parseInt($("#vid_count").text());
-    if (navigator.userAgent.match(/Safari|iPod|iPhone|iPad/)) {
+    if (navigator.userAgent.match(/iPod|iPhone|iPad/)) {
       vid_count -= $(".hulu").length;
       console.log("Removing " + ($(".hulu").length) + " hulu videos");
       $(".hulu").remove();
