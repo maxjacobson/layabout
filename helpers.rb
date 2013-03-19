@@ -1,5 +1,6 @@
 def get_cipher
   # change the key to alter the encryption
+  # probably replace this with something less goofy
   Gibberish::AES.new("b34rvssh4rk")
 end
 

@@ -11,7 +11,7 @@ $(document).ready ->
     hulu_vids = $(".hulu")
     num_hulu_vids = hulu_vids.length
     vid_count -= num_hulu_vids
-    console.log "Removing #{num_hulu_vids} hulu videos"
+    puts "Removing #{num_hulu_vids} hulu videos"
     hulu_vids.remove()
   height_diff = $(document).height() - $("body").height()
   $("#buffer2").css "height", "#{height_diff - 50}px" if height_diff > 0 # pushes footer to bottom (sometimes too far)
@@ -21,8 +21,6 @@ $(document).ready ->
   moving = false # not currently moving a bookmark to another folder
   current_folder = $("#videos").attr "folder_id"
   underline_current_folder(current_folder)
-
-  # $(".hulu").remove() if (navigator.userAgent.match(/iPod|iPhone|iPad/)) # no flash, can't play!
 
   $(".header").on "click", ".folder_link", (event) -> # when clicking on a folder link in the header
     if $(this).hasClass "glowing"
@@ -38,7 +36,7 @@ $(document).ready ->
       $(".folder_link").removeClass "glowing animated swing"
       vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
       $("<div/>").load "/move/#{id_to_move}/to/#{folder_id_clicked}", ->
-        console.log $(this).text()
+        puts $(this).text()
 
 
   $("#yield").on "click", "button", -> # ALL button presses. is this wise?
@@ -68,7 +66,7 @@ $(document).ready ->
       $(this).siblings(".both").text "Unlike and Delete"
       $(this).siblings(".delete").attr "disabled", "disabled"
       $('<div/>').load "/like/#{id}", ->
-        console.log $(this).text()
+        puts $(this).text()
 
 
     else if action is "Unlike"
@@ -76,7 +74,7 @@ $(document).ready ->
       $(this).siblings(".both").text "Like and Archive"
       $(this).siblings(".delete").removeAttr "disabled"
       $("<div/>").load "/unlike/#{id}", ->
-        console.log $(this).text()
+        puts $(this).text()
 
 
     else if action is "Like and Archive"
@@ -87,7 +85,7 @@ $(document).ready ->
         update_count(vid_count)
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
         $('<div/>').load "/like-and-archive/#{id}", ->
-          console.log $(this).text()
+          puts $(this).text()
 
 
     else if action is "Archive"
@@ -98,7 +96,7 @@ $(document).ready ->
         update_count(vid_count)
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
         $("<div/>").load "/archive/#{id}", ->
-          console.log $(this).text()
+          puts $(this).text()
 
 
     else if action is "Delete"
@@ -109,7 +107,7 @@ $(document).ready ->
         update_count(vid_count)
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
         $("<div/>").load "/delete/#{id}", ->
-          console.log $(this).text()
+          puts $(this).text()
 
 
     else if action is "Move"
@@ -126,45 +124,7 @@ $(document).ready ->
         update_count(vid_count)
         vids_showing = load_more_vids(vids_showing, 1, vid_count, 'slow')
         $("<div/>").load "/unlike-and-delete/#{id}", ->
-          console.log $(this).text()
-
-update_count = (num) ->
-  document.title = "(#{num}) Layabout"
-  $("#vid_count").text(num)
-  if num is 0
-    $("#messages").text "No more videos!"
-    $("#more_videos").remove() # rid of the load more button
-
-
-underline_current_folder = (id) ->
-  $("##{id}").css "text-decoration", "underline"
-
-
-load_more_vids = (vids_showing, num_to_load, vid_count, speed) ->
-  queue = $(".video.hiding")
-  if vid_count - vids_showing > num_to_load
-    queue.slice(0, num_to_load).slideToggle speed, ->
-      $(this).removeClass 'hiding'
-    console.log "Showing #{vids_showing + num_to_load} of #{vid_count} videos"
-    return vids_showing + num_to_load # new total of visible videos
-  else
-    $("#messages").text "You've reached the bottom of this folder!" if $("#messages").text() is ""
-    $("#more_videos").slideToggle 'fast' # gets rid of button
-    queue.slideToggle speed, ->
-      $(this).removeClass 'hiding'
-    console.log "Showing all #{vid_count} videos"
-    return vid_count # new total of visible videos
-
-delay = (s, func) -> setTimeout func, s*1000 # http://stackoverflow.com/a/6460151
-
-remove_video = (video_id) ->
-  video = $(".video##{video_id}")
-  if Math.random() > 0.5
-    video.addClass "animated bounceOutLeft"
-  else
-    video.addClass "animated bounceOutRight"
-  delay 1, ->
-    video.remove()
+          puts $(this).text()
 
 # show or hide the ajax spinner gif, when requests are being made
 $(document).ajaxStart ->

@@ -1,5 +1,6 @@
 # TODOS
 
+* if I click move, and then dleete the video, the folders are still pink ugh
 * learn to catch and interpret error messages, particulary HTTP ones
 * when hiding hulu videos on mobile, reflect that in the count and `vids_showing` variable. It's weird having 0 videos showing, and seeing the count say "1".
 * what about folder names that HAVE hyphens in them?
