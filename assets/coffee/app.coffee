@@ -6,6 +6,23 @@
 ###
 
 $(document).ready ->
+
+  # I want to use [this plugin](http://css-tricks.com/fluid-width-youtube-videos/)
+  # but it's in js, so I've adapted it to CoffeeScript and made it work with all iframes,
+  # not just youtube ones. dope plugin chris!
+
+  $allVideos = $("iframe")
+  $fluidEl = $("body")
+  $allVideos.each ->
+    $(this).data('aspectRatio', this.height / this.width).removeAttr('height').removeAttr('width')
+  $(window).resize ->
+    newWidth = $fluidEl.width()
+    $allVideos.each ->
+      $el = $(this)
+      $el.width(newWidth).height(newWidth * $el.data('aspectRatio'))
+  $(window).resize()
+
+
   vid_count = parseInt $("#vid_count").text() # provided by the videos.haml file
   if not navigator.mimeTypes["application/x-shockwave-flash"] # no flash, hide hulu videos
     hulu_vids = $(".hulu")
@@ -57,8 +74,10 @@ $(document).ready ->
       vid_site =  $(this).attr "vid_site"
       vid_home = $(this).siblings(".vid_embed")
       vid_home.load "/embedcode/#{vid_site}/#{video_id}", ->
+        $(window).resize() # to toggle the video resize
         vid_home.slideToggle 'fast'
         shower.remove()
+
 
 
     else if action is "Like"
