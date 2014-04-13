@@ -1,4 +1,5 @@
 source "https://rubygems.org"
+ruby "1.9.3"
 gem 'sinatra'
 gem 'thin'
 gem 'instapaper_full'
@@ -8,3 +9,4 @@ gem 'haml'
 gem 'gibberish'
 gem 'kramdown'
 gem 'markdown'
+gem 'film_snob'

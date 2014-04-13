@@ -20,32 +20,6 @@ def get_ip
     :consumer_secret => "UYdf9isHWJTJtBjXQvbwTSYQU4Q8kyqm2x7l3jBLL3Kjju8Nhg"
 end
 
-def grok_url (url)
-  # TODO support hulu short urls
-  if url =~ /youtube\.com\/embed\//
-    id = url.match(/\/embed\/([A-Za-z0-9_-]+)/)[1].to_s
-    site = :youtube
-  elsif url =~ /youtube\.com/
-    id = url.match(/v=([A-Za-z0-9_-]+)/)[1].to_s
-    site = :youtube
-  elsif url =~ /youtu\.be/
-    id = url.match(/(http:\/\/youtu.be\/)([A-Za-z0-9\-_]+)/)[2].to_s
-    site = :youtube
-  elsif url =~ /vimeo\.com\/m\//
-    id = url.match(/\/m\/(\d+)/)[1].to_s
-    site = :vimeo
-  elsif url =~ /vimeo\.com/
-    id = url.match(/vimeo\.com\/([\d]+)/)[1].to_s
-    site = :vimeo
-  elsif url =~ /hulu\.com\/watch/
-    id = url.match(/watch\/([\d]+)/)[1].to_s
-    site = :hulu
-  else
-    return false, false, false
-  end
-  return true, site, id
-end
-
 def cleanup_title (title)
   # because it's needless clutter
   title.gsub!(/ - YouTube/, '')
@@ -75,11 +49,11 @@ def load_videos(folder_id, folder_title) # folder id
   end
   all_links.each do |link|
     if link["type"] == "bookmark" # filters out the first two irrelevant items
-      is_video, vid_site, video_id = grok_url link["url"]
-      if is_video == true
-        link["video_id"] = video_id
+      snob = FilmSnob.new link['url']
+      if snob.watchable?
+        link["video_id"] = snob.id
         link["title"] = cleanup_title link["title"] # prob not necessary
-        link["vid_site"] = vid_site
+        link["vid_site"] = snob.site
         link["description"] = make_clicky link["description"]
         video_links.push link
       end

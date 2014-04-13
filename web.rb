@@ -2,12 +2,14 @@ require 'sinatra' # framework for web app
 require 'haml' # templates
 require 'gibberish' # password encryption
 require 'instapaper_full' # access to Instapaper API
+require 'film_snob' # video URL parser
 require 'oembed' # video URL -> HTML embed code
 require_relative 'helpers.rb' # helper methods
 
 enable :sessions
 set :dump_errors, false
 set :show_exceptions, false
+set :views, File.dirname(__FILE__) + "/views"
 
 get '/' do
   if session[:username].nil? or session[:password].nil?
