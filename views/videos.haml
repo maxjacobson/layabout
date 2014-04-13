@@ -1,9 +1,13 @@
-%h2= "#{session[:folder_title]} (<span id='vid_count'>#{@videos.length}</span>)"
+%h2
+  = session[:folder_title]
+  %span#vid_count= "(#{ @videos.length })"
+
 #videos{:folder_id => session[:folder_id]}
   -if @videos.length > 0
     -@videos.each do |video|
       .video.hiding{:id => video["bookmark_id"], :class => video["vid_site"]}
-        %h3= "<a href='#{video["url"]}'>#{video["title"]}</a>"
+        %h3
+          %a{:href => video['url']}= video['title']
         .vid_embed{:style => 'display: none'}
         -if video["description"].length > 0
           %p.description= video["description"]
