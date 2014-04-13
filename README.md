@@ -33,3 +33,4 @@ from project route
 * Just added some password encryption using the Gibberish gem.
 * Also learned haml this morning. I think I like it more than ERB already.
 * 2013-02-20, I made a ton of progress. Implemented move-to-folder and re-implemented all of the other button actions. Still have to re-do infinite-scrolling and video embedding, but excited to re-think my approach :)
+* 2014-04-12, Revisited this codebase with affection recently. Moved it from BitBucket to GitHub. Extracted a small gem.
