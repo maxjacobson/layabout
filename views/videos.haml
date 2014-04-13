@@ -1,6 +1,8 @@
 %h2
   = session[:folder_title]
-  %span#vid_count= "(#{ @videos.length })"
+  (
+  %span#vid_count>= @videos.length
+  )
 
 #videos{:folder_id => session[:folder_id]}
   -if @videos.length > 0
