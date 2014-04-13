@@ -41,25 +41,25 @@ end
 
 def load_videos(folder_id, folder_title) # folder id
   ip = session[:ip]
-  video_links = Array.new
-  if folder_id == :readlater
-    all_links = ip.bookmarks_list(:limit => 500)
+
+  @videos = (if folder_id == :readlater
+    ip.bookmarks_list(:limit => 500)
   else
-    all_links = ip.bookmarks_list(:limit => 500, :folder_id => folder_id)
-  end
-  all_links.each do |link|
-    if link["type"] == "bookmark" # filters out the first two irrelevant items
-      snob = FilmSnob.new link['url']
+    ip.bookmarks_list(:limit => 500, :folder_id => folder_id)
+  end).map do |link|
+    if link['type'] == 'bookmark' # filters out the first two irrelevant items
+      snob = FilmSnob.new(link['url'])
       if snob.watchable?
-        link["video_id"] = snob.id
-        link["title"] = cleanup_title link["title"] # prob not necessary
-        link["vid_site"] = snob.site
-        link["description"] = make_clicky link["description"]
-        video_links.push link
+        link.tap do |link|
+          link['video_id'] = snob.id
+          link['title'] = cleanup_title link['title']
+          link['vid_site'] = snob.site
+          link['description'] = make_clicky link['description']
+        end
       end
     end
-  end
-  @videos = video_links
+  end.compact
+
   session[:folder_id] = folder_id
   session[:folder_title] = folder_title
   session[:folders_list] ||= ip.folders_list.map do |folder|
