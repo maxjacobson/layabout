@@ -100,16 +100,19 @@ def perform_action(i) # i for instructions
 end
 
 def get_embed (vid_site, id)
-  if vid_site == :youtube
-    url = "http://www.youtube.com/watch?v=#{id}"
-    return OEmbed::Providers::Youtube.get(url).html
-  elsif vid_site == :vimeo
-    url = "http://www.vimeo.com/#{id}"
-    return OEmbed::Providers::Vimeo.get(url, maxwidth: "500", portrait: false, byline: false, title: false).html
-  elsif vid_site == :hulu
-    url = "http://www.hulu.com/watch/#{id}"
-    return OEmbed::Providers::Hulu.get(url).html
-  else
-    return "<p>Failed to get embed code</p>"
+  begin
+    case vid_site
+    when :youtube
+      OEmbed::Providers::Youtube.get("http://www.youtube.com/watch?v=#{id}").html
+    when :vimeo
+      OEmbed::Providers::Vimeo.get("http://www.vimeo.com/#{id}", maxwidth: "500", portrait: false, byline: false, title: false).html
+    when :hulu
+      OEmbed::Providers::Hulu.get("http://www.hulu.com/watch/#{id}").html
+    else
+      "Unsupported site"
+    end
+  rescue Exception => e
+    puts e.inspect
+    "<p>Sorry, couldn't get the embed code for this one. Maybe it doesn't allow embedding? Or maybe it was deleted? Sorry.</p>"
   end
 end
