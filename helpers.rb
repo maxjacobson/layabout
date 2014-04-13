@@ -62,41 +62,14 @@ def load_videos(folder_id, folder_title) # folder id
   @videos = video_links
   session[:folder_id] = folder_id
   session[:folder_title] = folder_title
-  if session[:folders_list].nil?
-    folders_list = ip.folders_list
-    for i in 0...folders_list.length
-      folders_list[i]["clean_title"] = folders_list[i]["title"].gsub(/\s/,'-')
-    end
-    session[:folders_list] = folders_list
+  session[:folders_list] ||= ip.folders_list.map do |folder|
+    folder.tap { |f| f["clean_title"] = f["title"].gsub(/\s/, '-') }
   end
   haml :videos
 end
 
-def perform_action(i) # i for instructions
-  # maybe return false if the action doesn't go thru?
-  ip = session[:ip]
-  action = i[:action]
-  if action == :like
-    ip.bookmarks_star({"bookmark_id" => i[:id]})
-  elsif action == :unlike
-    ip.bookmarks_unstar({"bookmark_id" => i[:id]})
-  elsif action == :archive
-    ip.bookmarks_archive({"bookmark_id" => i[:id]})
-  elsif action == :unarchive
-    ip.bookmarks_unarchive({"bookmark_id" => i[:id]})
-  elsif action == :delete
-    ip.bookmarks_delete({"bookmark_id" => i[:id]})
-  elsif action == :like_and_archive
-    ip.bookmarks_star({"bookmark_id" => i[:id]})
-    ip.bookmarks_archive({"bookmark_id" => i[:id]})
-  elsif action == :unlike_and_delete
-    ip.bookmarks_unstar({"bookmark_id" => i[:id]})
-    ip.bookmarks_delete({"bookmark_id" => i[:id]})
-  elsif action == :add_url
-    ip.bookmarks_add({"url" => i[:url]})
-  elsif action == :move
-    ip.bookmarks_move({"bookmark_id" => i[:id], "folder_id" => i[:folder_id]})
-  end
+def current_link
+  Link.new(params[:id], session[:ip])
 end
 
 def get_embed (vid_site, id)

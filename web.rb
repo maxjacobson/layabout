@@ -4,6 +4,7 @@ require 'gibberish' # password encryption
 require 'instapaper_full' # access to Instapaper API
 require 'film_snob' # video URL parser
 require 'oembed' # video URL -> HTML embed code
+require_relative 'link.rb'    # an Instapaper link
 require_relative 'helpers.rb' # helper methods
 
 enable :sessions
@@ -74,44 +75,38 @@ get '/folder/:id/:title' do
 end
 
 get '/like/:id' do
-  perform_action({:action => :like, :id => params[:id].to_i})
+  current_link.like!
   "Liked #{params[:id]}"
 end
 
 get '/unlike/:id' do
-  perform_action({:action => :unlike, :id => params[:id].to_i})
+  current_link.unlike!
   "Disliked #{params[:id]}"
 end
 
 get '/archive/:id' do
-  perform_action({:action => :archive, :id => params[:id].to_i})
+  current_link.archive!
   "Archived #{params[:id]}"
 end
 
 get '/delete/:id' do
-  perform_action({:action => :delete, :id => params[:id].to_i})
+  current_link.delete!
   "Deleted #{params[:id]}"
 end
 
 get '/like-and-archive/:id' do
-  perform_action({:action => :like_and_archive, :id => params[:id].to_i})
+  current_link.like_and_archive!
   "Liked and archived #{params[:id]}"
 end
 
 get '/unlike-and-delete/:id' do
-  perform_action({:action => :unlike_and_delete, :id => params[:id].to_i})
+  current_link.unlike_and_delete!
   "Unliked and deleted #{params[:id]}"
 end
 
 get '/move/:id/to/:folder' do
-  id = params[:id].to_i
-  folder = params[:folder]
-  if folder == "readlater"
-    perform_action({:action => :unarchive, :id => id})
-  else
-    perform_action({:action => :move, :id => id, :folder_id => folder.to_i})
-  end
-  "Moved #{params[:id]} to folder: #{folder}"
+  params[:folder] == 'readlater' ? current_link.unarchive! : current_link.move_to(params[:folder])
+  "Moved #{params[:id]} to folder: #{params[:folder]}"
 end
 
 get '/embedcode/:site/:id' do
