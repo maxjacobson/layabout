@@ -105,7 +105,7 @@ get '/unlike-and-delete/:id' do
 end
 
 get '/move/:id/to/:folder' do
-  params[:folder] == 'readlater' ? current_link.unarchive! : current_link.move_to(params[:folder])
+  params[:folder] == 'readlater' ? current_link.unarchive! : current_link.move_to!(params[:folder])
   "Moved #{params[:id]} to folder: #{params[:folder]}"
 end
 
