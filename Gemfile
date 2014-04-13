@@ -1,12 +1,13 @@
 source "https://rubygems.org"
-ruby "1.9.3"
-gem 'sinatra'
-gem 'thin'
-gem 'instapaper_full'
-gem 'ruby-oembed'
-gem 'rack-flash'
-gem 'haml'
-gem 'gibberish'
-gem 'kramdown'
-gem 'markdown'
+gem 'sinatra', '~> 1.4'
+gem 'thin', '~> 1.6'
+gem 'instapaper_full', '~> 0.2'
+gem 'ruby-oembed', '~> 0.8'
+gem 'rack-flash', '~> 0.1'
+gem 'haml', '~> 4.0'
+gem 'gibberish', '~> 1.4'
+gem 'kramdown', '~> 1.3'
+gem 'markdown', '~> 1.1'
 gem 'film_snob'
+
+gem 'shotgun', group: [:development]
