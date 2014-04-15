@@ -72,20 +72,3 @@ def current_link
   Link.new(params[:id], session[:ip])
 end
 
-def get_embed (vid_site, id)
-  begin
-    case vid_site
-    when :youtube
-      OEmbed::Providers::Youtube.get("http://www.youtube.com/watch?v=#{id}").html
-    when :vimeo
-      OEmbed::Providers::Vimeo.get("http://www.vimeo.com/#{id}", maxwidth: "500", portrait: false, byline: false, title: false).html
-    when :hulu
-      OEmbed::Providers::Hulu.get("http://www.hulu.com/watch/#{id}").html
-    else
-      "Unsupported site"
-    end
-  rescue Exception => e
-    puts e.inspect
-    "<p>Sorry, couldn't get the embed code for this one. Maybe it doesn't allow embedding? Or maybe it was deleted? Sorry.</p>"
-  end
-end
