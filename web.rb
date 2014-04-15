@@ -3,7 +3,6 @@ require 'haml' # templates
 require 'gibberish' # password encryption
 require 'instapaper_full' # access to Instapaper API
 require 'film_snob' # video URL parser
-require 'oembed' # video URL -> HTML embed code
 require_relative 'link.rb'    # an Instapaper link
 require_relative 'helpers.rb' # helper methods
 
@@ -108,12 +107,12 @@ get '/move/:id/to/:folder' do
   "Moved #{params[:id]} to folder: #{params[:folder]}"
 end
 
-get '/embedcode/:site/:id' do
-  embedcode = get_embed params[:site].to_sym, params[:id]
-  if embedcode.nil? or embedcode == ""
-    "Video could not be loaded. It may have embedding disabled."
-  else
-    haml embedcode, :layout => false
+get '/embedcode' do
+  snob = FilmSnob.new(params[:url], width: 550)
+  begin
+    haml snob.html, layout: false
+  rescue FilmSnob::NotEmbeddableError
+    haml "<p>Sorry, this video isn't embeddable.</p>", layout: false
   end
 end
 

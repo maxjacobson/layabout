@@ -70,10 +70,9 @@ $(document).ready ->
     else if action is "Watch"
       $(this).text "Loading..."
       shower = $(this)
-      video_id = $(this).attr "video_id"
-      vid_site =  $(this).attr "vid_site"
       vid_home = $(this).siblings(".vid_embed")
-      vid_home.load "/embedcode/#{vid_site}/#{video_id}", ->
+      video_url = $(this).siblings('h3').find('a').attr('href')
+      vid_home.load "/embedcode?url=#{ video_url  }", ->
         $(window).resize() # to toggle the video resize
         vid_home.slideToggle 'fast'
         shower.remove()
