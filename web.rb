@@ -108,9 +108,9 @@ get '/move/:id/to/:folder' do
 end
 
 get '/embedcode' do
-  snob = FilmSnob.new(params[:url], width: 550)
+  film = FilmSnob.new(params[:url], width: 550)
   begin
-    haml snob.html, layout: false
+    haml film.html, layout: false
   rescue FilmSnob::NotEmbeddableError
     haml "<p>Sorry, this video isn't embeddable.</p>", layout: false
   end
