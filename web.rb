@@ -7,7 +7,6 @@ require_relative 'link.rb'    # an Instapaper link
 require_relative 'helpers.rb' # helper methods
 
 enable :sessions
-set :dump_errors, false
 set :show_exceptions, false
 set :session_secret, 'af08143cba6b1aa20155ff2945206d55'
 
