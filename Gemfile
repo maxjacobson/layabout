@@ -36,7 +36,14 @@ gem 'spring',        group: :development
 # gem 'capistrano-rails', group: :development
 
 # Use debugger
-# gem 'debugger', group: [:development, :test]
+ gem 'debugger', group: [:development, :test]
 
 gem 'normalize-rails'
+gem "haml-rails"
+gem "kramdown"
+
+group :test do
+  gem 'rspec-rails'
+  gem 'capybara'
+end
 
