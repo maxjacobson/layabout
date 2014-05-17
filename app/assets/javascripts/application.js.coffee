@@ -47,7 +47,7 @@ remove_video = (video_id) ->
   I'd like to figure out source maps so this can point to the CS file, but I have to go eat I'm so hungry.
 ###
 
-$(document).ready ->
+$(document).on 'ready page:load', ->
 
   # I want to use [this plugin](http://css-tricks.com/fluid-width-youtube-videos/)
   # but it's in js, so I've adapted it to CoffeeScript and made it work with all iframes,
