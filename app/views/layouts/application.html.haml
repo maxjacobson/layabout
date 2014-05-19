@@ -31,6 +31,8 @@
                 %a{:href => "/logout"} Logout
     #buffer1
     #yield
+      %p= alert
+      %p= notice
       =yield
     #buffer2
     = render 'layouts/footer'

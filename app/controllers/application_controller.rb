@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   # also some kind of encrypted key I guess
   def current_user
     if session[:uid]
-      @current_user ||= { uid: session[:uid] }
+      @current_user ||= User.find_by(uid: session[:uid])
     end
   end
   helper_method :current_user
