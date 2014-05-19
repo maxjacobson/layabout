@@ -8,6 +8,7 @@
     %script{:type => "text/javascript"}= "/*analytics*/var _gaq=_gaq||[];_gaq.push([\"_setAccount\",\"UA-4982721-13\"]);_gaq.push([\"_trackPageview\"]);(function(){var e=document.createElement(\"script\");e.type=\"text/javascript\";e.async=true;e.src=(\"https:\"==document.location.protocol?\"https://ssl\":\"http://www\")+\".google-analytics.com/ga.js\";var t=document.getElementsByTagName(\"script\")[0];t.parentNode.insertBefore(e,t)})()"
   = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true
   = javascript_include_tag 'application', 'data-turbolinks-track' => true
+  = csrf_meta_tags
 
   %body
     .header
@@ -15,6 +16,11 @@
         = image_tag 'ajax.gif'
       .header_content
         %h1= link_to 'Layabout', root_path
+        %ul
+          - if current_user
+            %li= link_to 'Logout', logout_path, method: :delete
+          - else
+            %li= link_to 'Login with Instapaper', '/auth/instapaper'
         %p.menu
           -if session[:username].nil? == false # three nested ifs? really?
             -if session[:folders_list].nil? == false

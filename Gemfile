@@ -35,12 +35,14 @@ gem 'spring',        group: :development
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
-# Use debugger
- gem 'debugger', group: [:development, :test]
+ gem 'pry', group: [:development, :test]
 
 gem 'normalize-rails'
 gem "haml-rails"
 gem "kramdown"
+
+gem 'omniauth'
+gem 'omniauth-instapaper'
 
 group :test do
   gem 'rspec-rails'
