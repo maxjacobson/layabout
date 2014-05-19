@@ -1,4 +1,12 @@
 - if current_user
-  %p Thanks for logging in. Probably we'll show you some videos in this space
+  - if current_user.active?
+    %p Thanks for logging in. Probably we'll show you some videos in this space
+    - current_user.folders.each do |folder|
+      %li= link_to folder.name, '#'
+  - else
+    %p Sorry, you need a paid subscription to use Layabout.
 - else
-  %p Maybe log in?
+  - cache do
+    %p
+      Welcome to Layabout. This is an Instapaper client that focuses on videos. Read more on the
+      = link_to 'about page', about_path

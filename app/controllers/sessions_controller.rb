@@ -5,6 +5,8 @@ class SessionsController < ApplicationController
     user.active = auth.extra.raw_info.subscription_is_active == '1'
     user.email = auth.extra.raw_info.username
     if user.save
+
+      user.refresh_folders!
       session[:uid] = user.uid
       redirect_to root_path, notice: "Logged in! Welcome, #{user.email || 'video lover'}!"
     else

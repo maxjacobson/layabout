@@ -43,6 +43,7 @@ gem "kramdown"
 
 gem 'omniauth'
 gem 'omniauth-instapaper'
+gem 'httparty'
 
 group :test do
   gem 'rspec-rails'
