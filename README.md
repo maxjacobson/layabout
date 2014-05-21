@@ -36,3 +36,4 @@ from project route
 * 2014-04-12, Revisited this codebase with affection recently. Moved it from BitBucket to GitHub. Extracted a small gem.
 * 2014-04-13, extracted more code into the gem
 * 2014-05-11, deleted everything. I have too much data in instapaper to use layabout as it's currently written. It tries to store too much data in session, and there's a 4k limit. rather than try to put some kind of bandaid on that, I think it's time to rewrite it as a rails app with a database
+* 2014-05-21, continued with the rails rewrite. This new version should be a bit sturdier. Tonight I managed to store the user's token and request their list of folders, then setup pages for each password -- using slugs in the urls
