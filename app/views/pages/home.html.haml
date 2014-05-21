@@ -2,7 +2,7 @@
   - if current_user.active?
     %p Thanks for logging in. Probably we'll show you some videos in this space
     - current_user.folders.each do |folder|
-      %li= link_to folder.name, '#'
+      %li= link_to folder.title, folder.path
   - else
     %p Sorry, you need a paid subscription to use Layabout.
 - else

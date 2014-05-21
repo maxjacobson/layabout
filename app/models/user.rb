@@ -6,14 +6,22 @@ class User < ActiveRecord::Base
   has_many :folders
 
   def refresh_folders!
-    #folders.destroy_all
-    #HTTParty.post(
-    #  'https://instapaper.com/api/1.1/folders/list',
-    #  body: {
-    #    user_id: uid,
-    #    consumer_key: Rails.application.secrets.instapaper['consumer_key'],
-    #    consumer_secret: Rails.application.secrets.instapaper['consumer_secret']
-    #  }
-    #)
+    folders.destroy_all
+    instapaper.folders_list.each do |folder|
+      folders << Folder.from_api(folder)
+    end
+    save!
   end
+
+  # TODO make this method private, probably
+  #
+  def instapaper
+    @instapaper ||= InstapaperFull::API.new(
+      consumer_key: Rails.application.secrets.instapaper['consumer_key'],
+      consumer_secret: Rails.application.secrets.instapaper['consumer_secret'],
+      oauth_token: token,
+      oauth_token_secret: secret
+    )
+  end
+
 end

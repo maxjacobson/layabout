@@ -43,7 +43,7 @@ gem "kramdown"
 
 gem 'omniauth'
 gem 'omniauth-instapaper'
-gem 'httparty'
+gem 'instapaper_full', git: 'git@github.com:mattb/instapaper_full.git'
 
 group :test do
   gem 'rspec-rails'

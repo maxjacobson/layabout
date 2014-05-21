@@ -3,4 +3,5 @@ Rails.application.routes.draw do
   get '/about' => 'pages#about'
   get '/auth/instapaper/callback' => 'sessions#create'
   delete '/aurevoir' => 'sessions#destroy', as: 'logout'
+  get '/folders/:slug' => 'folders#show', as: 'folder'
 end
