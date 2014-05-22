@@ -5,6 +5,10 @@ class User < ActiveRecord::Base
 
   has_many :folders
 
+  def ever_synced?
+    !last_synced_at.nil?
+  end
+
   def refresh_folders!
     folders.destroy_all
     instapaper.folders_list.each do |folder|
