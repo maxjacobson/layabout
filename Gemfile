@@ -47,6 +47,11 @@ gem 'omniauth-instapaper'
 gem 'instapaper_full', git: 'git@github.com:mattb/instapaper_full.git'
 gem 'thin'
 
+group :development do
+  gem 'better_errors'
+  gem 'binding_of_caller'
+end
+
 group :test do
   gem 'rspec-rails'
   gem 'capybara'

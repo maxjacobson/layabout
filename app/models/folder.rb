@@ -13,4 +13,15 @@ class Folder < ActiveRecord::Base
   def path
     '/folders/' + slug
   end
+
+  def bookmarks
+    instapaper.bookmarks(folder_id: fid, limit: 500)
+  end
+
+  private
+
+    def instapaper
+      @instapaper ||= Instapaper.for(user)
+    end
+
 end

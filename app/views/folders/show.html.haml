@@ -1,1 +1,5 @@
 %h2= @folder.title
+
+%ul
+  - @folder.bookmarks.each do |bookmark|
+    %li= bookmark.title
