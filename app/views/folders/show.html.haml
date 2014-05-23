@@ -1,5 +1,7 @@
 %h2= @folder.title
 
-%ul
-  - @folder.bookmarks.each do |bookmark|
-    %li= bookmark.title
+.videos
+  - @folder.videos.each do |video|
+    .video
+      %h2= video.title
+      = video.html.html_safe

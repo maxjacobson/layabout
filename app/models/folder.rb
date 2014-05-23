@@ -15,7 +15,13 @@ class Folder < ActiveRecord::Base
   end
 
   def bookmarks
-    instapaper.bookmarks(folder_id: fid, limit: 500)
+    @bookmarks ||= instapaper.bookmarks(folder_id: fid, limit: 500)
+  end
+
+  def videos
+    bookmarks.keep_if do |bookmark|
+      bookmark.watchable?
+    end
   end
 
   private

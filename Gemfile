@@ -46,6 +46,7 @@ gem 'omniauth'
 gem 'omniauth-instapaper'
 gem 'instapaper_full', git: 'git@github.com:mattb/instapaper_full.git'
 gem 'thin'
+gem 'film_snob'
 
 group :development do
   gem 'better_errors'

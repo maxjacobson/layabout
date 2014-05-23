@@ -18,4 +18,19 @@ class Bookmark
     @url = attributes[:url]
     @liked = attributes[:liked]
   end
+
+  def watchable?
+    film.watchable?
+  end
+
+  def html
+    film.html
+  rescue FilmSnob::NotEmbeddableError
+    "Sorry, not embeddable"
+  end
+
+  def film
+    @film ||= FilmSnob.new(url, width: 100)
+  end
+
 end
