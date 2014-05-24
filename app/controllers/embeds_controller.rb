@@ -1,14 +1,18 @@
 class EmbedsController < ApplicationController
 
   def show
-    if film.watchable?
-      render json: { watchable: true, html: film.html }
+    if current_user
+      if film.watchable?
+        render json: { watchable: true, html: film.html }
+      else
+        render json: { watchable: false, reason: "Sorry, I don't know how to embed that." }
+      end
     else
-      render json: { watchable: false, reason: "Sorry, I don't know how to embed that." }
+      render json: { watchable: false, reason: "Sorry, this endpoint requires being logged in" }
     end
   rescue Exception => e
     # TODO rescue specific filmsnob error
-    render json: { watchable: false, reason: e }
+    render json: { watchable: false, reason: e.to_s }
   end
 
   private

@@ -9,11 +9,9 @@ $(document).on 'ready page:load', ->
     $.get '/embed',
       url: $(this).data('url')
     ,
-      (data) =>
-        if data.watchable
-          $(data.html).insertAfter $(this)
-          $(document).trigger 'newVideoAdded'
-        else
-          console.log data.reason
-
-
+    (video) =>
+      if video.watchable
+        $(video.html).insertAfter $(this)
+        $(document).trigger 'newVideoAdded'
+      else
+        $("<p />").text(video.reason).insertAfter $(this)
