@@ -20,7 +20,9 @@ class Bookmark
   end
 
   def title
-    @title || 'Title unavailable'
+    @title.present??
+      @title :
+      film.title rescue 'Title unavailable'
   end
 
   def liked?
