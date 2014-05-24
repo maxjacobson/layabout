@@ -1,6 +1,5 @@
 source 'https://rubygems.org'
 
-
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.1'
 
@@ -38,7 +37,6 @@ gem 'spring',        group: :development
 
  gem 'pry', group: [:development, :test]
 
-gem 'normalize-rails'
 gem "haml-rails"
 gem "kramdown"
 
@@ -47,6 +45,7 @@ gem 'omniauth-instapaper'
 gem 'instapaper_full', git: 'git@github.com:mattb/instapaper_full.git'
 gem 'thin'
 gem 'film_snob'
+gem 'bootstrap-sass-rails'
 
 group :development do
   gem 'better_errors'
