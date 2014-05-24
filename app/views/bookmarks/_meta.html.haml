@@ -1,0 +1,6 @@
+%span{class: 'meta'}
+  - if liked
+    %span= link_to 'Unlike', unlike_bookmark_path(bid), method: :put, remote: true
+  - else
+    %span= link_to 'Like', like_bookmark_path(bid), method: :put, remote: true
+  %span= link_to 'Archive', archive_bookmark_path(bid), method: :put, remote: true

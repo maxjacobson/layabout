@@ -1,6 +1,5 @@
 %h2= @folder.title
 
 .videos
-  - @folder.videos.each do |video|
-    .video
-      %h3.title{data: { url: video.url }}= video.title
+  - @folder.videos.each do |bookmark|
+    = render 'bookmarks/show',  bookmark: bookmark

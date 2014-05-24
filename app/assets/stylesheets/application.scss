@@ -19,9 +19,6 @@ $width: 600px;
 $link: #660033;
 $hlink: #CC6699;
 $bg: #E8E8E8;
-$headerheight: 170px; // ugh
-$bufferheight: 195px; // basically giving a 25px margin-top
-$videopadding: 10px;
 
 @font-face {
   font-family: 'VT323';
@@ -44,25 +41,14 @@ body {
 }
 
 .header {
-  width: 100%;
-  height: $headerheight;
-  position: fixed;
   .header_content {
     width: $width;
     margin: 0 auto;
   }
   border-bottom: medium double black;
   background-color: $bg;
-  box-shadow: 0 10px 5px #888;
 }
 
-#buffer1 {
-  height: $bufferheight;
-}
-
-#buffer {
-  height: 0;
-}
 
 #yield {
   width: $width;
@@ -70,7 +56,6 @@ body {
   background-color: white;
   border-radius: 5px;
   padding: 5px;
-  // margin-top: 150px;
 }
 
 footer {
@@ -151,32 +136,6 @@ strong {
 
 .youtube {
   background-color: #A02723;
-}
-
-.vimeo, .hulu, .youtube {
-  padding: $videopadding;
-  p {
-    color: white;
-  }
-  a {
-    color: #FFCC66;
-    &:hover {
-      color: black;
-    }
-  }
-  hr {
-    border-top: medium double white;
-  }
-}
-
-.glowing {
-  display: inline-block;
-  color: #FF7FBA;
-  text-shadow: 0.1em 0.1em 0.1em #FDEDFF;
-}
-
-.hiding {
-  display: none;
 }
 
 .page {

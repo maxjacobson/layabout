@@ -10,13 +10,21 @@ class Bookmark
     )
   end
 
-  attr_accessor :description, :bid, :title, :url, :liked
+  attr_accessor :description, :bid, :url, :liked
   def initialize(attributes)
     @description = attributes[:description] || ''
     @bid = attributes[:bid]
     @title = attributes[:title]
     @url = attributes[:url]
     @liked = attributes[:liked]
+  end
+
+  def title
+    @title || 'Title unavailable'
+  end
+
+  def liked?
+    !!liked
   end
 
   def watchable?

@@ -25,5 +25,16 @@ class Instapaper
     end.compact # compact because meta bookmarks are nil
   end
 
+  def like(bookmark)
+    instapaper.bookmarks_star bookmark_id: bookmark.bid
+  end
+
+  def unlike(bookmark)
+    instapaper.bookmarks_unstar bookmark_id: bookmark.bid
+  end
+
+  def archive(bookmark)
+    instapaper.bookmarks_archive bookmark_id: bookmark.bid
+  end
 
 end

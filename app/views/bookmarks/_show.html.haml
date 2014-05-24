@@ -1,0 +1,3 @@
+.video{id: bookmark.bid}
+  %h3.title{data: { url: bookmark.url }}= bookmark.title
+  = render 'bookmarks/meta', bid: bookmark.bid, liked: bookmark.liked?
