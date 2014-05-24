@@ -54,7 +54,7 @@ $(document).on 'ready page:load', ->
   # not just youtube ones. dope plugin chris!
 
   $allVideos = $("iframe")
-  $fluidEl = $("body")
+  $fluidEl = $("#yield")
   $allVideos.each ->
     $(this).data('aspectRatio', this.height / this.width).removeAttr('height').removeAttr('width')
   $(window).resize ->
