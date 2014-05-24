@@ -3,5 +3,4 @@
 .videos
   - @folder.videos.each do |video|
     .video
-      %h2= video.title
-      = video.html.html_safe
+      %h3.title{data: { url: video.url }}= video.title

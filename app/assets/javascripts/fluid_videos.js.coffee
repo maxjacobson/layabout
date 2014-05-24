@@ -2,7 +2,7 @@
 # but it's in js, so I've adapted it to CoffeeScript and made it work with all iframes,
 # not just youtube ones. dope plugin chris!
 
-$(document).on 'ready page:load', ->
+$(document).on 'ready page:load newVideoAdded', ->
 
   $allVideos = $("iframe")
   $fluidEl = $("#yield")
