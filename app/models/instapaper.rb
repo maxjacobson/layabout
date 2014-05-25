@@ -37,4 +37,12 @@ class Instapaper
     instapaper.bookmarks_archive bookmark_id: bookmark.bid
   end
 
+  def move(bookmark, options)
+    instapaper.bookmarks_move bookmark_id: bookmark.bid, folder_id: options[:to].fid
+  end
+
+  def text(bookmark)
+    instapaper.bookmarks_get_text bookmark_id: bookmark.bid
+  end
+
 end

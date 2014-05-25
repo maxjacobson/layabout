@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       put :like
       put :unlike
       put :archive
+      put :move
     end
   end
 end

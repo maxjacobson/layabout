@@ -1,6 +1,13 @@
 %span{class: 'meta'}
   - if liked
-    %span= link_to 'Unlike', unlike_bookmark_path(bid), method: :put, remote: true
+    %span= link_to 'Unlike', unlike_bookmark_path(bid), method: :put, remote: true, class: 'btn btn-default'
   - else
-    %span= link_to 'Like', like_bookmark_path(bid), method: :put, remote: true
-  %span= link_to 'Archive', archive_bookmark_path(bid), method: :put, remote: true, data: { confirm: 'Are u suuuure?' }
+    %span= link_to 'Like', like_bookmark_path(bid), method: :put, remote: true, class: 'btn btn-default'
+  %span= link_to 'Archive', archive_bookmark_path(bid), method: :put, remote: true, data: { confirm: 'Are u suuuure?' }, class: 'btn btn-default'
+  .btn-group
+    %button.btn.btn-default.dropdown-toggle{type: 'button', data: {toggle: 'dropdown'}}
+      Move
+      %span.caret
+    %ul.dropdown-menu{role: 'menu'}
+      - current_user.folders.each do |folder|
+        %li= link_to folder.title, move_bookmark_path(bid, folder_id: folder.fid), method: :put, remote: true
