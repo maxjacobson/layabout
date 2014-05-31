@@ -36,10 +36,8 @@
                 -session[:folders_list].each do |folder|
                   %a.folder_link{:id => folder["folder_id"], :href => "/folder/#{folder['folder_id']}/#{folder['clean_title']}"}= folder["title"]
                 %a{:href => "/logout"} Logout
-    #buffer1
     #yield
       %p= alert
       %p= notice
       =yield
-    #buffer2
     = render 'layouts/footer'

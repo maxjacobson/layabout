@@ -2,6 +2,14 @@ class EmbedsController < ApplicationController
 
   before_action :instantiate_bookmark, only: [:show]
 
+  def show
+    @html = (
+      film.watchable??
+        film.html :
+        current_user.instapaper.text(bookmark)
+    ).force_encoding('UTF-8')
+  end
+
   private
 
     def film
