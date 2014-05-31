@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   get 'bookmarks/like'
 
-  get 'embed' => 'embeds#show'
+  get 'embed' => 'embeds#show', defaults: { format: :json }
 
   root to: 'pages#home'
   get '/about' => 'pages#about'

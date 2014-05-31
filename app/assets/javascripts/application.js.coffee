@@ -12,10 +12,11 @@ $(document).on 'ready page:load', ->
       bookmark_id: $(this).closest('.video').attr('id')
     ,
     (video) =>
+      console.log video
       if video.watchable
         $(video.html).insertAfter $(this)
         $(document).trigger 'newVideoAdded'
       else if video.readable
-        $(video.html).text().insertAfter $(this)
+        $(video.html).insertAfter $(this)
       else
         $("<p />").text(video.reason).insertAfter $(this)
