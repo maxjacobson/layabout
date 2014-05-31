@@ -23,8 +23,10 @@
                 Last synced with instapaper #{time_ago_in_words current_user.last_synced_at} ago
               - else
                 Never synced
-            - current_user.folders.each do |folder|
-              %li= link_to folder.title, folder.path
+            %li
+              - current_user.folders.each_with_index do |folder, index|
+                #{link_to folder.title, folder.path}
+                = "|" unless index == current_user.folders.count
             %li= link_to 'Logout', logout_path, method: :delete
           - else
             %li= link_to 'Login with Instapaper', '/auth/instapaper'

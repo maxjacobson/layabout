@@ -1,6 +1,5 @@
 <% if current_user.present? %>
   var bookmarkHTML = '<%= j render(partial: 'modal', locals: {html: @html}) %>';
-  console.log(bookmarkHTML);
   var bookmarkModal = $(bookmarkHTML);
   bookmarkModal.modal('show');
   bookmarkModal.on('hidden.bs.modal', function(){
