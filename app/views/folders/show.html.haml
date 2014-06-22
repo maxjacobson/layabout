@@ -1,5 +1,5 @@
 %h2= @folder.title
 
 .videos
-  - @folder.videos.each do |bookmark|
+  - @folder.bookmarks.each do |bookmark|
     = render 'bookmarks/show',  bookmark: bookmark
