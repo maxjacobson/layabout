@@ -1,5 +1,6 @@
 class SessionsController < ApplicationController
   def create
+    byebug
     auth = request.env['omniauth.auth']
     user = User.find_or_initialize_by(uid: auth.uid)
     user.active = auth.extra.raw_info.subscription_is_active == '1'

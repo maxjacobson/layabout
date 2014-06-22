@@ -59,3 +59,4 @@ group :test do
   gem 'capybara'
 end
 
+gem 'byebug'
