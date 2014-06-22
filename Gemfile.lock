@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:mattb/instapaper_full.git
+  remote: git://github.com/mattb/instapaper_full.git
   revision: b367551640a64e00565887c5e4d8ec9aa804411d
   specs:
     instapaper_full (0.2.0)
@@ -101,7 +101,7 @@ GEM
     mime-types (1.25.1)
     mini_portile (0.6.0)
     minitest (5.3.4)
-    multi_json (1.10.0)
+    multi_json (1.10.1)
     multipart-post (2.0.0)
     nokogiri (1.6.2.1)
       mini_portile (= 0.6.0)

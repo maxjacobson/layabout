@@ -42,7 +42,7 @@ gem "kramdown"
 
 gem 'omniauth'
 gem 'omniauth-instapaper'
-gem 'instapaper_full', git: 'git@github.com:mattb/instapaper_full.git'
+gem 'instapaper_full', github: 'mattb/instapaper_full'
 gem 'thin'
 gem 'film_snob'
 gem 'bootstrap-sass-rails'
