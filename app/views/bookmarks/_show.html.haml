@@ -1,0 +1,8 @@
+.video{id: bookmark.bid}
+  %h3.title{data: { url: bookmark.url }}= bookmark.title
+  - if bookmark.watchable?
+    %p this is a video
+  %p= bookmark.description
+  %p
+    %code= link_to bookmark.url, bookmark.url
+  = render 'bookmarks/meta', bid: bookmark.bid, liked: bookmark.liked?

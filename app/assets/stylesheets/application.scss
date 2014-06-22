@@ -1,0 +1,158 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+@import 'bootstrap';
+
+$width: 1000px;
+$link: #660033;
+$hlink: #CC6699;
+$bg: #E8E8E8;
+
+@font-face {
+  font-family: 'VT323';
+  font-style: normal;
+  font-weight: 400;
+  src: local('VT323'), local('VT323-Regular'), url(http://themes.googleusercontent.com/static/fonts/vt323/v4/LfMzj2MWAZU6qzlnp1MNbg.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Anaheim';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Anaheim'), local('Anaheim-Regular'), url(http://themes.googleusercontent.com/static/fonts/anaheim/v1/ih4p6L2bXQbInUkJnAHUUQLUuEpTyoUstqEm5AMlJo4.woff) format('woff');
+}
+
+body {
+  margin: 0 auto;
+  font-family: "Helvetica", sans-serif;
+  background-color: $bg;
+}
+
+.header {
+  .header_content {
+    width: $width;
+    margin: 0 auto;
+  }
+  border-bottom: medium double black;
+  background-color: $bg;
+}
+
+
+#yield {
+  width: $width;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+footer {
+  width: 100%;
+  border-top: medium double black;
+  margin-top: 25px;
+  .footer_content {
+    width: $width;
+    margin: 0 auto;
+  }
+  li {
+    display: inline;
+  }
+  li+li {
+    &:before {
+      content: "\a0 \2736\a0 ";
+    }
+  }
+}
+
+h1 {
+  font-family: 'VT323', serif;
+  font-size: 6em;
+}
+
+h2 {
+  font-family: 'VT323', serif;
+  font-size: 3em;
+}
+
+h3 {
+  font-family: 'Anaheim', serif;
+  font-size: 1.5em;
+}
+
+p, ul, li, h1, h2, h3, h4, h5, h6, .buttons {
+  margin: 5px 0;
+}
+
+#ajax_gif {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  display: none;
+}
+
+a {
+  color: $link;
+  text-decoration: none;
+  &:hover {
+    cursor: pointer;
+    cursor: hand;
+    text-decoration: underline;
+    color: $hlink;
+  }
+}
+
+hr {
+  border: none;
+  border-top: medium double #333;
+}
+
+em {
+  font-style: italic;
+}
+
+strong {
+  font-weight: bold;
+}
+
+.vimeo {
+  background-color: #20B9EB;
+}
+
+.hulu {
+  background-color: #7DB737;
+}
+
+.youtube {
+  background-color: #A02723;
+}
+
+.page {
+  padding: 15px;
+  li {
+    list-style-type: disc;
+    margin-left: 1em;
+  }
+}
+
+.title {
+  cursor: pointer;
+}
+
+.modal {
+  img {
+    width: 100%;
+  }
+}

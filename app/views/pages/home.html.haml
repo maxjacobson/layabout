@@ -1,0 +1,12 @@
+- if current_user
+  %h2 Home
+  - if current_user.active?
+    - current_user.instapaper.bookmarks(limit: 500).each do |bookmark|
+      = render 'bookmarks/show', bookmark: bookmark
+  - else
+    %p Sorry, you need a paid subscription to use Layabout.
+- else
+  - cache do
+    %p
+      Welcome to Layabout. This is an Instapaper client that focuses on videos. Read more on the
+      = link_to 'about page', about_path
