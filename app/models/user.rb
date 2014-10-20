@@ -16,5 +16,5 @@ class User < ActiveRecord::Base
   def instapaper
     @instapaper ||= Instapaper.for(self)
   end
-
 end
+

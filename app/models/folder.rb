@@ -9,7 +9,7 @@ class Folder < ActiveRecord::Base
     )
   end
 
-  # FIXME surely there is a better way to do this :)
+  # FIXME: surely there is a better way to do this :)
   def path
     '/folders/' + slug
   end
@@ -19,15 +19,13 @@ class Folder < ActiveRecord::Base
   end
 
   def videos
-    bookmarks.keep_if do |bookmark|
-      bookmark.watchable?
-    end
+    bookmarks.keep_if(&:watchable?)
   end
 
   private
 
-    def instapaper
-      @instapaper ||= Instapaper.for(user)
-    end
-
+  def instapaper
+    @instapaper ||= Instapaper.for(user)
+  end
 end
+

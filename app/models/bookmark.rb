@@ -1,6 +1,6 @@
 class Bookmark
   def self.from_api(attributes)
-    return nil if attributes['type'].in? ['meta', 'user']
+    return nil if attributes['type'].in? %w(meta user)
     new(
       description: attributes['description'],
       bid: attributes['bookmark_id'],
@@ -11,6 +11,8 @@ class Bookmark
   end
 
   attr_accessor :description, :bid, :url, :liked
+  alias_method :liked?, :liked
+
   def initialize(attributes)
     @description = attributes[:description] || ''
     @bid = attributes[:bid]
@@ -20,13 +22,9 @@ class Bookmark
   end
 
   def title
-    @title.present??
-      @title :
-      film.title rescue 'Title unavailable'
-  end
-
-  def liked?
-    !!liked
+    @title.presence || film.title
+  rescue
+    'Title unavailable'
   end
 
   def watchable?
@@ -36,11 +34,11 @@ class Bookmark
   def html
     film.html
   rescue FilmSnob::NotEmbeddableError
-    "Sorry, not embeddable"
+    'Sorry, not embeddable'
   end
 
   def film
     @film ||= FilmSnob.new(url, width: 100)
   end
-
 end
+
