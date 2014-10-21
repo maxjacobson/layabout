@@ -6,3 +6,4 @@ class UpdateFolderAttributes < ActiveRecord::Migration
     add_column :folders, :slug, :string
   end
 end
+

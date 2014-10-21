@@ -3,3 +3,4 @@ class AddLastSyncedAtTimeToUser < ActiveRecord::Migration
     add_column :users, :last_synced_at, :datetime
   end
 end
+
