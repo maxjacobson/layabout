@@ -1,11 +1,15 @@
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-content <%= bookmark.bid %>">
+      <div class="modal-header">
+        <h3><%= bookmark.title %></h3>
+      </div>
       <div class="modal-body">
         <%= html.html_safe %>
       </div>
       <div class="modal-footer">
+        <%= render partial: 'bookmarks/meta', locals: { liked: bookmark.liked?, bid: bookmark.bid } %>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>

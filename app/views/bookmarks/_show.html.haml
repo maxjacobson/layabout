@@ -1,4 +1,4 @@
-.video{id: bookmark.bid}
+.video{ video_class_for(bookmark) }
   %h3.title{data: { url: bookmark.url }}= bookmark.title
   - if bookmark.watchable?
     %p this is a video

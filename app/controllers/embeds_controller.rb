@@ -14,13 +14,13 @@ class EmbedsController < ApplicationController
   end
   helper_method :film
 
-  def instapaper
-    # FIXME: this should be in application controller
-    @instapaper ||= current_user.instapaper
-  end
 
   def instantiate_bookmark
-    @bookmark ||= Bookmark.new(bid: params[:bookmark_id])
+    @bookmark ||= Bookmark.new(
+      bid: params[:bookmark_id],
+      liked: (params[:liked] == "true"),
+      title: params[:title]
+    )
   end
 
   attr_reader :bookmark
