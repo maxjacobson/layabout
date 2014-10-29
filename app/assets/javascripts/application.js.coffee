@@ -10,3 +10,6 @@ $(document).on 'ready page:load', ->
     $.get '/embed',
       url: $(this).data('url')
       bookmark_id: $(this).closest('.video').attr('id')
+      liked: $(this).closest('.video').hasClass('liked')
+      title: $(this).closest('.video').find('.title').text()
+

@@ -30,9 +30,5 @@ class BookmarksController < ApplicationController
   def instantiate_folder
     @folder = Folder.new(params[:folder_id])
   end
-
-  def instapaper
-    @instapaper ||= current_user.instapaper
-  end
 end
 

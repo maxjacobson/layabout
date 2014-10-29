@@ -9,5 +9,9 @@ class ApplicationController < ActionController::Base
     @current_user ||= User.find_by(uid: session[:uid]) if session[:uid]
   end
   helper_method :current_user
+
+  def instapaper
+    @instapaper ||= current_user.instapaper
+  end
 end
 
