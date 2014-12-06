@@ -2,9 +2,7 @@ class EmbedsController < ApplicationController
   before_action :instantiate_bookmark, only: [:show]
 
   def show
-    @html = (
-      film.watchable? ? film.html : current_user.instapaper.text(bookmark)
-    ).force_encoding('UTF-8')
+    @html = html.force_encoding('UTF-8')
   end
 
   private
@@ -25,5 +23,15 @@ class EmbedsController < ApplicationController
 
   attr_reader :bookmark
   helper_method :bookmark
+
+  def html
+    film.watchable? ? film.html : text
+  rescue FilmSnob::NotEmbeddableError
+    text
+  end
+
+  def text
+    current_user.instapaper.text(bookmark)
+  end
 end
 
