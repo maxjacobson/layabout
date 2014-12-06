@@ -12,6 +12,7 @@ class Bookmark
 
   attr_accessor :description, :bid, :url, :liked
   alias_method :liked?, :liked
+  delegate :watchable?, to: :film
 
   def initialize(attributes)
     @description = attributes[:description] || ''
@@ -25,10 +26,6 @@ class Bookmark
     @title.presence || film.title
   rescue
     'Title unavailable'
-  end
-
-  def watchable?
-    film.watchable?
   end
 
   def html
