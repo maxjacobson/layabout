@@ -25,7 +25,7 @@ class EmbedsController < ApplicationController
   helper_method :bookmark
 
   def html
-    film.watchable? ? film.html : text
+    film.embeddable? ? film.html : text
   rescue FilmSnob::NotEmbeddableError
     text
   end

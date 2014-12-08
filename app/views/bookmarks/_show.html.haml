@@ -1,6 +1,6 @@
 .video{id: bookmark.bid}
   %h3.title{data: { url: bookmark.url }}= bookmark.title
-  - if bookmark.watchable?
+  - if bookmark.embeddable?
     %p this is a video
   %p= bookmark.description
   %p

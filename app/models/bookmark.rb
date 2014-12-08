@@ -27,8 +27,8 @@ class Bookmark
     'Title unavailable'
   end
 
-  def watchable?
-    film.watchable?
+  def embeddable?
+    film.embeddable?
   end
 
   def html

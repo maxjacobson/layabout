@@ -19,7 +19,7 @@ class Folder < ActiveRecord::Base
   end
 
   def videos
-    bookmarks.keep_if(&:watchable?)
+    bookmarks.keep_if(&:embeddable?)
   end
 
   private
