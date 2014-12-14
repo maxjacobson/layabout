@@ -2,18 +2,17 @@
 
 ## What it is
 
-A site for Instapaper subscribers to go to and watch all the videos they've saved. Just kick back and enjoy.
+A site for Instapaper subscribers to go to and watch all the videos they've
+saved. Just kick back and enjoy.
 
-## Running
+## setup
 
-from project route
-
-* shotgun web.rb
-* compass watch
-    * for sass
-* coffee -j public/js/app.js -cw assets/coffee/
-    * for coffeescript
-    * I made an alias 'americano' for this annoyingly complex command
+* `git clone git@github.com:maxjacobson/layabout.git`
+* `cd layabout`
+* `bundle install`
+* `cp config/instapaper.yml.example config/instapaper.yml`
+* edit `config/instapaper.yml` with your Instapaper API credentials
+* `bin/rails s`
 
 ## Notes
 
@@ -38,3 +37,4 @@ from project route
 * 2014-05-11, deleted everything. I have too much data in instapaper to use layabout as it's currently written. It tries to store too much data in session, and there's a 4k limit. rather than try to put some kind of bandaid on that, I think it's time to rewrite it as a rails app with a database
 * 2014-05-21, continued with the rails rewrite. This new version should be a bit sturdier. Tonight I managed to store the user's token and request their list of folders, then setup pages for each password -- using slugs in the urls
 * 2014-05-22, added the ability to fetch and display bookmarks on the folder show pages; just the title for now, and only folders, not the home page
+* 2014-12-14, I've made a bunch of small improvements, moving toward open sourcing this thing and making it more useful
