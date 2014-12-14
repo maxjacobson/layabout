@@ -1,6 +1,8 @@
 # Layabout
 
 [![Build Status](https://travis-ci.org/maxjacobson/layabout.svg)](https://travis-ci.org/maxjacobson/layabout)
+[![Code Climate](https://codeclimate.com/github/maxjacobson/layabout/badges/gpa.svg)](https://codeclimate.com/github/maxjacobson/layabout)
+[![Test Coverage](https://codeclimate.com/github/maxjacobson/layabout/badges/coverage.svg)](https://codeclimate.com/github/maxjacobson/layabout)
 
 ## What it is
 
