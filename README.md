@@ -1,5 +1,7 @@
 # Layabout
 
+[![Build Status](https://travis-ci.org/maxjacobson/layabout.svg)](https://travis-ci.org/maxjacobson/layabout)
+
 ## What it is
 
 A site for Instapaper subscribers to go to and watch all the videos they've
