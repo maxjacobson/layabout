@@ -8,9 +8,9 @@ unless defined?(Spring)
   require 'bundler'
 
   match = Bundler
-    .default_lockfile
-    .read
-    .match(/^GEM$.*?^    spring \((.*?)\)$.*?^$/m)
+          .default_lockfile
+          .read
+          .match(/^GEM$.*?^    spring \((.*?)\)$.*?^$/m)
 
   if match
     ENV['GEM_PATH'] = (

@@ -62,4 +62,5 @@ end
 gem 'byebug'
 gem 'rubocop', '0.28'
 
-gem "codeclimate-test-reporter", group: :test, require: nil
+gem 'codeclimate-test-reporter', group: :test, require: nil
+
