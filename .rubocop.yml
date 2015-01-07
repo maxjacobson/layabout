@@ -55,4 +55,5 @@ Lint/AssignmentInCondition:
 AllCops:
   Exclude:
     - 'db/schema.rb'
+    - 'vendor/bundle/**/*'
 
