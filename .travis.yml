@@ -4,6 +4,7 @@ rvm:
 before_install:
   - "gem install bundler -v 1.6"
   - "cp config/instapaper.yml.example config/instapaper.yml"
+before_script:
   - "RAILS_ENV=test bin/rake db:create db:migrate"
 script:
   - bundle exec rake
