@@ -60,6 +60,6 @@ group :test do
 end
 
 gem 'byebug'
-gem 'rubocop'
+gem 'rubocop', '0.28'
 
 gem "codeclimate-test-reporter", group: :test, require: nil
