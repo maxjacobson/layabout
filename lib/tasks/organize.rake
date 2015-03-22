@@ -1,4 +1,5 @@
 require 'readline'
+require 'launchy'
 
 class OrgAction
   class << self
@@ -144,7 +145,7 @@ class ReadAction < OrgAction
   private
 
   def open_bookmark(app, bookmark)
-    file = Tempfile.new(bookmark.title)
+    file = Tempfile.new([bookmark.title, '.html'])
     file.write(
       engine.call(
         title: bookmark.title,
@@ -152,6 +153,7 @@ class ReadAction < OrgAction
         url: bookmark.url
       ).encode(*encoding_options)
     )
+    file.rewind
     Launchy.open(file.path)
   end
 
