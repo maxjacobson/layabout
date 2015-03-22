@@ -1,5 +1,6 @@
 class Folder < ActiveRecord::Base
   belongs_to :user
+  include HasBookmarks
 
   def self.from_api(attributes)
     new(
@@ -14,18 +15,12 @@ class Folder < ActiveRecord::Base
     '/folders/' + slug
   end
 
-  def bookmarks
-    @bookmarks ||= instapaper.bookmarks(folder_id: fid, limit: 500)
-  end
-
-  def videos
-    bookmarks.keep_if(&:embeddable?)
-  end
-
   private
 
-  def instapaper
-    @instapaper ||= Instapaper.for(user)
+  def bookmarks_options
+    {
+      folder_id: fid
+    }
   end
 end
 

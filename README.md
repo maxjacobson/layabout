@@ -6,8 +6,9 @@
 
 ## What it is
 
-A site for Instapaper subscribers to go to and watch all the videos they've
+1. A site for Instapaper subscribers to go to and watch all the videos they've
 saved. Just kick back and enjoy.
+2. A command line interface 
 
 ## setup
 
@@ -16,7 +17,9 @@ saved. Just kick back and enjoy.
 * `bundle install`
 * `cp config/instapaper.yml.example config/instapaper.yml`
 * edit `config/instapaper.yml` with your Instapaper API credentials
-* `bin/rails s`
+* `bin/rake db:setup` to setup the database
+* `bin/rails s` for the web interface
+* `bin/rake org:bookmarks` for the command-line interface (must first run the web app and sign in there)
 
 ## LICENSE
 
