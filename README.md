@@ -19,7 +19,7 @@ saved. Just kick back and enjoy.
 * edit `config/instapaper.yml` with your Instapaper API credentials
 * `bin/rake db:setup` to setup the database
 * `bin/rails s` for the web interface
-* `bin/rake org:bookmarks` for the command-line interface (must first run the web app and sign in there)
+* `bin/rake explore` for the command-line interface (must first run the web app and sign in there)
 
 ## LICENSE
 

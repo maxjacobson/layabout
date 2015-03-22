@@ -333,10 +333,8 @@ class OrgApp
   end
 end
 
-namespace :org do
-  task bookmarks: :environment do
-    app = OrgApp.new(User.first)
-    ':)' while app.handle(app.next_command)
-  end
+task explore: :environment do
+  app = OrgApp.new(User.first)
+  ':)' while app.handle(app.next_command)
 end
 
