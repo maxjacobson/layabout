@@ -81,6 +81,7 @@ class ArchiveAction < OrgAction
       app.user.instapaper.archive(bookmark)
       app.remove_current_bookmark
       puts "Archived #{bookmark.title}"
+      StatusAction.new.handle(app)
     end
   end
 end
