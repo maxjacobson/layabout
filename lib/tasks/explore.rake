@@ -281,6 +281,7 @@ class OrgApp
   def initialize(user)
     @user = user
     validate_user
+    puts "Logged in as #{user.email}"
     @folders = [HomeFolder.new(user)] + user.folders.to_a
     @current_folder = @folders.first
     @bookmark_index = 0
