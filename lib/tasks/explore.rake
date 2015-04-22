@@ -48,6 +48,16 @@ class OrgAction
   end
 end
 
+class ReverseAction < OrgAction
+  self.command = 'reverse'
+  self.description = 'Reverse the bookmarks order'
+
+  def handle(app)
+    app.reverse_bookmarks!
+    StatusAction.new.handle(app)
+  end
+end
+
 class LikeAction < OrgAction
   self.commands = ['like', 'liked', 'l', '<3']
   self.description = 'Like current bookmark'
@@ -285,6 +295,7 @@ class OrgApp
     @folders = [HomeFolder.new(user)] + user.folders.to_a
     @current_folder = @folders.first
     @bookmark_index = 0
+    @older_first = false
   end
 
   def handle(command)
@@ -297,8 +308,7 @@ class OrgApp
   end
 
   def current_folder=(folder)
-    @bookmarks = nil    # releasing this memory!
-    @bookmark_index = 0 # back to the top!
+    forget_bookmarks!
     @current_folder = folder
   end
 
@@ -308,7 +318,20 @@ class OrgApp
   end
 
   def bookmarks
-    @bookmarks ||= current_folder.bookmarks
+    @bookmarks ||= if older_first?
+                      current_folder.bookmarks.reverse
+                    else
+                      current_folder.bookmarks
+                    end
+  end
+
+  def older_first?
+    @older_first
+  end
+
+  def reverse_bookmarks!
+    @older_first = !@older_first
+    forget_bookmarks!
   end
 
   def remove_current_bookmark
@@ -332,6 +355,11 @@ class OrgApp
   def validate_user
     raise 'No users in db! Sign in thru browser first' unless user.present?
     raise 'Sorry, must be a paying Instapaper subscribe' unless user.active?
+  end
+
+  def forget_bookmarks!
+    @bookmarks = nil    # release this memory
+    @bookmark_index = 0 # back to the top!
   end
 end
 
