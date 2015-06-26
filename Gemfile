@@ -49,6 +49,8 @@ gem 'film_snob'
 gem 'unicorn'
 gem 'bootstrap-sass-rails'
 
+gem 'skylight'
+
 group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
