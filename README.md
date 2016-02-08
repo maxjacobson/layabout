@@ -21,10 +21,6 @@ saved. Just kick back and enjoy.
 * `bin/rails s` for the web interface
 * `bin/rake explore` for the command-line interface (must first run the web app and sign in there)
 
-## deploying to Heroku
-
-* `heroku config:set SKYLIGHT_AUTHENTICATION="<token>"`
-
 ## LICENSE
 
 The MIT License (MIT)

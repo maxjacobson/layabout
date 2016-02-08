@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-  - 2.1.5
+  - 2.1.8
 before_install:
   - "gem install bundler -v 1.6"
   - "cp config/instapaper.yml.example config/instapaper.yml"
@@ -9,4 +9,3 @@ before_script:
 script:
   - bin/rake
   - bin/rubocop
-

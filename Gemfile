@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "2.1.5"
+ruby File.read("./.ruby-version").chomp
 
 gem "rails", "4.1.9"
 
@@ -48,8 +48,6 @@ gem "instapaper_full", github: "mattb/instapaper_full"
 gem "film_snob", github: "maxjacobson/film_snob"
 gem "unicorn"
 gem "bootstrap-sass-rails"
-
-gem "skylight"
 
 group :development do
   gem "better_errors"
