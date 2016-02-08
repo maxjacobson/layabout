@@ -7,7 +7,7 @@ class HomeFolder
 
   def initialize(user)
     @user = user
-    @title = 'Home'
+    @title = "Home"
   end
 
   private
@@ -16,4 +16,3 @@ class HomeFolder
     {}
   end
 end
-

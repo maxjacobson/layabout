@@ -5,7 +5,7 @@ class EmbedsController < ApplicationController
     @html = HtmlGuarantor.new(
       current_user,
       bookmark
-    ).html.force_encoding('UTF-8')
+    ).html.force_encoding("UTF-8")
   end
 
   private
@@ -28,4 +28,3 @@ class EmbedsController < ApplicationController
 
   helper_method :bookmark
 end
-

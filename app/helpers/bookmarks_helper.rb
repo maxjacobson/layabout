@@ -1,3 +1,2 @@
 module BookmarksHelper
 end
-

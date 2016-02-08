@@ -8,4 +8,3 @@ class CreateFolders < ActiveRecord::Migration
     end
   end
 end
-

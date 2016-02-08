@@ -35,4 +35,3 @@ class BookmarksController < ApplicationController
     @instapaper ||= current_user.instapaper
   end
 end
-

@@ -22,4 +22,3 @@ class HtmlGuarantor
     user.instapaper.text(bookmark)
   end
 end
-

@@ -3,4 +3,3 @@ class FoldersController < ApplicationController
     @folder = current_user.folders.find_by(slug: params[:slug])
   end
 end
-

@@ -4,15 +4,15 @@ class Folder < ActiveRecord::Base
 
   def self.from_api(attributes)
     new(
-      title: attributes['title'],
-      fid: attributes['folder_id'],
-      slug: attributes['slug']
+      title: attributes["title"],
+      fid: attributes["folder_id"],
+      slug: attributes["slug"]
     )
   end
 
   # FIXME: surely there is a better way to do this :)
   def path
-    '/folders/' + slug
+    "/folders/" + slug
   end
 
   private
@@ -23,4 +23,3 @@ class Folder < ActiveRecord::Base
     }
   end
 end
-

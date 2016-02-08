@@ -22,4 +22,3 @@ module HasBookmarks
     @instapaper ||= Instapaper.for(user)
   end
 end
-

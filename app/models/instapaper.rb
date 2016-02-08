@@ -6,8 +6,8 @@ class Instapaper
   attr_reader :instapaper
   def initialize(token, secret)
     @instapaper = InstapaperFull::API.new(
-      consumer_key: Rails.application.secrets.instapaper['consumer_key'],
-      consumer_secret: Rails.application.secrets.instapaper['consumer_secret'],
+      consumer_key: Rails.application.secrets.instapaper["consumer_key"],
+      consumer_secret: Rails.application.secrets.instapaper["consumer_secret"],
       oauth_token: token,
       oauth_token_secret: secret
     )
@@ -46,4 +46,3 @@ class Instapaper
     instapaper.bookmarks_get_text bookmark_id: bookmark.bid
   end
 end
-

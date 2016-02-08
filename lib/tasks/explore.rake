@@ -1,5 +1,5 @@
-require 'readline'
-require 'launchy'
+require "readline"
+require "launchy"
 
 class OrgAction
   class << self
@@ -49,11 +49,11 @@ class OrgAction
 end
 
 class LikeAction < OrgAction
-  self.commands = ['like', 'liked', 'l', '<3']
-  self.description = 'Like current bookmark'
+  self.commands = ["like", "liked", "l", "<3"]
+  self.description = "Like current bookmark"
 
   def handle(app)
-    with_current_bookmark(app, 'No bookmark...?') do |bookmark|
+    with_current_bookmark(app, "No bookmark...?") do |bookmark|
       app.user.instapaper.like(bookmark)
       puts "😍 Liked #{bookmark.title} 😍"
     end
@@ -62,10 +62,10 @@ end
 
 class UnlikeAction < OrgAction
   self.commands = %w(unlike u)
-  self.description = 'Unlike current bookmark'
+  self.description = "Unlike current bookmark"
 
   def handle(app)
-    with_current_bookmark(app, 'No bookmark...?') do |bookmark|
+    with_current_bookmark(app, "No bookmark...?") do |bookmark|
       app.user.instapaper.unlike(bookmark)
       puts "Unliked #{bookmark.title}"
     end
@@ -74,10 +74,10 @@ end
 
 class ArchiveAction < OrgAction
   self.commands = %w(archive y)
-  self.description = 'Archive current bookmark'
+  self.description = "Archive current bookmark"
 
   def handle(app)
-    with_current_bookmark(app, 'No bookmark...?') do |bookmark|
+    with_current_bookmark(app, "No bookmark...?") do |bookmark|
       app.user.instapaper.archive(bookmark)
       app.remove_current_bookmark
       puts "Archived #{bookmark.title}"
@@ -87,11 +87,11 @@ class ArchiveAction < OrgAction
 end
 
 class VisitAction < OrgAction
-  self.command = 'visit'
-  self.description = 'Visit Original url of bookmark'
+  self.command = "visit"
+  self.description = "Visit Original url of bookmark"
 
   def handle(app)
-    with_current_bookmark(app, 'Nothing to visit') do |bookmark|
+    with_current_bookmark(app, "Nothing to visit") do |bookmark|
       Launchy.open(bookmark.url)
     end
   end
@@ -99,17 +99,17 @@ end
 
 class MoveAction < OrgAction
   self.command = /^mv /
-  self.description = 'Move current bookmark to folder (eg. mv 4 or mv offload)'
+  self.description = "Move current bookmark to folder (eg. mv 4 or mv offload)"
 
   def handle(app)
-    with_current_bookmark(app, 'No bookmark to move!') do |bookmark|
+    with_current_bookmark(app, "No bookmark to move!") do |bookmark|
       if (folder = matched_folder(app.last_command, app.folders)).present?
         app.send_away(bookmark, folder)
         puts "Sent to #{folder.title}: #{bookmark.title}\n"
         ListAction.new.handle(app)
         StatusAction.new.handle(app)
       else
-        puts 'Invalid request! (Note: cannot move to home folder rn)'
+        puts "Invalid request! (Note: cannot move to home folder rn)"
       end
     end
   end
@@ -117,7 +117,7 @@ class MoveAction < OrgAction
   private
 
   def matched_folder(command, folders)
-    request = command.gsub('mv ', '')
+    request = command.gsub("mv ", "")
     match = folders.find do |folder|
       folder.title.downcase.starts_with?(request.downcase)
     end || (folders[request.to_i] if request =~ /^\d+$/)
@@ -127,17 +127,17 @@ end
 
 class ReadAction < OrgAction
   self.commands = %w(read open)
-  self.description = 'Read current bookmark'
+  self.description = "Read current bookmark"
 
   def handle(app)
-    with_current_bookmark(app, 'No bookmarks in this folder') do |bookmark|
+    with_current_bookmark(app, "No bookmarks in this folder") do |bookmark|
       begin
         open_bookmark(app, bookmark)
       rescue => e
         # sometimes this breaks, but we have a decent fallback
-        puts 'Error:'
+        puts "Error:"
         p e
-        puts 'Opening original URL'
+        puts "Opening original URL"
         VisitAction.new.handle(app)
       end
     end
@@ -146,7 +146,7 @@ class ReadAction < OrgAction
   private
 
   def open_bookmark(app, bookmark)
-    file = Tempfile.new([bookmark.title, '.html'])
+    file = Tempfile.new([bookmark.title, ".html"])
     file.write(
       engine.call(
         title: bookmark.title,
@@ -174,7 +174,7 @@ class ReadAction < OrgAction
   end
 
   def template_path
-    Rails.root.join('app', 'views', 'layouts', 'minimalist.html.haml')
+    Rails.root.join("app", "views", "layouts", "minimalist.html.haml")
   end
 
   def render_context
@@ -183,11 +183,11 @@ class ReadAction < OrgAction
 
   def encoding_options
     [
-      'utf-8',
+      "utf-8",
       {
         invalid: :replace,
         undef: :replace,
-        replace: '_'
+        replace: "_"
       }
     ]
   end
@@ -195,7 +195,7 @@ end
 
 class ListAction < OrgAction
   self.commands = %w(list ls)
-  self.description = 'List the folders'
+  self.description = "List the folders"
 
   def handle(app)
     app.folders.each.with_index do |folder, index|
@@ -206,31 +206,31 @@ end
 
 class SwitchFolderAction < OrgAction
   self.commands = [/^cd \d+$/, /^\d+$/]
-  self.description = 'Change to folder at provided index (eg. cd 4)'
+  self.description = "Change to folder at provided index (eg. cd 4)"
 
   def handle(app)
-    folder_index = app.last_command.gsub('cd ', '').to_i
+    folder_index = app.last_command.gsub("cd ", "").to_i
     if (folder = app.folders[folder_index]).present?
       app.current_folder = folder
       puts "Switched to #{app.current_folder.title}"
-      with_current_bookmark(app, 'This folder is empty') do |bookmark|
+      with_current_bookmark(app, "This folder is empty") do |bookmark|
         puts bookmark.title
       end
     else
-      puts 'Invalid folder index!'
+      puts "Invalid folder index!"
     end
   end
 end
 
 class StatusAction < OrgAction
-  self.description = 'Print the current folder'
+  self.description = "Print the current folder"
   self.commands = %w(status st)
 
   def handle(app)
     puts "Current folder: #{app.current_folder.title} (#{app.bookmarks.count})"
     puts
 
-    with_current_bookmark(app, 'No active bookmark') do |bookmark|
+    with_current_bookmark(app, "No active bookmark") do |bookmark|
       puts bookmark.title
       puts bookmark.url
     end
@@ -238,7 +238,7 @@ class StatusAction < OrgAction
 end
 
 class ExitAction < OrgAction
-  self.description = 'Quit the org app'
+  self.description = "Quit the org app"
   self.commands = %w(exit quit break q)
 
   def keep_looping?
@@ -247,11 +247,11 @@ class ExitAction < OrgAction
 end
 
 class HelpAction < OrgAction
-  self.description = 'Print all the valid actions'
-  self.command = 'help'
+  self.description = "Print all the valid actions"
+  self.command = "help"
 
   def handle(_)
-    puts 'Valid commands:'
+    puts "Valid commands:"
     OrgAction.subclasses.each do |action|
       next if action == NoMatchAction # Should not be invoked directly!
       puts "[#{action.valid_commands.join(',')}] => #{action.description}"
@@ -260,8 +260,8 @@ class HelpAction < OrgAction
 end
 
 class EmptyInput < OrgAction
-  self.description = 'No input! Just relax'
-  self.command = ''
+  self.description = "No input! Just relax"
+  self.command = ""
 end
 
 # Must be last-defined action, it catches all the non-matches
@@ -316,9 +316,9 @@ class OrgApp
   end
 
   def next_command
-    Readline.readline('> ', true)
+    Readline.readline("> ", true)
   rescue Interrupt
-    'exit'
+    "exit"
   end
 
   private
@@ -330,13 +330,12 @@ class OrgApp
   end
 
   def validate_user
-    raise 'No users in db! Sign in thru browser first' unless user.present?
-    raise 'Sorry, must be a paying Instapaper subscribe' unless user.active?
+    raise "No users in db! Sign in thru browser first" unless user.present?
+    raise "Sorry, must be a paying Instapaper subscribe" unless user.active?
   end
 end
 
 task explore: :environment do
   app = OrgApp.new(User.first)
-  ':)' while app.handle(app.next_command)
+  ":)" while app.handle(app.next_command)
 end
-
