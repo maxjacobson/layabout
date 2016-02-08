@@ -10,12 +10,6 @@
 Metrics/AbcSize:
   Max: 16
 
-# Offense count: 3
-# Configuration parameters: AllowHeredoc, AllowURI, URISchemes.
-# URISchemes: http, https
-Metrics/LineLength:
-  Max: 86
-
 # Offense count: 38
 Style/Documentation:
   Enabled: false
